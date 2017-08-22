@@ -99,7 +99,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/08/22/2017-08-22 Python3 入门之函数基础/index.html">
 <meta property="og:site_name" content="bashellwang 的小书屋">
 <meta property="og:description" content="函数基础函数是最基本的一种代码抽象方式 条件判断根据 Python 的缩进规则，如果 if 语句判断为 True ，就把接下来缩进的语句执行，否则执行 else 的内容 1234567&amp;gt;&amp;gt;&amp;gt; age = 20&amp;gt;&amp;gt;&amp;gt; if age&amp;gt;= 18:...     print(&amp;quot;your age is&amp;quot;,age)... else:...">
-<meta property="og:updated_time" content="2017-08-22T13:37:45.000Z">
+<meta property="og:updated_time" content="2017-08-22T13:54:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python3 入门之函数基础">
 <meta name="twitter:description" content="函数基础函数是最基本的一种代码抽象方式 条件判断根据 Python 的缩进规则，如果 if 语句判断为 True ，就把接下来缩进的语句执行，否则执行 else 的内容 1234567&amp;gt;&amp;gt;&amp;gt; age = 20&amp;gt;&amp;gt;&amp;gt; if age&amp;gt;= 18:...     print(&amp;quot;your age is&amp;quot;,age)... else:...">
@@ -426,6 +426,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; person(&apos;Bob&apos;, 35, city=&apos;Beijing&apos;)</div><div class="line">name: Bob age: 35 other: &#123;&apos;city&apos;: &apos;Beijing&apos;&#125;</div><div class="line">&gt;&gt;&gt; person(&apos;Adam&apos;, 45, gender=&apos;M&apos;, job=&apos;Engineer&apos;)</div><div class="line">name: Adam age: 45 other: &#123;&apos;gender&apos;: &apos;M&apos;, &apos;job&apos;: &apos;Engineer&apos;&#125;</div></pre></td></tr></table></figure>
 <p>这种函数可以扩展函数功能，除了保证能接收到必要参数，对于调用者额外提供的参数也能获取到。</p>
 <p>和可变参数一样，我们也可以先组装出一个 dict，然后把该 dict 转换为关键字参数传进去。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; extra = &#123;&apos;city&apos;: &apos;Beijing&apos;, &apos;job&apos;: &apos;Engineer&apos;&#125;</div><div class="line">&gt;&gt;&gt; person(&apos;Jack&apos;, 24, city=extra[&apos;city&apos;], job=extra[&apos;job&apos;])</div><div class="line">name: Jack age: 24 other: &#123;&apos;city&apos;: &apos;Beijing&apos;, &apos;job&apos;: &apos;Engineer&apos;&#125;</div></pre></td></tr></table></figure>
+<p>上面可以简化为如下写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; extra = &#123;&apos;city&apos;: &apos;Beijing&apos;, &apos;job&apos;: &apos;Engineer&apos;&#125;</div><div class="line">&gt;&gt;&gt; person(&apos;Jack&apos;, 24, **extra)</div><div class="line">name: Jack age: 24 other: &#123;&apos;city&apos;: &apos;Beijing&apos;, &apos;job&apos;: &apos;Engineer&apos;&#125;</div></pre></td></tr></table></figure>
+<p><code>**extra</code> 表示把 extra 这个 dict 的所有 key-value 用关键字参数传入到函数的 <code>**kw</code> 参数，kw 将获得一个 dict，注意 kw 获得的dict 是 extra 的一份拷贝，对 kw 的改动不会影响到函数外的 extra。</p>
 <h5 id="命名关键字参数"><a href="#命名关键字参数" class="headerlink" title="命名关键字参数"></a>命名关键字参数</h5><p>对于关键字参数，函数调用者可以传入任意不受限制的关键字参数。对于传入参数的判断，只能在 kw 内部进行检查。以上面的 person() 函数为例，当我们只想调用者传入 city 和 job 做为关键字参数时，我们就可以使用「命名关键字参数」。这种函数的定义如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">def person(name,age,*,city,job)</div><div class="line">    print(name,age,city,job)</div></pre></td></tr></table></figure></p>
 <p>和关键字参数不一样的地方就是命名关键字参数需要使用分隔符 <code>*</code> ，<code>*</code> 后面的参数被视为命名关键字参数。</p>
 <p>如果函数定义中已经有了一个可变参数，那么后面跟着的命名关键字参数就不再需要 <code>*</code> 分隔符了。</p>
