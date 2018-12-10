@@ -87,18 +87,18 @@
 <meta property="og:site_name" content="bashellwang 的小书屋">
 <meta property="og:description" content="APP 接入 Bugly 热更新 公司最近项目在考虑加入热更新能力，综合目前开源的多个项目方案，我们采取了基于 Tinker 封装的 Bugly 热更新解决方案。  Tinker 原理用官方的一张图展示">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/tinker_theory.png">
-<meta property="og:image" content="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/single_channel_base_apk.jpg">
-<meta property="og:image" content="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/single_channel_patch_apk.jpg">
-<meta property="og:image" content="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/upload_patch_on_bugly.jpg">
-<meta property="og:image" content="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/multiple_channel_base_apk.jpg">
-<meta property="og:image" content="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/multiple_channel_patch_apk.jpg">
-<meta property="og:image" content="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/tinkerid_in_apk.jpg">
-<meta property="og:updated_time" content="2018-12-10T05:30:29.372Z">
+<meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/tinker_theory.png">
+<meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/single_channel_base_apk.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/single_channel_patch_apk.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/upload_patch_on_bugly.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/multiple_channel_base_apk.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/multiple_channel_patch_apk.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/tinkerid_in_apk.jpg">
+<meta property="og:updated_time" content="2018-12-10T06:06:25.455Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2018-12-09 APP 接入 Bugly 热更新">
 <meta name="twitter:description" content="APP 接入 Bugly 热更新 公司最近项目在考虑加入热更新能力，综合目前开源的多个项目方案，我们采取了基于 Tinker 封装的 Bugly 热更新解决方案。  Tinker 原理用官方的一张图展示">
-<meta name="twitter:image" content="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/tinker_theory.png">
+<meta name="twitter:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/tinker_theory.png">
 
 
 
@@ -288,7 +288,7 @@
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="bashellwang">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://bashellwang.github.io/uploads/avatar.jpeg">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
     </span>
 
     <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
@@ -354,7 +354,7 @@
 <p>公司最近项目在考虑加入热更新能力，综合目前开源的多个项目方案，我们采取了基于 Tinker 封装的 Bugly 热更新解决方案。</p>
 </blockquote>
 <p>Tinker 原理用官方的一张图展示</p>
-<p><img src="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/tinker_theory.png" alt="s"></p>
+<p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/tinker_theory.png" alt="tinker_theory.png"></p>
 <a id="more"></a>
 <h3 id="Bugly-介绍"><a href="#Bugly-介绍" class="headerlink" title="Bugly 介绍"></a>Bugly 介绍</h3><p>Bugly 热更新能力目前采用微信 Tinker 开源方案，无需重新发版即可解决线上问题，同时 Bugly 提供热更新管理后台免费给开发者使用。</p>
 <p>下面是 Bugly 官方给出的一些优势，可参考 <a href="https://bugly.qq.com/docs/user-guide/instruction-manual-android-hotfix/?v=20181014122344" target="_blank" rel="noopener">Bugly Android 热更新指南</a> :</p>
@@ -412,13 +412,13 @@
 <p>此 tinkerid 需要保证唯一，在生成基准包（即将发布的包）后，需要将对应的 apk、mapping 文件、R 文件保存。</p>
 <p><strong>1. 生成正式发布包（基准包）</strong></p>
 <p>如下图所示，这些都是在生成正式发布包时注意的。</p>
-<p><img src="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/single_channel_base_apk.jpg" alt="s"></p>
+<p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/single_channel_base_apk.jpg" alt="single_channel_base_apk.jpg"></p>
 <p><strong>2. 正式包出问题时，生成补丁文件</strong></p>
 <p>需要生成补丁文件时，需要修改 <code>tinker-support.gradle</code> 脚本文件。详细说明如图所示：</p>
-<p><img src="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/single_channel_patch_apk.jpg" alt="s"></p>
+<p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/single_channel_patch_apk.jpg" alt="single_channel_patch_apk.jpg"></p>
 <p><strong>3. 上传补丁文件并下发用户</strong></p>
 <p>在 bugly 官网，找到对应的产品热更新模块，如图所示操作，用户重启 app 即可修复。</p>
-<p><img src="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/upload_patch_on_bugly.jpg" alt="s"></p>
+<p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/upload_patch_on_bugly.jpg" alt="upload_patch_on_bugly.jpg"></p>
 <p><strong><em>注意：这里选择文件上传时可能会报错，没有对应版本。这是因为需要目标 apk 进行联网，将 tinkerid 上报，后台才能识别到。当然正式包上线，这里肯定有联网会匹配到目标版本；如果是自己测试，需要注意这一点。</em></strong></p>
 <p><strong><em>多渠道打补丁包模式</em></strong></p>
 <p>前面介绍了单渠道模式下的补丁包生成过程，大部分情况下我们还是有很多渠道包的，可以看看这篇文章 <a href="https://buglydevteam.github.io/2017/05/15/solution-of-multiple-channel-hotpatch/" target="_blank" rel="noopener">Bugly多渠道热更新解决方案</a>。</p>
@@ -427,14 +427,14 @@
 <p>考虑到我们项目多渠道包主要针对不同国家版本，每个国家一个渠道包，虽然整体代码是同一套，但是所有渠道包代码不能保证一致，因此无法通过一个补丁完成所有渠道修复工作。这里我们项目采用的是 productFlavors 这种方式。</p>
 <p><strong>1. 多渠道生成正式发布包（基准包）</strong></p>
 <p>如图所示：</p>
-<p><img src="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/multiple_channel_base_apk.jpg" alt="s"></p>
+<p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/multiple_channel_base_apk.jpg" alt="multiple_channel_base_apk.jpg"></p>
 <p><strong>2. 生成补丁文件</strong></p>
-<p><img src="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/multiple_channel_patch_apk.jpg" alt="s"></p>
+<p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/multiple_channel_patch_apk.jpg" alt="multiple_channel_patch_apk.jpg"></p>
 <p><strong>3. 上传补丁文件并下发用户</strong><br>这里和单渠道类似，只不过是针对每个渠道单独上传配置下发。</p>
 <p><strong><em>另外说明</em></strong></p>
 <p>tinkerid 是 tinker 识别每一个 apk 包的唯一标识，它被写入到 <code>AndroidManifest</code> 文件中。</p>
 <p>补丁文件中的 <code>YAPATCH.MF</code> 包含目标版本和补丁版本的相关信息，用于补丁生效使用。</p>
-<p><img src="https://bashellwang.github.io/uploads/2018/12/bugly_tinker/tinkerid_in_apk.jpg" alt="s"></p>
+<p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/tinkerid_in_apk.jpg" alt="tinkerid_in_apk.jpg"></p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>bugly 提供了一系列相关接口方法，如是否通知用户重启、如何打加固包等，更多详情可参考：</p>
 <ol>
 <li><a href="https://bugly.qq.com/docs/user-guide/instruction-manual-android-hotfix/?v=20180709165613" target="_blank" rel="noopener">Bugly 热更新使用指南</a></li>
@@ -550,7 +550,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image" src="https://bashellwang.github.io/uploads/avatar.jpeg" alt="bashellwang">
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpeg" alt="bashellwang">
             
               <p class="site-author-name" itemprop="name">bashellwang</p>
               <p class="site-description motion-element" itemprop="description">路漫漫其修远兮</p>

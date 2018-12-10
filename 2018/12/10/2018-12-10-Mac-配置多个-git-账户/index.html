@@ -86,12 +86,12 @@
 <meta property="og:site_name" content="bashellwang 的小书屋">
 <meta property="og:description" content="公司工作使用 Gitlab，自己需要使用 Github，那么该如何在同一台 Mac 上配置多个账号呢  思路ssh 方式链接到 Github/Gitlab,需要使用唯一的公钥，因此同一台 Mac 绑定多个账号，需要满足两个条件：  生成对应的私钥/公钥 设置不同的 Host 和 HostName 配置 为每个仓库独立配置 用户名/用户邮箱">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://bashellwang.github.io/uploads/2018/12/git/file_in_ssh.jpg">
-<meta property="og:updated_time" content="2018-12-10T03:38:19.887Z">
+<meta property="og:image" content="http://yoursite.com/2018/12/10/2018-12-10-Mac-配置多个-git-账户/file_in_ssh.jpg">
+<meta property="og:updated_time" content="2018-12-10T06:07:19.182Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2018-12-10 Mac 配置多个 git 账户">
 <meta name="twitter:description" content="公司工作使用 Gitlab，自己需要使用 Github，那么该如何在同一台 Mac 上配置多个账号呢  思路ssh 方式链接到 Github/Gitlab,需要使用唯一的公钥，因此同一台 Mac 绑定多个账号，需要满足两个条件：  生成对应的私钥/公钥 设置不同的 Host 和 HostName 配置 为每个仓库独立配置 用户名/用户邮箱">
-<meta name="twitter:image" content="https://bashellwang.github.io/uploads/2018/12/git/file_in_ssh.jpg">
+<meta name="twitter:image" content="http://yoursite.com/2018/12/10/2018-12-10-Mac-配置多个-git-账户/file_in_ssh.jpg">
 
 
 
@@ -281,7 +281,7 @@
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="bashellwang">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://bashellwang.github.io/uploads/avatar.jpeg">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
     </span>
 
     <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
@@ -357,7 +357,7 @@
 <p>2.生成新的密钥：</p>
 <p><code>ssh-keygen -t rsa -f ~/.ssh/id_rsa_github_bashellwang -C &quot;youremail@xx.com&quot;</code></p>
 <p>生成密钥后，我的 ssh 目录下如图所示：</p>
-<p><img src="https://bashellwang.github.io/uploads/2018/12/git/file_in_ssh.jpg" alt="s"></p>
+<p><img src="/2018/12/10/2018-12-10-Mac-配置多个-git-账户/file_in_ssh.jpg" alt="file_in_ssh.jpg"></p>
 <p>3.在 <code>.ssh</code> 文件夹下新建 <code>config</code> 目录（如果没有的话），进行内容编辑如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># gitlab shopee</span><br><span class="line">                                                             </span><br><span class="line">Host gitlab.com</span><br><span class="line">HostName gitlab.com</span><br><span class="line">User git</span><br><span class="line">IdentityFile ~/.ssh/id_rsa</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># gitHub bashellwang</span><br><span class="line">                                                                        </span><br><span class="line">Host github.com</span><br><span class="line">HostName github.com</span><br><span class="line">User git</span><br><span class="line">IdentityFile ~/.ssh/id_rsa_github_bashellwang</span><br></pre></td></tr></table></figure>
 <ol start="4">
@@ -470,7 +470,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image" src="https://bashellwang.github.io/uploads/avatar.jpeg" alt="bashellwang">
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpeg" alt="bashellwang">
             
               <p class="site-author-name" itemprop="name">bashellwang</p>
               <p class="site-description motion-element" itemprop="description">路漫漫其修远兮</p>
