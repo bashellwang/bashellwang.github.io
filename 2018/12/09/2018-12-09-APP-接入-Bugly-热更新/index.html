@@ -94,7 +94,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/multiple_channel_base_apk.jpg">
 <meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/multiple_channel_patch_apk.jpg">
 <meta property="og:image" content="http://yoursite.com/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/tinkerid_in_apk.jpg">
-<meta property="og:updated_time" content="2018-12-10T08:33:40.839Z">
+<meta property="og:updated_time" content="2018-12-21T08:14:17.673Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2018-12-09 APP 接入 Bugly 热更新">
 <meta name="twitter:description" content="APP 接入 Bugly 热更新 公司最近项目在考虑加入热更新能力，综合目前开源的多个项目方案，我们采取了基于 Tinker 封装的 Bugly 热更新解决方案。  Tinker 原理用官方的一张图展示">
@@ -424,7 +424,7 @@
 <p>前面介绍了单渠道模式下的补丁包生成过程，大部分情况下我们还是有很多渠道包的，可以看看这篇文章 <a href="https://buglydevteam.github.io/2017/05/15/solution-of-multiple-channel-hotpatch/" target="_blank" rel="noopener">Bugly多渠道热更新解决方案</a>。</p>
 <p>多渠道打包官方原生支持是 productFlavors，这种方式每打一个渠道包需要全部编译一次，因此效率比较低。</p>
 <p>bugly 官方这里推荐使用美团的多渠道打包组件 <a href="https://github.com/Meituan-Dianping/walle" target="_blank" rel="noopener">walle</a>，只需要修改 apk signature block 来添加自定义的渠道信息即可生成渠道包，速度非常快。</p>
-<p>考虑到我们项目多渠道包主要针对不同国家版本，每个国家一个渠道包，虽然整体代码是同一套，但是所有渠道包代码不能保证一致，因此无法通过一个补丁完成所有渠道修复工作。这里我们项目采用的是 productFlavors 这种方式。</p>
+<p>考虑到我们项目多渠道包主要针对不同国家版本，每个国家一个渠道包，虽然整体代码是同一套，但是不同渠道线上版本不能保证一致，因此无法通过一个补丁完成所有渠道修复工作。这里我们项目采用的是 productFlavors 这种方式。</p>
 <p><strong>1. 多渠道生成正式发布包（基准包）</strong></p>
 <p>如图所示：</p>
 <p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/multiple_channel_base_apk.jpg" alt="multiple_channel_base_apk.jpg"></p>
@@ -432,9 +432,13 @@
 <p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/multiple_channel_patch_apk.jpg" alt="multiple_channel_patch_apk.jpg"></p>
 <p><strong>3. 上传补丁文件并下发用户</strong><br>这里和单渠道类似，只不过是针对每个渠道单独上传配置下发。</p>
 <p><strong><em>另外说明</em></strong></p>
-<p>tinkerid 是 tinker 识别每一个 apk 包的唯一标识，它被写入到 <code>AndroidManifest</code> 文件中。</p>
+<p>1.tinkerid 是 tinker 识别每一个 apk 包的唯一标识，它被写入到 <code>AndroidManifest</code> 文件中。</p>
 <p>补丁文件中的 <code>YAPATCH.MF</code> 包含目标版本和补丁版本的相关信息，用于补丁生效使用。</p>
 <p><img src="/2018/12/09/2018-12-09-APP-接入-Bugly-热更新/tinkerid_in_apk.jpg" alt="tinkerid_in_apk.jpg"></p>
+<p>2.如果生成补丁包时报错 </p>
+<pre><code>Execution failed for task &apos;:app:tinkerProcessReleaseResourceId&apos;. &gt; 
+java.io.FileNotFoundException: build\intermediates\tinker_intermediates\values_backup
+</code></pre><p>这个时候可以备份下基准文件，然后 clean 项目后再重新打补丁包即可，可以参考这个 <a href="https://github.com/Tencent/tinker/issues/961" target="_blank" rel="noopener">issue</a></p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>bugly 提供了一系列相关接口方法，如是否通知用户重启、如何打加固包等，更多详情可参考：</p>
 <ol>
 <li><a href="https://bugly.qq.com/docs/user-guide/instruction-manual-android-hotfix/?v=20180709165613" target="_blank" rel="noopener">Bugly 热更新使用指南</a></li>
