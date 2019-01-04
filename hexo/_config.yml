@@ -8,7 +8,9 @@ subtitle:
 description: 路漫漫其修远兮
 keywords:
 author: bashellwang
-language: zh-Hans
+# language: zh-Hans
+# v6.0.3 版本以上，zh-Hans 改为 zh-CN
+language: zh-CN
 timezone: Asia/Shanghai
 
 # URL
@@ -73,7 +75,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: next-reloaded
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
