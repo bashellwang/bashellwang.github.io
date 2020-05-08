@@ -363,7 +363,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2020/05/07/2020-05-07-Android-Studio-NDK编译Bsdiff库/" class="post-title-link" itemprop="url">2020-05-07-Android-Studio-NDK编译Bsdiff库</a>
+                <a href="/2020/05/07/2020-05-07-Android-Studio-NDK编译Bsdiff库/" class="post-title-link" itemprop="url">Android Studio NDK 编译 Bsdiff 库</a>
               
             
           </h1>
@@ -391,6 +391,22 @@
               <time title="创建时间：2020-05-07 17:35:34" itemprop="dateCreated datePublished" datetime="2020-05-07T17:35:34+08:00">2020-05-07</time>
             
 
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-05-08 14:30:38" itemprop="dateModified" datetime="2020-05-08T14:30:38+08:00">2020-05-08</time>
+              
             
           </span>
 
@@ -423,9 +439,21 @@
 
       
         
+          <blockquote>
+<p>最近在做 web 离线包，需要使用到增量更新，这里对基于 Android Studio 编译 Bsdiff so 库做一个总结记录</p>
+</blockquote>
+<p>web 离线包需要从服务端下载资源压缩包到本地并解压，当使用到对应资源时可以优先从本地读取，减少了网络耗时，优化了用户体验。当压缩包体积过大，或者变动量小时，如果还是整包下载，则会造成带宽流量的浪费。因此需要使用到增量更新的方式。</p>
+<h3 id="增量更新原理"><a href="#增量更新原理" class="headerlink" title="增量更新原理"></a>增量更新原理</h3><p>增量更新就是在服务端生成新包和旧包之间的差分包，然后客户端下载这个差分包，和本地的旧包进行合并成完整包再使用。</p>
+<p>增量更新的算法有很多，最常用的是 <a href="http://www.daemonology.net/bsdiff/" target="_blank" rel="noopener">bsdiff</a> 算法</p>
+          <!--noindex-->
           
-            
+            <div class="post-button text-center">
+              <a class="btn" href="/2020/05/07/2020-05-07-Android-Studio-NDK编译Bsdiff库/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
           
+          <!--/noindex-->
         
       
     </div>
@@ -2069,7 +2097,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">21</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
