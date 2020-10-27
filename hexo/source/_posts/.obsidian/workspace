@@ -1,0 +1,78 @@
+{
+  "main": {
+    "id": "4330468e07ebc556",
+    "type": "split",
+    "children": [
+      {
+        "id": "8486eaa78407ee57",
+        "type": "leaf",
+        "active": true,
+        "state": {
+          "type": "image",
+          "state": {
+            "file": "2018-12-09-APP-接入-Bugly-热更新/single_channel_patch_apk.jpg"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "1e253fdb09573b8d",
+    "type": "split",
+    "children": [
+      {
+        "id": "09266e3d1fb77e16",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "cd26ed397d1a5483",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "4f26942a3a244940",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "969aa4680415900b",
+    "type": "split",
+    "children": [
+      {
+        "id": "70cd3a24cb2a629d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5854e78bf8aa7ca9",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "lastOpenFiles": [
+    "2018-12-09-APP-接入-Bugly-热更新/single_channel_patch_apk.jpg",
+    "2018-12-09-APP-接入-Bugly-热更新/tinker_theory.png",
+    "2018-12-09-APP-接入-Bugly-热更新/hot_patch_overview.jpg"
+  ]
+}

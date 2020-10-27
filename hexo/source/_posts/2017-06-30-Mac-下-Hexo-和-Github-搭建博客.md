@@ -119,6 +119,32 @@ $ hexo clean
 $ hexo g
 ```
 
+### 草稿相关命令操作
+
+#### 编写草稿
+```
+$ hexo new draft "article_title"
+```
+生成的文件作为草稿被放到 `/source/_draft` 目录下。
+
+放在该目录下的草稿，在使用 `hexo generate` 命令生成静态文件时不会被处理。
+
+#### 预览草稿
+如果想要查看草稿效果，可以在启动本地服务时增加一个参数 `hexo server --draft`，或者在 `_config.yml` 文件中进行配置，这样每次在启动本地服务时都会渲染草稿。
+
+```
+render_drafts: true
+```
+
+#### 发布草稿
+编写好草稿之后，如果想将草稿发布到 `source_posts` 目录下，可以使用如下命令：
+
+```
+$ hexo publish post "article_title"
+```
+在发布成功后，`_drafts` 目录下的草稿会被移除
+
+
 ### Hexo 常用命令
 
 ```
