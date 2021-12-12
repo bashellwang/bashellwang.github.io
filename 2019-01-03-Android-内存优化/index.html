@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="前言：App 的内存使用情况是我们评价 App 性能高低的一个重要指标，为了提高 App 的质量，提供用户更良好的体验，需要我们对 App 的内存使用有一定的控制。因此，内存优化也是我们开发过程中不可避免的一个工作。本文将从内存优化的背景知识、内存优化工具、常见内存泄漏类型及解决方案等方面做一个简单介绍。   注：目前 Android Studio 已到最新版 3.2.1，部分内存分析工具已被官">
@@ -37,7 +38,7 @@
 <meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-dorminator-tree.png">
 <meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-histogram.png">
 <meta property="article:published_time" content="2019-01-03T06:57:08.000Z">
-<meta property="article:modified_time" content="2021-12-12T09:29:24.350Z">
+<meta property="article:modified_time" content="2021-12-12T12:22:54.755Z">
 <meta property="article:author" content="bashellwang">
 <meta property="article:tag" content="Android">
 <meta property="article:tag" content="内存优化">
@@ -231,10 +232,17 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-12 17:29:24" itemprop="dateModified" datetime="2021-12-12T17:29:24+08:00">2021-12-12</time>
+                <time title="修改时间：2021-12-12 20:22:54" itemprop="dateModified" datetime="2021-12-12T20:22:54+08:00">2021-12-12</time>
               </span>
 
           
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
 
         </div>
       </header>
@@ -269,7 +277,7 @@
 <li>Old Generation（老年代）</li>
 <li>Permanent Generation（持久代）</li>
 </ul>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/generational_heap_memory.png" class="" title="generational_heap_memory.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/generational_heap_memory.png" class="" title="generational_heap_memory.png">
 
 <p>Young Generation 存放最近被创建的对象，当对象在该区域停留到一定时间，它会被移动到 Old Generation 区域，同理，也会被移动到 Permanent Generation 区域。新生代区域创建快，销毁也很快。</p>
 <p>在三级内存模型中，每一个区域的大小都是有固定值的，当进入到该区域的内存对象大小超过阈值时就会触发 GC 机制，进行内存回收。不仅如此，不同区域的 GC 时间也是不同的。</p>
@@ -298,7 +306,7 @@
 <li>从 Android Profiler 工具栏中选择您想要分析的设备和应用进程。 如果您通过 USB 连接了某个设备但该设备未在设备列表中列出，请确保您已启用 USB 调试。</li>
 <li>点击 **MEMORY **时间线中的任意位置可打开 Memory Profiler。</li>
 </ul>
-<h5 id="面板说明"><a href="#面板说明" class="headerlink" title="面板说明"></a>面板说明</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-overview.png" class="" title="memory-profiler-overview.png">
+<h5 id="面板说明"><a href="#面板说明" class="headerlink" title="面板说明"></a>面板说明</h5><img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-overview.png" class="" title="memory-profiler-overview.png">
 
 <p>如图所示，Memory Profiler 默认视图包含以下各项：</p>
 <ol>
@@ -315,7 +323,7 @@
 </ul>
 </li>
 </ol>
-<h5 id="指标参数说明"><a href="#指标参数说明" class="headerlink" title="指标参数说明"></a>指标参数说明</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-number.png" class="" title="memory-profiler-number.png">
+<h5 id="指标参数说明"><a href="#指标参数说明" class="headerlink" title="指标参数说明"></a>指标参数说明</h5><img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-number.png" class="" title="memory-profiler-number.png">
 
 <p>如图所示，内存计数中类别如下：</p>
 <ul>
@@ -336,7 +344,7 @@
 </li>
 </ul>
 <p>当连接至运行 Android 7.1 及更低版本的设备时，此分配仅在 Memory Profiler 连接至您运行的应用时才开始计数。 因此，您开始分析之前分配的任何对象都不会被计入。 不过，Android 8.0 附带一个设备内置分析工具，该工具可记录所有分配，因此，在 Android 8.0 及更高版本上，此数字始终表示您的应用中待处理的 Java 对象总数。</p>
-<h5 id="查看内存区域"><a href="#查看内存区域" class="headerlink" title="查看内存区域"></a>查看内存区域</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-see-useage.png" class="" title="memory-profile-see-useage.png">
+<h5 id="查看内存区域"><a href="#查看内存区域" class="headerlink" title="查看内存区域"></a>查看内存区域</h5><img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-see-useage.png" class="" title="memory-profile-see-useage.png">
 
 <p>在点击并按住时间线，并拖动选择您想要查看分配的区域之后，已分配对象的列表将显示在时间线下方，默认按类名称分类，并按堆计数排好序。</p>
 <ol>
@@ -350,7 +358,7 @@
 <li><strong>Arrange by package</strong>：基于软件包名称对所有分配进行分组。</li>
 <li><strong>Arrange by callstack</strong>：将所有分配分组到其对应的调用堆栈。</li>
 </ul>
-<h5 id="捕获堆转储"><a href="#捕获堆转储" class="headerlink" title="捕获堆转储"></a>捕获堆转储</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-dump.png" class="" title="memory-profile-dump.png">
+<h5 id="捕获堆转储"><a href="#捕获堆转储" class="headerlink" title="捕获堆转储"></a>捕获堆转储</h5><img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-dump.png" class="" title="memory-profile-dump.png">
 
 <p>在点击 Dump Java Heap 按钮后，Studio 会自动记录一段时间内的 Java Heap，如图所示，这里我们可以看到很多信息。</p>
 <p>在类列表，可以查看下吗信息：</p>
@@ -373,7 +381,7 @@
 <li><strong>Retained Size</strong>：此实例支配的内存大小（根据 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dominator_(graph_theory)">dominator 树</a>）。</li>
 </ul>
 <h5 id="堆转储另存为-HPROF"><a href="#堆转储另存为-HPROF" class="headerlink" title="堆转储另存为 HPROF"></a>堆转储另存为 HPROF</h5><p>我们之前查看堆转储时都是在设备连接在 Studio 上进行的，如果我们设备不在了，或者需要将堆转储发给其它人，就需要将堆转储另存为 HPROF 文件了。</p>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-save-hprof.png" class="" title="memory-profile-save-hprof.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-save-hprof.png" class="" title="memory-profile-save-hprof.png">
 
 <p>如图所示，在 Sessions 面板下，可以点击保存图标或者右键我们要保存的 Heap Dump 即可保存为 HPROF 文件了。然后在 Studio 中即可双击打开分析了。</p>
 <p>如果需要使用到其它的 HPROF 分析器，则需要将 HPROF 文件从 Android 格式转换为 Java SE HPROF 格式。 我们可以使用 <code>android_sdk/platform-tools/</code> 目录中提供的 <code>hprof-conv</code> 工具执行此操作。 运行包括以下两个参数的 hprof-conv 命令：<code>原始 HPROF 文件和转换后 HPROF 文件的写入位置</code>。 例如：</p>
@@ -391,17 +399,17 @@
 <li>线程信息，包括线程的调用栈及此线程的线程局部变量（TLS）</li>
 </ul>
 <p>通过 Android Studio 保存的 HPROF 文件无法直接通过 MAT 打开，需要使用 <code>hprof-conv</code> 转换，转换后打开的界面如下图所示：</p>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-overview.png" class="" title="mat-overview.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-overview.png" class="" title="mat-overview.png">
 
 <h5 id="Dorminator-Tree"><a href="#Dorminator-Tree" class="headerlink" title="Dorminator Tree"></a>Dorminator Tree</h5><p>支配树可以直观反映一个对象的 retained heap，会将所有内存中的对象按大小进行排序，并且我们可以分析对象之间的引用结构。</p>
 <ul>
 <li>shallow heap:指的是某一个对象所占内存大小。</li>
 <li>retained heap:指的是一个对象的 retained set所包含对象所占内存的总大小。</li>
 </ul>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-dorminator-tree.png" class="" title="mat-dorminator-tree.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-dorminator-tree.png" class="" title="mat-dorminator-tree.png">
 
 <h5 id="Histogram"><a href="#Histogram" class="headerlink" title="Histogram"></a>Histogram</h5><p>以直方图的方式来显示当前内存使用情况可能更加适合较为复杂的内存泄漏分析，它默认直接显示当前内存中各种类型对象的数量及这些对象的 shallow heap 和 retained heap 。结合 MAT 提供的不同显示方式，往往能够直接定位问题，当我们切换到 histogram 视图下时，如图所示</p>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-histogram.png" class="" title="mat-histogram.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-histogram.png" class="" title="mat-histogram.png">
 
 <p>通常我们可以在怀疑的对象上，右键选择 list objects -&gt; with incoming reference ，从而可以获取到达 GC Roots 的最短引用路径，以此来判定是哪里在引用导致的内存没被回收。</p>
 <h5 id="两个-HPROF-文件对比"><a href="#两个-HPROF-文件对比" class="headerlink" title="两个 HPROF 文件对比"></a>两个 HPROF 文件对比</h5><p>通过对比两个 HPROF 文件，可以知道两个版本之间，内存的增量在哪些地方</p>
@@ -541,12 +549,13 @@
 
 
       <footer class="post-footer">
+          
           <div class="post-tags">
-              <a href="/tags/Android/" rel="tag"># Android</a>
-              <a href="/tags/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" rel="tag"># 内存优化</a>
-              <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag"># 内存泄漏</a>
-              <a href="/tags/Profiler/" rel="tag"># Profiler</a>
-              <a href="/tags/MAT/" rel="tag"># MAT</a>
+              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+              <a href="/tags/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" rel="tag"><i class="fa fa-tag"></i> 内存优化</a>
+              <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag"><i class="fa fa-tag"></i> 内存泄漏</a>
+              <a href="/tags/Profiler/" rel="tag"><i class="fa fa-tag"></i> Profiler</a>
+              <a href="/tags/MAT/" rel="tag"><i class="fa fa-tag"></i> MAT</a>
           </div>
 
         
@@ -690,7 +699,7 @@
 
 <div class="copyright">
   
-  &copy; 
+  &copy; 2017 – 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
@@ -701,6 +710,26 @@
   </div>
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 
@@ -715,6 +744,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 
 <script src="/js/utils.js"></script>
 
@@ -728,6 +760,31 @@
 
 
   
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
 
 
 

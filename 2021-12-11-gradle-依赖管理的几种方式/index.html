@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="背景随着项目的发展扩张，项目区分多个 module 的做法越来越常见，同时项目中的依赖也越来越多，不同 module 引入的版本也不一致。有必要对项目中的依赖做梳理，达到统一管理、单独配置，版本号统一的目的。 gradle 依赖管理的一些方案gradle 随着版本的发展，也不断涌现出一些不同的方案。包括：原始手动管理、extra 扩展管理、buildSrc 方案、composing build 方">
@@ -31,7 +32,7 @@
 <meta property="og:image" content="https://bashellwang.github.io/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/auto_complete_code.png">
 <meta property="og:image" content="https://bashellwang.github.io/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/composing_build_structure.png">
 <meta property="article:published_time" content="2021-12-11T07:06:16.000Z">
-<meta property="article:modified_time" content="2021-12-12T09:29:24.367Z">
+<meta property="article:modified_time" content="2021-12-12T12:22:54.773Z">
 <meta property="article:author" content="bashellwang">
 <meta property="article:tag" content="gradle">
 <meta name="twitter:card" content="summary">
@@ -221,10 +222,17 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-12 17:29:24" itemprop="dateModified" datetime="2021-12-12T17:29:24+08:00">2021-12-12</time>
+                <time title="修改时间：2021-12-12 20:22:54" itemprop="dateModified" datetime="2021-12-12T20:22:54+08:00">2021-12-12</time>
               </span>
 
           
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
 
         </div>
       </header>
@@ -253,7 +261,7 @@
 <blockquote>
 <p>gradle 在运行时会去检查是否存在 buildSrc 的目录，如果有的话，gradle 会自动编译并测试这段代码，并将其放入构建脚本的路径中。对于多项目构建，只能有一个 buildSrc 目录，它位于 gradle 根目录下的一个目录。</p>
 </blockquote>
-<h5 id="根目录下创建-buildSrc-目录"><a href="#根目录下创建-buildSrc-目录" class="headerlink" title="根目录下创建 buildSrc 目录"></a>根目录下创建 buildSrc 目录</h5><img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/build_src_dir.png" class="">
+<h5 id="根目录下创建-buildSrc-目录"><a href="#根目录下创建-buildSrc-目录" class="headerlink" title="根目录下创建 buildSrc 目录"></a>根目录下创建 buildSrc 目录</h5><img data-src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/build_src_dir.png" class="">
 
 <h5 id="新建文件-build-gradle-kts"><a href="#新建文件-build-gradle-kts" class="headerlink" title="新建文件 build.gradle.kts"></a>新建文件 build.gradle.kts</h5><p>文件内容如下，同步 gradle</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    `kotlin-dsl`</span><br><span class="line">&#125;</span><br><span class="line">repositories &#123;</span><br><span class="line">    // 必不可少</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -264,7 +272,7 @@
 <p>在 module 中的 <code>build.gradle</code> 中引用，如下所示。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation DependLibs.appcompat</span><br><span class="line">    implementation DependLibs.material</span><br><span class="line">    implementation DependLibs.constraintlayout</span><br><span class="line">    implementation DependLibs.okhttp</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>代码支持跳转，也可以支持自动补全，如下图所示</p>
-<img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/auto_complete_code.png" class="">
+<img data-src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/auto_complete_code.png" class="">
 
 
 <h4 id="Composing-build"><a href="#Composing-build" class="headerlink" title="Composing build"></a>Composing build</h4><p>buildSrc 在依赖更新时会重新构建整个项目，是对全局所有 module 的配置，因此构建速度较慢；有没有既满足自动补全、单击跳转又在依赖更新时不重新构建整个项目的方法呢。答案是使用 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/composite_builds.html#composite_build_intro">Composing Build</a></p>
@@ -273,7 +281,7 @@
 <p>包含在复合构建中的构建被称为<code>包含构建</code>，包含的构建不与复合构建或其他包含的构建共享任何配置。每个包含的构建都是独立配置和执行的。</p>
 </blockquote>
 <p>新建一个 module，只保留 src/main 下代码源文件和 build.gradle 文件，其余均删除，如图所示：</p>
-<img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/composing_build_structure.png" class="">
+<img data-src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/composing_build_structure.png" class="">
 
 <p>其中 VersionPlugin 为继承 Plugin 的实现类，代码空实现即可</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class VersionPlugin : Plugin&lt;Project&gt; &#123;</span><br><span class="line">    override fun apply(target: Project) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -341,8 +349,9 @@
 
 
       <footer class="post-footer">
+          
           <div class="post-tags">
-              <a href="/tags/gradle/" rel="tag"># gradle</a>
+              <a href="/tags/gradle/" rel="tag"><i class="fa fa-tag"></i> gradle</a>
           </div>
 
         
@@ -483,7 +492,7 @@
 
 <div class="copyright">
   
-  &copy; 
+  &copy; 2017 – 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
@@ -494,6 +503,26 @@
   </div>
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 
@@ -508,6 +537,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 
 <script src="/js/utils.js"></script>
 
@@ -521,6 +553,31 @@
 
 
   
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
 
 
 

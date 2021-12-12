@@ -16,7 +16,7 @@
 <li>如果安装了 <code>Homebrew</code>，直接通过命令 <code>brew install python3</code> 安装即可</li>
 </ul>
 <h4 id="运行-Python"><a href="#运行-Python" class="headerlink" title="运行 Python"></a>运行 Python</h4><p>在命令行中输入 <code>python3</code> 即可看到如下信息，说明我们安装成功。前面不是说系统有自带 Python 2.7 版本吗，在命令行中输入 python 即可使用 2.7 版本。</p>
-<img src="/2017-08-04-Python3-%E5%85%A5%E9%97%A8%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/python3_cmd.png" class="" title="Python 3.6 版本运行">
+<img data-src="/2017-08-04-Python3-%E5%85%A5%E9%97%A8%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/python3_cmd.png" class="" title="Python 3.6 版本运行">
 
 <p>看到如上图所示的系统提示符 &gt;&gt;&gt;，说明已经进入 Python 运行环境，在这里即可开始进行程序的编辑及运行。退出 Python 运行环境也很简单，直接命令行输入 exit() 即可。</p>
 <h3 id="第一个-Python-程序"><a href="#第一个-Python-程序" class="headerlink" title="第一个 Python 程序"></a>第一个 Python 程序</h3><h4 id="Python-交互式环境"><a href="#Python-交互式环境" class="headerlink" title="Python 交互式环境"></a>Python 交互式环境</h4><p>在交互式环境提示符 <code>&gt;&gt;&gt;</code> 下，使用 <code>print()</code> 函数输出指定字符串，字符串使用单引号或双引号均可，但是不能混用单双引号。交互式模式相当于启动了 Python 解释器，等待一行行的代码输入并一行行执行。</p>
@@ -38,72 +38,6 @@
 ]]></content>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RecyclerView 控件的使用</title>
-    <url>/2017-08-02-RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<h3 id="RecyclerView-控件的使用"><a href="#RecyclerView-控件的使用" class="headerlink" title="RecyclerView 控件的使用"></a>RecyclerView 控件的使用</h3><blockquote>
-<p>前言 最近在做一个滑动列表的需求，现将 RecyclerView 的使用知识记录总结下</p>
-</blockquote>
-<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView">RecyclerView</a> 是 android.support.v7 包下的一个组件，根据官方文档说明，它是一个可以在有限屏幕区域提供大量数据集的灵活视图组件。</p>
-<p>那么它和我们熟悉的 ListView 和 GridView 有什么区别呢，或者说对比已有的两个组件，RecyclerView 有什么优势呢？整体来说，RecyclerView 提供了更为灵活的体验，高度解耦，开发者可以使用不同的 LayoutManager，ItemDecoration，ItemAnimator 来实现各种自定义效果。</p>
-<span id="more"></span>
-
-<ul>
-<li>LayoutManager 通过布局管理器，可以轻松实现类似 ListView，GridView 和 流式布局等效果</li>
-<li>ItemDecoration 通过它可以控制 Item 间的间隔，实现自定义间隔样式</li>
-<li>ItemAnimator 使用它来控制 Item 的增删等动画效果</li>
-<li>点击事件 RecyclerView 的点击事件需要自己来实现（提供了 OnItemTouchListener 接口）</li>
-</ul>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h4 id="导入库包"><a href="#导入库包" class="headerlink" title="导入库包"></a>导入库包</h4><p>在 gradle 文件中引入 v7 包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">compile &#x27;com.android.support:recyclerview-v7:21.0.3&#x27;</span><br></pre></td></tr></table></figure>
-<h4 id="布局中使用"><a href="#布局中使用" class="headerlink" title="布局中使用"></a>布局中使用</h4><p>在 xml 布局文件中使用</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;android.support.v7.widget.RecyclerView</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;&gt;</span><br><span class="line">&lt;/android.support.v7.widget.RecyclerView&gt;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Activity-中设置"><a href="#Activity-中设置" class="headerlink" title="Activity 中设置"></a>Activity 中设置</h4><p>在 Activity 中获取 RecyclerView 组件，进行以下设置：</p>
-<ul>
-<li>设置数据适配器（必须）</li>
-<li>设置布局管理器（必须）</li>
-<li>设置 Item 增加、移除动画（非必须）</li>
-<li>添加分割线（非必须）</li>
-</ul>
-<h4 id="Adapter"><a href="#Adapter" class="headerlink" title="Adapter"></a>Adapter</h4><p>继承实现 <code>RecyclerView.Adapter&lt;VH extends ViewHolder&gt;</code> 类，作为 <code>RecyclerView</code> 的数据适配器，主要实现以下几个方法</p>
-<ul>
-<li>onCreateViewHolder（创建 ViewHoldre，初始化填充 ItemView 布局）</li>
-<li>onBindViewHolder（绑定 ViewHolder，进行数据的展示处理）</li>
-<li>getItemViewType（获取 ItemView 类型，主要运用于多布局）</li>
-<li>getItemCount（获取 Item 个数）</li>
-</ul>
-<p><em><strong>注意:</strong></em> 在 onCreateViewHolder 中，填充 View 时建议使用如下格式：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_1, parent, false);</span><br></pre></td></tr></table></figure>
-<h4 id="LayoutManager"><a href="#LayoutManager" class="headerlink" title="LayoutManager"></a>LayoutManager</h4><p><code>RecyclerView.LayoutManager</code> 是一个抽象类，系统默认提供了三个实现类：</p>
-<ul>
-<li>LinearLayoutManager 线性布局管理器，支持横向及纵向布局</li>
-<li>GridLayoutManager 网格式布局管理器</li>
-<li>StaggeredGridLayoutManager 瀑布流式布局管理器</li>
-</ul>
-<p>将不同布局管理器设置到 RecyclerView 中，即可实现不同的布局；当然也可以继承 RecyclerView.LayoutManager 从而实现自定义布局</p>
-<h4 id="ItemDecoration"><a href="#ItemDecoration" class="headerlink" title="ItemDecoration"></a>ItemDecoration</h4><p>通过 <code>RecyclerView.addItemDecoration()</code> 方法可以添加分割线，该类为一个抽象类，开发者需要自己来进行实现</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static abstract class ItemDecoration &#123;</span><br><span class="line"></span><br><span class="line">    public void onDraw(Canvas c, RecyclerView parent, State state) &#123;</span><br><span class="line">        onDraw(c, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void onDraw(Canvas c, RecyclerView parent) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void onDrawOver(Canvas c, RecyclerView parent, State state) &#123;</span><br><span class="line">        onDrawOver(c, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void onDrawOver(Canvas c, RecyclerView parent) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) &#123;</span><br><span class="line">        outRect.set(0, 0, 0, 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) &#123;</span><br><span class="line">        getItemOffsets(outRect, ((LayoutParams) view.getLayoutParams()).getViewPosition(),parent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当我们使用 <code>RecyclerView.addItemDecoration`` 方法时，RecyclerView 会进行绘制，主要是通过 onDraw()</code> 和 <code>onDrawOver()</code> 方法</p>
-<ul>
-<li>onDraw() : 绘制分割线</li>
-<li>onDrawOver() : 在 onDraw() 之后绘制，一般覆写其中一个即可</li>
-<li>getItemOffsets() : 通过 outRect.set() 为每个 item 设置偏移量，即用来设置分割线的宽、高</li>
-</ul>
-<h4 id="Item-Animator"><a href="#Item-Animator" class="headerlink" title="Item Animator"></a>Item Animator</h4><p>RecyclerView 能够通过 <code>mRecyclerView.setItemAnimator(ItemAnimator animator)</code> 设置添加、删除、移动、改变的动画效果。RecyclerView 提供了默认的 ItemAnimator 实现类：<code>DefaultItemAnimator</code></p>
-<h4 id="多布局实现"><a href="#多布局实现" class="headerlink" title="多布局实现"></a>多布局实现</h4><p>RecyclerView 可以通过 getItemViewType 获取不同的布局类型，进行对应布局的填充，有点类似 ListView ；利用这个接口可以轻松实现头布局和尾布局的添加</p>
-<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>综合来看，RecyclerView 提供了一种低耦合，插拔式的滑动布局体验，通过 LayoutManager 可以只需一行代码实现布局格式的切换，轻松实现 ListView、GridView 等布局效果，更是可以支持自定义分割线处理。</p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://blog.csdn.net/lmj623565791/article/details/45059587">Android RecyclerView 使用完全解析</a></li>
-<li><a href="https://gist.github.com/alexfu/0f464fc3742f134ccd1e">DividerItemDecoration</a></li>
-<li><a href="https://github.com/CymChad/CymChad.github.io">RecyclerView 优秀文集</a></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>RecyclerView</tag>
       </tags>
   </entry>
   <entry>
@@ -174,12 +108,78 @@
 <p>这样即完成了基本的网站主题设置，更多详情请参考 <a href="http://theme-next.iissnan.com/getting-started.html">NexT 使用文档</a></p>
 <h3 id="博客中插入图片"><a href="#博客中插入图片" class="headerlink" title="博客中插入图片"></a>博客中插入图片</h3><p>可参考文章 <a href="https://univer2012.github.io/2017/04/23/6how-to-insert-picture-in-hexo-blog/">hexo 博客插入图片</a></p>
 <h3 id="最终成品"><a href="#最终成品" class="headerlink" title="最终成品"></a>最终成品</h3><p><a href="https://bashellwang.github.io/">https://bashellwang.github.io/</a></p>
-<img src="/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/blog_home_page.png" class="" title="blog_home_page.png">]]></content>
+<img data-src="/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/blog_home_page.png" class="" title="blog_home_page.png">]]></content>
       <tags>
         <tag>Mac</tag>
         <tag>Hexo</tag>
         <tag>Next</tag>
         <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RecyclerView 控件的使用</title>
+    <url>/2017-08-02-RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h3 id="RecyclerView-控件的使用"><a href="#RecyclerView-控件的使用" class="headerlink" title="RecyclerView 控件的使用"></a>RecyclerView 控件的使用</h3><blockquote>
+<p>前言 最近在做一个滑动列表的需求，现将 RecyclerView 的使用知识记录总结下</p>
+</blockquote>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView">RecyclerView</a> 是 android.support.v7 包下的一个组件，根据官方文档说明，它是一个可以在有限屏幕区域提供大量数据集的灵活视图组件。</p>
+<p>那么它和我们熟悉的 ListView 和 GridView 有什么区别呢，或者说对比已有的两个组件，RecyclerView 有什么优势呢？整体来说，RecyclerView 提供了更为灵活的体验，高度解耦，开发者可以使用不同的 LayoutManager，ItemDecoration，ItemAnimator 来实现各种自定义效果。</p>
+<span id="more"></span>
+
+<ul>
+<li>LayoutManager 通过布局管理器，可以轻松实现类似 ListView，GridView 和 流式布局等效果</li>
+<li>ItemDecoration 通过它可以控制 Item 间的间隔，实现自定义间隔样式</li>
+<li>ItemAnimator 使用它来控制 Item 的增删等动画效果</li>
+<li>点击事件 RecyclerView 的点击事件需要自己来实现（提供了 OnItemTouchListener 接口）</li>
+</ul>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h4 id="导入库包"><a href="#导入库包" class="headerlink" title="导入库包"></a>导入库包</h4><p>在 gradle 文件中引入 v7 包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">compile &#x27;com.android.support:recyclerview-v7:21.0.3&#x27;</span><br></pre></td></tr></table></figure>
+<h4 id="布局中使用"><a href="#布局中使用" class="headerlink" title="布局中使用"></a>布局中使用</h4><p>在 xml 布局文件中使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;android.support.v7.widget.RecyclerView</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;&gt;</span><br><span class="line">&lt;/android.support.v7.widget.RecyclerView&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Activity-中设置"><a href="#Activity-中设置" class="headerlink" title="Activity 中设置"></a>Activity 中设置</h4><p>在 Activity 中获取 RecyclerView 组件，进行以下设置：</p>
+<ul>
+<li>设置数据适配器（必须）</li>
+<li>设置布局管理器（必须）</li>
+<li>设置 Item 增加、移除动画（非必须）</li>
+<li>添加分割线（非必须）</li>
+</ul>
+<h4 id="Adapter"><a href="#Adapter" class="headerlink" title="Adapter"></a>Adapter</h4><p>继承实现 <code>RecyclerView.Adapter&lt;VH extends ViewHolder&gt;</code> 类，作为 <code>RecyclerView</code> 的数据适配器，主要实现以下几个方法</p>
+<ul>
+<li>onCreateViewHolder（创建 ViewHoldre，初始化填充 ItemView 布局）</li>
+<li>onBindViewHolder（绑定 ViewHolder，进行数据的展示处理）</li>
+<li>getItemViewType（获取 ItemView 类型，主要运用于多布局）</li>
+<li>getItemCount（获取 Item 个数）</li>
+</ul>
+<p><em><strong>注意:</strong></em> 在 onCreateViewHolder 中，填充 View 时建议使用如下格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_1, parent, false);</span><br></pre></td></tr></table></figure>
+<h4 id="LayoutManager"><a href="#LayoutManager" class="headerlink" title="LayoutManager"></a>LayoutManager</h4><p><code>RecyclerView.LayoutManager</code> 是一个抽象类，系统默认提供了三个实现类：</p>
+<ul>
+<li>LinearLayoutManager 线性布局管理器，支持横向及纵向布局</li>
+<li>GridLayoutManager 网格式布局管理器</li>
+<li>StaggeredGridLayoutManager 瀑布流式布局管理器</li>
+</ul>
+<p>将不同布局管理器设置到 RecyclerView 中，即可实现不同的布局；当然也可以继承 RecyclerView.LayoutManager 从而实现自定义布局</p>
+<h4 id="ItemDecoration"><a href="#ItemDecoration" class="headerlink" title="ItemDecoration"></a>ItemDecoration</h4><p>通过 <code>RecyclerView.addItemDecoration()</code> 方法可以添加分割线，该类为一个抽象类，开发者需要自己来进行实现</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static abstract class ItemDecoration &#123;</span><br><span class="line"></span><br><span class="line">    public void onDraw(Canvas c, RecyclerView parent, State state) &#123;</span><br><span class="line">        onDraw(c, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void onDraw(Canvas c, RecyclerView parent) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void onDrawOver(Canvas c, RecyclerView parent, State state) &#123;</span><br><span class="line">        onDrawOver(c, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void onDrawOver(Canvas c, RecyclerView parent) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) &#123;</span><br><span class="line">        outRect.set(0, 0, 0, 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) &#123;</span><br><span class="line">        getItemOffsets(outRect, ((LayoutParams) view.getLayoutParams()).getViewPosition(),parent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们使用 <code>RecyclerView.addItemDecoration`` 方法时，RecyclerView 会进行绘制，主要是通过 onDraw()</code> 和 <code>onDrawOver()</code> 方法</p>
+<ul>
+<li>onDraw() : 绘制分割线</li>
+<li>onDrawOver() : 在 onDraw() 之后绘制，一般覆写其中一个即可</li>
+<li>getItemOffsets() : 通过 outRect.set() 为每个 item 设置偏移量，即用来设置分割线的宽、高</li>
+</ul>
+<h4 id="Item-Animator"><a href="#Item-Animator" class="headerlink" title="Item Animator"></a>Item Animator</h4><p>RecyclerView 能够通过 <code>mRecyclerView.setItemAnimator(ItemAnimator animator)</code> 设置添加、删除、移动、改变的动画效果。RecyclerView 提供了默认的 ItemAnimator 实现类：<code>DefaultItemAnimator</code></p>
+<h4 id="多布局实现"><a href="#多布局实现" class="headerlink" title="多布局实现"></a>多布局实现</h4><p>RecyclerView 可以通过 getItemViewType 获取不同的布局类型，进行对应布局的填充，有点类似 ListView ；利用这个接口可以轻松实现头布局和尾布局的添加</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>综合来看，RecyclerView 提供了一种低耦合，插拔式的滑动布局体验，通过 LayoutManager 可以只需一行代码实现布局格式的切换，轻松实现 ListView、GridView 等布局效果，更是可以支持自定义分割线处理。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://blog.csdn.net/lmj623565791/article/details/45059587">Android RecyclerView 使用完全解析</a></li>
+<li><a href="https://gist.github.com/alexfu/0f464fc3742f134ccd1e">DividerItemDecoration</a></li>
+<li><a href="https://github.com/CymChad/CymChad.github.io">RecyclerView 优秀文集</a></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>RecyclerView</tag>
       </tags>
   </entry>
   <entry>
@@ -485,13 +485,13 @@ ABC
 <p>公司最近项目在考虑加入热更新能力，综合目前开源的多个项目方案，我们采取了基于 Tinker 封装的 Bugly 热更新解决方案。</p>
 </blockquote>
 <h3 id="热补丁方案对比"><a href="#热补丁方案对比" class="headerlink" title="热补丁方案对比"></a>热补丁方案对比</h3><p>主要参考阿里的 <a href="http://techforum-img.cn-hangzhou.oss-pub.aliyun-inc.com/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2Android%E7%83%AD%E4%BF%AE%E5%A4%8D%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%867.3Q.pdf">深入探索 Android 热修复技术原理</a></p>
-<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/hot_patch_overview.jpg" class="" title="hot_patch_overview.jpg">
+<img data-src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/hot_patch_overview.jpg" class="" title="hot_patch_overview.jpg">
 
 <p>我们项目规模小，热修复实际运用场景很少，增加热补丁功能没有后台人力支援，没有项目经费；根据这些实际情况，我们选择了免费开源的 Tinker 项目，并使用了基于 Tinker 的免费后台发布系统 bugly。</p>
 <span id="more"></span>
 
 <h4 id="Tinker-原理"><a href="#Tinker-原理" class="headerlink" title="Tinker 原理"></a>Tinker 原理</h4><p>Tinker 原理用官方的一张图展示</p>
-<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/tinker_theory.png" class="" title="tinker_theory.png">
+<img data-src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/tinker_theory.png" class="" title="tinker_theory.png">
 
 <h3 id="Bugly-介绍"><a href="#Bugly-介绍" class="headerlink" title="Bugly 介绍"></a>Bugly 介绍</h3><p>Bugly 热更新能力目前采用微信 Tinker 开源方案，无需重新发版即可解决线上问题，同时 Bugly 提供热更新管理后台免费给开发者使用。</p>
 <p>下面是 Bugly 官方给出的一些优势，可参考 <a href="https://bugly.qq.com/docs/user-guide/instruction-manual-android-hotfix/?v=20181014122344">Bugly Android 热更新指南</a> :</p>
@@ -556,15 +556,15 @@ ABC
 <p>此 tinkerid 需要保证唯一，在生成基准包（即将发布的包）后，需要将对应的 apk、mapping 文件、R 文件保存。</p>
 <p><strong>1. 生成正式发布包（基准包）</strong></p>
 <p>如下图所示，这些都是在生成正式发布包时注意的。</p>
-<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/single_channel_base_apk.jpg" class="" title="single_channel_base_apk.jpg">
+<img data-src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/single_channel_base_apk.jpg" class="" title="single_channel_base_apk.jpg">
 
 <p><strong>2. 正式包出问题时，生成补丁文件</strong></p>
 <p>需要生成补丁文件时，需要修改 <code>tinker-support.gradle</code> 脚本文件。详细说明如图所示：</p>
-<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/single_channel_patch_apk.jpg" class="" title="single_channel_patch_apk.jpg">
+<img data-src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/single_channel_patch_apk.jpg" class="" title="single_channel_patch_apk.jpg">
 
 <p><strong>3. 上传补丁文件并下发用户</strong></p>
 <p>在 bugly 官网，找到对应的产品热更新模块，如图所示操作，用户重启 app 即可修复。</p>
-<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/upload_patch_on_bugly.jpg" class="" title="upload_patch_on_bugly.jpg">
+<img data-src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/upload_patch_on_bugly.jpg" class="" title="upload_patch_on_bugly.jpg">
 
 <p><em><strong>注意：这里选择文件上传时可能会报错，没有对应版本。这是因为需要目标 apk 进行联网，将 tinkerid 上报，后台才能识别到。当然正式包上线，这里肯定有联网会匹配到目标版本；如果是自己测试，需要注意这一点。</strong></em></p>
 <p><em><strong>多渠道打补丁包模式</strong></em></p>
@@ -574,16 +574,16 @@ ABC
 <p>考虑到我们项目多渠道包主要针对不同国家版本，每个国家一个渠道包，虽然整体代码是同一套，但是不同渠道线上版本不能保证一致，因此无法通过一个补丁完成所有渠道修复工作。这里我们项目采用的是 productFlavors 这种方式。</p>
 <p><strong>1. 多渠道生成正式发布包（基准包）</strong></p>
 <p>如图所示：</p>
-<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/multiple_channel_base_apk.jpg" class="" title="multiple_channel_base_apk.jpg">
+<img data-src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/multiple_channel_base_apk.jpg" class="" title="multiple_channel_base_apk.jpg">
 
 <p><strong>2. 生成补丁文件</strong></p>
-<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/multiple_channel_patch_apk.jpg" class="" title="multiple_channel_patch_apk.jpg">
+<img data-src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/multiple_channel_patch_apk.jpg" class="" title="multiple_channel_patch_apk.jpg">
 
 <p><strong>3. 上传补丁文件并下发用户</strong><br>这里和单渠道类似，只不过是针对每个渠道单独上传配置下发。</p>
 <p><em><strong>另外说明</strong></em></p>
 <p>1.tinkerid 是 tinker 识别每一个 apk 包的唯一标识，它被写入到 <code>AndroidManifest</code> 文件中。</p>
 <p>补丁文件中的 <code>YAPATCH.MF</code> 包含目标版本和补丁版本的相关信息，用于补丁生效使用。</p>
-<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/tinkerid_in_apk.jpg" class="" title="tinkerid_in_apk.jpg">
+<img data-src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/tinkerid_in_apk.jpg" class="" title="tinkerid_in_apk.jpg">
 
 <p>2.如果生成补丁包时报错 </p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Execution failed for task &#x27;:app:tinkerProcessReleaseResourceId&#x27;. &gt; </span><br><span class="line">java.io.FileNotFoundException: build\intermediates\tinker_intermediates\values_backup</span><br></pre></td></tr></table></figure>
@@ -620,7 +620,7 @@ ABC
 <p>2.生成新的密钥：</p>
 <p><code>ssh-keygen -t rsa -f ~/.ssh/id_rsa_github_bashellwang -C &quot;youremail@xx.com&quot;</code></p>
 <p>生成密钥后，我的 ssh 目录下如图所示：</p>
-<img src="/2018-12-10-Mac-%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AA-git-%E8%B4%A6%E6%88%B7/file_in_ssh.jpg" class="" title="file_in_ssh.jpg">
+<img data-src="/2018-12-10-Mac-%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AA-git-%E8%B4%A6%E6%88%B7/file_in_ssh.jpg" class="" title="file_in_ssh.jpg">
 
 <p>3.在 <code>.ssh</code> 文件夹下新建 <code>config</code> 目录（如果没有的话），进行内容编辑如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># gitlab shopee</span><br><span class="line">                                                             </span><br><span class="line">Host gitlab.com</span><br><span class="line">HostName gitlab.com</span><br><span class="line">User git</span><br><span class="line">IdentityFile ~/.ssh/id_rsa</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># gitHub bashellwang</span><br><span class="line">                                                                        </span><br><span class="line">Host github.com</span><br><span class="line">HostName github.com</span><br><span class="line">User git</span><br><span class="line">IdentityFile ~/.ssh/id_rsa_github_bashellwang</span><br></pre></td></tr></table></figure>
@@ -672,7 +672,7 @@ ABC
 <li>Old Generation（老年代）</li>
 <li>Permanent Generation（持久代）</li>
 </ul>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/generational_heap_memory.png" class="" title="generational_heap_memory.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/generational_heap_memory.png" class="" title="generational_heap_memory.png">
 
 <p>Young Generation 存放最近被创建的对象，当对象在该区域停留到一定时间，它会被移动到 Old Generation 区域，同理，也会被移动到 Permanent Generation 区域。新生代区域创建快，销毁也很快。</p>
 <p>在三级内存模型中，每一个区域的大小都是有固定值的，当进入到该区域的内存对象大小超过阈值时就会触发 GC 机制，进行内存回收。不仅如此，不同区域的 GC 时间也是不同的。</p>
@@ -701,7 +701,7 @@ ABC
 <li>从 Android Profiler 工具栏中选择您想要分析的设备和应用进程。 如果您通过 USB 连接了某个设备但该设备未在设备列表中列出，请确保您已启用 USB 调试。</li>
 <li>点击 **MEMORY **时间线中的任意位置可打开 Memory Profiler。</li>
 </ul>
-<h5 id="面板说明"><a href="#面板说明" class="headerlink" title="面板说明"></a>面板说明</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-overview.png" class="" title="memory-profiler-overview.png">
+<h5 id="面板说明"><a href="#面板说明" class="headerlink" title="面板说明"></a>面板说明</h5><img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-overview.png" class="" title="memory-profiler-overview.png">
 
 <p>如图所示，Memory Profiler 默认视图包含以下各项：</p>
 <ol>
@@ -718,7 +718,7 @@ ABC
 </ul>
 </li>
 </ol>
-<h5 id="指标参数说明"><a href="#指标参数说明" class="headerlink" title="指标参数说明"></a>指标参数说明</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-number.png" class="" title="memory-profiler-number.png">
+<h5 id="指标参数说明"><a href="#指标参数说明" class="headerlink" title="指标参数说明"></a>指标参数说明</h5><img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-number.png" class="" title="memory-profiler-number.png">
 
 <p>如图所示，内存计数中类别如下：</p>
 <ul>
@@ -739,7 +739,7 @@ ABC
 </li>
 </ul>
 <p>当连接至运行 Android 7.1 及更低版本的设备时，此分配仅在 Memory Profiler 连接至您运行的应用时才开始计数。 因此，您开始分析之前分配的任何对象都不会被计入。 不过，Android 8.0 附带一个设备内置分析工具，该工具可记录所有分配，因此，在 Android 8.0 及更高版本上，此数字始终表示您的应用中待处理的 Java 对象总数。</p>
-<h5 id="查看内存区域"><a href="#查看内存区域" class="headerlink" title="查看内存区域"></a>查看内存区域</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-see-useage.png" class="" title="memory-profile-see-useage.png">
+<h5 id="查看内存区域"><a href="#查看内存区域" class="headerlink" title="查看内存区域"></a>查看内存区域</h5><img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-see-useage.png" class="" title="memory-profile-see-useage.png">
 
 <p>在点击并按住时间线，并拖动选择您想要查看分配的区域之后，已分配对象的列表将显示在时间线下方，默认按类名称分类，并按堆计数排好序。</p>
 <ol>
@@ -753,7 +753,7 @@ ABC
 <li><strong>Arrange by package</strong>：基于软件包名称对所有分配进行分组。</li>
 <li><strong>Arrange by callstack</strong>：将所有分配分组到其对应的调用堆栈。</li>
 </ul>
-<h5 id="捕获堆转储"><a href="#捕获堆转储" class="headerlink" title="捕获堆转储"></a>捕获堆转储</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-dump.png" class="" title="memory-profile-dump.png">
+<h5 id="捕获堆转储"><a href="#捕获堆转储" class="headerlink" title="捕获堆转储"></a>捕获堆转储</h5><img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-dump.png" class="" title="memory-profile-dump.png">
 
 <p>在点击 Dump Java Heap 按钮后，Studio 会自动记录一段时间内的 Java Heap，如图所示，这里我们可以看到很多信息。</p>
 <p>在类列表，可以查看下吗信息：</p>
@@ -776,7 +776,7 @@ ABC
 <li><strong>Retained Size</strong>：此实例支配的内存大小（根据 <a href="https://en.wikipedia.org/wiki/Dominator_(graph_theory)">dominator 树</a>）。</li>
 </ul>
 <h5 id="堆转储另存为-HPROF"><a href="#堆转储另存为-HPROF" class="headerlink" title="堆转储另存为 HPROF"></a>堆转储另存为 HPROF</h5><p>我们之前查看堆转储时都是在设备连接在 Studio 上进行的，如果我们设备不在了，或者需要将堆转储发给其它人，就需要将堆转储另存为 HPROF 文件了。</p>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-save-hprof.png" class="" title="memory-profile-save-hprof.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-save-hprof.png" class="" title="memory-profile-save-hprof.png">
 
 <p>如图所示，在 Sessions 面板下，可以点击保存图标或者右键我们要保存的 Heap Dump 即可保存为 HPROF 文件了。然后在 Studio 中即可双击打开分析了。</p>
 <p>如果需要使用到其它的 HPROF 分析器，则需要将 HPROF 文件从 Android 格式转换为 Java SE HPROF 格式。 我们可以使用 <code>android_sdk/platform-tools/</code> 目录中提供的 <code>hprof-conv</code> 工具执行此操作。 运行包括以下两个参数的 hprof-conv 命令：<code>原始 HPROF 文件和转换后 HPROF 文件的写入位置</code>。 例如：</p>
@@ -794,17 +794,17 @@ ABC
 <li>线程信息，包括线程的调用栈及此线程的线程局部变量（TLS）</li>
 </ul>
 <p>通过 Android Studio 保存的 HPROF 文件无法直接通过 MAT 打开，需要使用 <code>hprof-conv</code> 转换，转换后打开的界面如下图所示：</p>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-overview.png" class="" title="mat-overview.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-overview.png" class="" title="mat-overview.png">
 
 <h5 id="Dorminator-Tree"><a href="#Dorminator-Tree" class="headerlink" title="Dorminator Tree"></a>Dorminator Tree</h5><p>支配树可以直观反映一个对象的 retained heap，会将所有内存中的对象按大小进行排序，并且我们可以分析对象之间的引用结构。</p>
 <ul>
 <li>shallow heap:指的是某一个对象所占内存大小。</li>
 <li>retained heap:指的是一个对象的 retained set所包含对象所占内存的总大小。</li>
 </ul>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-dorminator-tree.png" class="" title="mat-dorminator-tree.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-dorminator-tree.png" class="" title="mat-dorminator-tree.png">
 
 <h5 id="Histogram"><a href="#Histogram" class="headerlink" title="Histogram"></a>Histogram</h5><p>以直方图的方式来显示当前内存使用情况可能更加适合较为复杂的内存泄漏分析，它默认直接显示当前内存中各种类型对象的数量及这些对象的 shallow heap 和 retained heap 。结合 MAT 提供的不同显示方式，往往能够直接定位问题，当我们切换到 histogram 视图下时，如图所示</p>
-<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-histogram.png" class="" title="mat-histogram.png">
+<img data-src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-histogram.png" class="" title="mat-histogram.png">
 
 <p>通常我们可以在怀疑的对象上，右键选择 list objects -&gt; with incoming reference ，从而可以获取到达 GC Roots 的最短引用路径，以此来判定是哪里在引用导致的内存没被回收。</p>
 <h5 id="两个-HPROF-文件对比"><a href="#两个-HPROF-文件对比" class="headerlink" title="两个 HPROF 文件对比"></a>两个 HPROF 文件对比</h5><p>通过对比两个 HPROF 文件，可以知道两个版本之间，内存的增量在哪些地方</p>
@@ -941,10 +941,10 @@ ABC
 <h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><h4 id="生成资源文件"><a href="#生成资源文件" class="headerlink" title="生成资源文件"></a>生成资源文件</h4><p>首先需要生成对应语言的资源文件，这一点 Studio 还是挺方便的。</p>
 <span id="more"></span>
 
-<img src="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_new_folder.png" class="">
+<img data-src="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_new_folder.png" class="">
 
 <p>在 res 目录下新建一个 Android 资源目录，选择 locale 然后在列表里选择对应的国家语言后，命名后保存，系统就会帮我们生成符合要求格式的文件。</p>
-<img src="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_choose_locale.png" class="">
+<img data-src="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_choose_locale.png" class="">
 
 <p>这里如果有一些国家码不清楚或不知如何选择的话，也可以看看这个表查找下</p>
 <p><a href="http://www.cnblogs.com/jacksoft/p/5771130.html">每个国家对应的语言Locale和国家代码对照表</a></p>
@@ -981,7 +981,7 @@ ABC
 </blockquote>
 <p>为什么我们的项目需要使用架构模式？个人理解使用架构模式是为了使我们的代码模块化，达到模块内部高内聚和模块间低耦合的目的，同时开发人员只需要关注相应的业务逻辑点，提高开发效率。当然，使用架构模式不一定是减少了代码量，相反还可能增加代码量；但是它帮你简化了逻辑，提高了扩展性和兼容性。针对不同的项目规模，合理采用或不采用架构模式都是值得考虑的。</p>
 <h3 id="MVC"><a href="#MVC" class="headerlink" title="MVC"></a>MVC</h3><p>MVC(Model-View-Controller)</p>
-<img src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvc.png" class="">
+<img data-src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvc.png" class="">
 
 <ul>
 <li>Model: 模型层。主要是实体类，数据库，网络等存在的层面，Model 将新的数据发送到 View 层，用户得到数据响应。</li>
@@ -993,18 +993,18 @@ ABC
 <h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>多视图可共用同一模型，重用性高；模块彼此独立清晰，耦合低。</p>
 <h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><p>增加了实现复杂性；视图与控制层联系过于紧密，没有完全解耦；视图层无法组件化，复用比较困难。</p>
 <h3 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h3><p>Model(Model View Presenter),Model: 逻辑模型，View: 视图模型，Presenter: 接口。</p>
-<img src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvp.png" class="">
+<img data-src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvp.png" class="">
 
 <p>MVP 是 MVC 的升级版，让 Model 层和 View 层完全解耦，代码清晰。</p>
 <p>MVP 中的 P，是 Presenter 的含义，和 MVC 比较类似，都是将用户对 View 的操作交付给 Presenter，Presenter 会执行相应的逻辑，在这过程中会操作 Model，当 Model 执行完业务逻辑之后，同样是通过观察者模式把自己的结果传递出去，不过不是告诉 View，而是告诉 Presenter，Presenter 得到消息后，通过 View 的接口更新页面。</p>
 <p>这里详细代码可查看源码：<a href="https://github.com/bashellwang/AndroidArchitDemo">AndroidArchitDemo</a></p>
-<h4 id="MVP-代码演示"><a href="#MVP-代码演示" class="headerlink" title="MVP 代码演示"></a>MVP 代码演示</h4><img src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvp_demo.png" class="">
+<h4 id="MVP-代码演示"><a href="#MVP-代码演示" class="headerlink" title="MVP 代码演示"></a>MVP 代码演示</h4><img data-src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvp_demo.png" class="">
 
 <p>如图所示，代码结构分为三个模块，每个模块内封装了对应的基类。实际使用时，每个页面都会有一个对应的合约(Contract) 类，里面包含该页面的 View 接口和 Presenter 接口。</p>
 <p>比如 userdetail 功能页面，里面就有对应的 合约接口类，页面 UI 类以及 Presenter 实现类。这样做结构会比较清晰，当然每新建一个页面都有对应的合约及 Presenter 类，也是比较麻烦。</p>
 <h4 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h4><p>Model 层和 View 层完成接耦；View 层可以组件化，便于单元测试。</p>
 <h4 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h4><p>接口类增多，实现复杂；View 层和 Presenter 层通过接口交互，一旦 View 层某个 UI 元素修改，需要修改接口，则所有接口事件均需要修改</p>
-<h3 id="MVVM"><a href="#MVVM" class="headerlink" title="MVVM"></a>MVVM</h3><img src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvvm.png" class="">
+<h3 id="MVVM"><a href="#MVVM" class="headerlink" title="MVVM"></a>MVVM</h3><img data-src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvvm.png" class="">
 
 <ul>
 <li>Model: 模型层，负责数据实现和逻辑处理，类似 MVP。</li>
@@ -1072,7 +1072,7 @@ ABC
 <p><a href="https://sourceforge.net/projects/bzip2/files/latest/download">bzip2-1.0.6.tar.gz</a></p>
 <h4 id="添加-Native-代码支持"><a href="#添加-Native-代码支持" class="headerlink" title="添加 Native 代码支持"></a>添加 Native 代码支持</h4><p>Android Studio 上安装配置 Native 代码支持，可参考 <a href="https://developer.android.com/studio/projects/add-native-code">添加 C 和 C++ 代码</a></p>
 <h3 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h3><p>我将生成 so 的代码单独成一个子 module ，总体代码结构如图所示</p>
-<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_code_structure.png" class="">
+<img data-src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_code_structure.png" class="">
 
 <h4 id="源码文件修改"><a href="#源码文件修改" class="headerlink" title="源码文件修改"></a>源码文件修改</h4><p>main 下新建 cpp 目录，下面存放 bsdiff 的源码，同时新建 bzip2 目录存放对应 bzip2 源码。</p>
 <blockquote>
@@ -1094,13 +1094,13 @@ ABC
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class BsdiffUtils &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&quot;bsdiff&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //生成差分包</span><br><span class="line">    public static native int diff(String oldFile, String newFile, String patchFile);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static native int patch(String oldFile, String patchFile, String newFile);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在 cpp 目录下 新建<code>diffpatch-lib.cpp</code>来实现底层 Native 方法。</p>
 <p>在新版 AS 中(我的版本是 3.6.3)，在刚新建的 cpp 文件里输入 jni，IDE 会有提示帮助你自动生成对应的 JNI 方法声明，如图所示：</p>
-<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_jni_code_tip.png" class="">
+<img data-src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_jni_code_tip.png" class="">
 
 <p>在这里我们实现差分和合并两个方法的具体实现，代码如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;jni.h&gt;</span><br><span class="line">#include &lt;cstdlib&gt;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; &#123;</span><br><span class="line">int bsdiff_main(int argc, const char *argv[]);</span><br><span class="line"></span><br><span class="line">int bspatch_main(int argc, const char *argv[]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; JNIEXPORT jint JNICALL</span><br><span class="line">Java_com_bashellwang_libbsdiff_BsdiffUtils_diff(JNIEnv *env, jclass clazz, jstring old_file,</span><br><span class="line">                                                jstring new_file, jstring patch_file) &#123;</span><br><span class="line"></span><br><span class="line">    // for cpp</span><br><span class="line">    const char *oldFile = env-&gt;GetStringUTFChars(old_file, 0);</span><br><span class="line">    const char *patchFile = env-&gt;GetStringUTFChars(patch_file, 0);</span><br><span class="line">    const char *newFile = env-&gt;GetStringUTFChars(new_file, 0);</span><br><span class="line"></span><br><span class="line">    const char *argv[] = &#123;&quot;&quot;, oldFile, newFile, patchFile&#125;;</span><br><span class="line"></span><br><span class="line">    int result = bsdiff_main(4, argv);</span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(old_file, oldFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(patch_file, patchFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(new_file, newFile);</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; JNIEXPORT jint JNICALL</span><br><span class="line">Java_com_bashellwang_libbsdiff_BsdiffUtils_patch(JNIEnv *env, jclass clazz, jstring old_file,</span><br><span class="line">                                                 jstring patch_file, jstring new_file) &#123;</span><br><span class="line"></span><br><span class="line">    // for cpp</span><br><span class="line">    const char *oldFile = env-&gt;GetStringUTFChars(old_file, 0);</span><br><span class="line">    const char *patchFile = env-&gt;GetStringUTFChars(patch_file, 0);</span><br><span class="line">    const char *newFile = env-&gt;GetStringUTFChars(new_file, 0);</span><br><span class="line"></span><br><span class="line">    const char *argv[] = &#123;&quot;&quot;, oldFile, newFile, patchFile&#125;;</span><br><span class="line"></span><br><span class="line">    int result = bspatch_main(4, argv);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(old_file, oldFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(new_file, newFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(patch_file, patchFile);</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><code>Rebuild Project</code>后可在<code>build-&gt;intermediates-&gt;cmake</code>找到对应 so 文件，其他工程可拷贝此 so 文件进行复用。也可上传到 maven 库供其他工程引用。</p>
-<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_build_so_path.png" class="">
+<img data-src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_build_so_path.png" class="">
 
 <p>此时相关功能就完成了，剩下就是写测试代码验证了。</p>
 <h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>这里主页面有两个按钮，一个是差分按钮，一个是合并按钮，分别调用差分和合并功能。</p>
@@ -1123,6 +1123,26 @@ ABC
       </tags>
   </entry>
   <entry>
+    <title>Hello World</title>
+    <url>/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>Gradle 依赖管理的几种方式</title>
     <url>/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
     <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>随着项目的发展扩张，项目区分多个 module 的做法越来越常见，同时项目中的依赖也越来越多，不同 module 引入的版本也不一致。有必要对项目中的依赖做梳理，达到统一管理、单独配置，版本号统一的目的。</p>
@@ -1143,7 +1163,7 @@ ABC
 <blockquote>
 <p>gradle 在运行时会去检查是否存在 buildSrc 的目录，如果有的话，gradle 会自动编译并测试这段代码，并将其放入构建脚本的路径中。对于多项目构建，只能有一个 buildSrc 目录，它位于 gradle 根目录下的一个目录。</p>
 </blockquote>
-<h5 id="根目录下创建-buildSrc-目录"><a href="#根目录下创建-buildSrc-目录" class="headerlink" title="根目录下创建 buildSrc 目录"></a>根目录下创建 buildSrc 目录</h5><img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/build_src_dir.png" class="">
+<h5 id="根目录下创建-buildSrc-目录"><a href="#根目录下创建-buildSrc-目录" class="headerlink" title="根目录下创建 buildSrc 目录"></a>根目录下创建 buildSrc 目录</h5><img data-src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/build_src_dir.png" class="">
 
 <h5 id="新建文件-build-gradle-kts"><a href="#新建文件-build-gradle-kts" class="headerlink" title="新建文件 build.gradle.kts"></a>新建文件 build.gradle.kts</h5><p>文件内容如下，同步 gradle</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    `kotlin-dsl`</span><br><span class="line">&#125;</span><br><span class="line">repositories &#123;</span><br><span class="line">    // 必不可少</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -1154,7 +1174,7 @@ ABC
 <p>在 module 中的 <code>build.gradle</code> 中引用，如下所示。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation DependLibs.appcompat</span><br><span class="line">    implementation DependLibs.material</span><br><span class="line">    implementation DependLibs.constraintlayout</span><br><span class="line">    implementation DependLibs.okhttp</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>代码支持跳转，也可以支持自动补全，如下图所示</p>
-<img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/auto_complete_code.png" class="">
+<img data-src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/auto_complete_code.png" class="">
 
 
 <h4 id="Composing-build"><a href="#Composing-build" class="headerlink" title="Composing build"></a>Composing build</h4><p>buildSrc 在依赖更新时会重新构建整个项目，是对全局所有 module 的配置，因此构建速度较慢；有没有既满足自动补全、单击跳转又在依赖更新时不重新构建整个项目的方法呢。答案是使用 <a href="https://docs.gradle.org/current/userguide/composite_builds.html#composite_build_intro">Composing Build</a></p>
@@ -1163,7 +1183,7 @@ ABC
 <p>包含在复合构建中的构建被称为<code>包含构建</code>，包含的构建不与复合构建或其他包含的构建共享任何配置。每个包含的构建都是独立配置和执行的。</p>
 </blockquote>
 <p>新建一个 module，只保留 src/main 下代码源文件和 build.gradle 文件，其余均删除，如图所示：</p>
-<img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/composing_build_structure.png" class="">
+<img data-src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/composing_build_structure.png" class="">
 
 <p>其中 VersionPlugin 为继承 Plugin 的实现类，代码空实现即可</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class VersionPlugin : Plugin&lt;Project&gt; &#123;</span><br><span class="line">    override fun apply(target: Project) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -1210,25 +1230,5 @@ ABC
       <tags>
         <tag>gradle</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html">Deployment</a></p>
-]]></content>
   </entry>
 </search>

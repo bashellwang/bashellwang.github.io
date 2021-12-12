@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="最近在做 web 离线包，需要使用到增量更新，这里对基于 Android Studio 编译 Bsdiff so 库做一个总结记录  web 离线包需要从服务端下载资源压缩包到本地并解压，当使用到对应资源时可以优先从本地读取，减少了网络耗时，优化了用户体验。当压缩包体积过大，或者变动量小时，如果还是整包下载，则会造成带宽流量的浪费。因此需要使用到增量更新的方式。 增量更新原理增量更新就是在服务端">
@@ -31,7 +32,7 @@
 <meta property="og:image" content="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_jni_code_tip.png">
 <meta property="og:image" content="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_build_so_path.png">
 <meta property="article:published_time" content="2020-05-07T09:35:34.000Z">
-<meta property="article:modified_time" content="2021-12-12T09:29:24.364Z">
+<meta property="article:modified_time" content="2021-12-12T12:22:54.769Z">
 <meta property="article:author" content="bashellwang">
 <meta property="article:tag" content="cmake">
 <meta property="article:tag" content="ndk">
@@ -223,10 +224,17 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-12 17:29:24" itemprop="dateModified" datetime="2021-12-12T17:29:24+08:00">2021-12-12</time>
+                <time title="修改时间：2021-12-12 20:22:54" itemprop="dateModified" datetime="2021-12-12T20:22:54+08:00">2021-12-12</time>
               </span>
 
           
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
 
         </div>
       </header>
@@ -250,7 +258,7 @@
 <p><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/bzip2/files/latest/download">bzip2-1.0.6.tar.gz</a></p>
 <h4 id="添加-Native-代码支持"><a href="#添加-Native-代码支持" class="headerlink" title="添加 Native 代码支持"></a>添加 Native 代码支持</h4><p>Android Studio 上安装配置 Native 代码支持，可参考 <a target="_blank" rel="noopener" href="https://developer.android.com/studio/projects/add-native-code">添加 C 和 C++ 代码</a></p>
 <h3 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h3><p>我将生成 so 的代码单独成一个子 module ，总体代码结构如图所示</p>
-<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_code_structure.png" class="">
+<img data-src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_code_structure.png" class="">
 
 <h4 id="源码文件修改"><a href="#源码文件修改" class="headerlink" title="源码文件修改"></a>源码文件修改</h4><p>main 下新建 cpp 目录，下面存放 bsdiff 的源码，同时新建 bzip2 目录存放对应 bzip2 源码。</p>
 <blockquote>
@@ -272,13 +280,13 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class BsdiffUtils &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&quot;bsdiff&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //生成差分包</span><br><span class="line">    public static native int diff(String oldFile, String newFile, String patchFile);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static native int patch(String oldFile, String patchFile, String newFile);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在 cpp 目录下 新建<code>diffpatch-lib.cpp</code>来实现底层 Native 方法。</p>
 <p>在新版 AS 中(我的版本是 3.6.3)，在刚新建的 cpp 文件里输入 jni，IDE 会有提示帮助你自动生成对应的 JNI 方法声明，如图所示：</p>
-<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_jni_code_tip.png" class="">
+<img data-src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_jni_code_tip.png" class="">
 
 <p>在这里我们实现差分和合并两个方法的具体实现，代码如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;jni.h&gt;</span><br><span class="line">#include &lt;cstdlib&gt;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; &#123;</span><br><span class="line">int bsdiff_main(int argc, const char *argv[]);</span><br><span class="line"></span><br><span class="line">int bspatch_main(int argc, const char *argv[]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; JNIEXPORT jint JNICALL</span><br><span class="line">Java_com_bashellwang_libbsdiff_BsdiffUtils_diff(JNIEnv *env, jclass clazz, jstring old_file,</span><br><span class="line">                                                jstring new_file, jstring patch_file) &#123;</span><br><span class="line"></span><br><span class="line">    // for cpp</span><br><span class="line">    const char *oldFile = env-&gt;GetStringUTFChars(old_file, 0);</span><br><span class="line">    const char *patchFile = env-&gt;GetStringUTFChars(patch_file, 0);</span><br><span class="line">    const char *newFile = env-&gt;GetStringUTFChars(new_file, 0);</span><br><span class="line"></span><br><span class="line">    const char *argv[] = &#123;&quot;&quot;, oldFile, newFile, patchFile&#125;;</span><br><span class="line"></span><br><span class="line">    int result = bsdiff_main(4, argv);</span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(old_file, oldFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(patch_file, patchFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(new_file, newFile);</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; JNIEXPORT jint JNICALL</span><br><span class="line">Java_com_bashellwang_libbsdiff_BsdiffUtils_patch(JNIEnv *env, jclass clazz, jstring old_file,</span><br><span class="line">                                                 jstring patch_file, jstring new_file) &#123;</span><br><span class="line"></span><br><span class="line">    // for cpp</span><br><span class="line">    const char *oldFile = env-&gt;GetStringUTFChars(old_file, 0);</span><br><span class="line">    const char *patchFile = env-&gt;GetStringUTFChars(patch_file, 0);</span><br><span class="line">    const char *newFile = env-&gt;GetStringUTFChars(new_file, 0);</span><br><span class="line"></span><br><span class="line">    const char *argv[] = &#123;&quot;&quot;, oldFile, newFile, patchFile&#125;;</span><br><span class="line"></span><br><span class="line">    int result = bspatch_main(4, argv);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(old_file, oldFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(new_file, newFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(patch_file, patchFile);</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><code>Rebuild Project</code>后可在<code>build-&gt;intermediates-&gt;cmake</code>找到对应 so 文件，其他工程可拷贝此 so 文件进行复用。也可上传到 maven 库供其他工程引用。</p>
-<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_build_so_path.png" class="">
+<img data-src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_build_so_path.png" class="">
 
 <p>此时相关功能就完成了，剩下就是写测试代码验证了。</p>
 <h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>这里主页面有两个按钮，一个是差分按钮，一个是合并按钮，分别调用差分和合并功能。</p>
@@ -318,10 +326,11 @@
 
 
       <footer class="post-footer">
+          
           <div class="post-tags">
-              <a href="/tags/cmake/" rel="tag"># cmake</a>
-              <a href="/tags/ndk/" rel="tag"># ndk</a>
-              <a href="/tags/bsdiff/" rel="tag"># bsdiff</a>
+              <a href="/tags/cmake/" rel="tag"><i class="fa fa-tag"></i> cmake</a>
+              <a href="/tags/ndk/" rel="tag"><i class="fa fa-tag"></i> ndk</a>
+              <a href="/tags/bsdiff/" rel="tag"><i class="fa fa-tag"></i> bsdiff</a>
           </div>
 
         
@@ -465,7 +474,7 @@
 
 <div class="copyright">
   
-  &copy; 
+  &copy; 2017 – 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
@@ -476,6 +485,26 @@
   </div>
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 
@@ -490,6 +519,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 
 <script src="/js/utils.js"></script>
 
@@ -503,6 +535,31 @@
 
 
   
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
 
 
 
