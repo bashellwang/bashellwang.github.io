@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言：公司 App 主要面向东南亚市场，因此必须针对东南亚市场做多语言国际化的实现。  需求 支持 App 内切换语言系统，不跟随系统语言变化 重启后，使用用户上次选择记录的语言  实现生成资源文件首先需要生成对应语言的资源文件，这一点 Studio 还是挺方便的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 多语言(国际化) 实现，兼容8.0+">
+<meta property="og:url" content="https://bashellwang.github.io/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/index.html">
+<meta property="og:site_name" content="bashellwang 的小书屋">
+<meta property="og:description" content="前言：公司 App 主要面向东南亚市场，因此必须针对东南亚市场做多语言国际化的实现。  需求 支持 App 内切换语言系统，不跟随系统语言变化 重启后，使用用户上次选择记录的语言  实现生成资源文件首先需要生成对应语言的资源文件，这一点 Studio 还是挺方便的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_new_folder.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_choose_locale.png">
+<meta property="article:published_time" content="2019-01-07T07:36:53.000Z">
+<meta property="article:modified_time" content="2021-12-12T09:29:24.359Z">
+<meta property="article:author" content="bashellwang">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="多语言">
+<meta property="article:tag" content="国际化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bashellwang.github.io/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_new_folder.png">
+
+<link rel="canonical" href="https://bashellwang.github.io/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android 多语言(国际化) 实现，兼容8.0+ | bashellwang 的小书屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">bashellwang 的小书屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/bashellwang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bashellwang.github.io/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="bashellwang">
+      <meta itemprop="description" content="路漫漫其修远兮">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bashellwang 的小书屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 多语言(国际化) 实现，兼容8.0+
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-07 15:36:53" itemprop="dateCreated datePublished" datetime="2019-01-07T15:36:53+08:00">2019-01-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-12 17:29:24" itemprop="dateModified" datetime="2021-12-12T17:29:24+08:00">2021-12-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>前言：公司 App 主要面向东南亚市场，因此必须针对东南亚市场做多语言国际化的实现。</p>
+</blockquote>
+<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><ul>
+<li>支持 App 内切换语言系统，不跟随系统语言变化</li>
+<li>重启后，使用用户上次选择记录的语言</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><h4 id="生成资源文件"><a href="#生成资源文件" class="headerlink" title="生成资源文件"></a>生成资源文件</h4><p>首先需要生成对应语言的资源文件，这一点 Studio 还是挺方便的。</p>
+<span id="more"></span>
+
+<img src="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_new_folder.png" class="">
+
+<p>在 res 目录下新建一个 Android 资源目录，选择 locale 然后在列表里选择对应的国家语言后，命名后保存，系统就会帮我们生成符合要求格式的文件。</p>
+<img src="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_choose_locale.png" class="">
+
+<p>这里如果有一些国家码不清楚或不知如何选择的话，也可以看看这个表查找下</p>
+<p><a target="_blank" rel="noopener" href="http://www.cnblogs.com/jacksoft/p/5771130.html">每个国家对应的语言Locale和国家代码对照表</a></p>
+<h4 id="创建多语言工具类"><a href="#创建多语言工具类" class="headerlink" title="创建多语言工具类"></a>创建多语言工具类</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 1. AppApplication 中 attachBaseContext 会根据配置版本存储并设置语言</span><br><span class="line"> * 2. BaseActivity 中 attachBaseContext 里设置语言并更新 context ，便于使用过程中语言切换</span><br><span class="line"> */</span><br><span class="line">public class LanguageUtils &#123;</span><br><span class="line">    public static final String TAG = &quot;LanguageUtils&quot;;</span><br><span class="line">    public static final Locale ENGLISH = Locale.ENGLISH;</span><br><span class="line">    public static final String ENGLISH_LANGUAGE_TAG = ENGLISH.toLanguageTag();</span><br><span class="line">    public static final Locale INDONESIA = new Locale(&quot;in&quot;);</span><br><span class="line">    public static final String INDONESIA_LANGUAGE_TAG = INDONESIA.toLanguageTag();//&quot;id&quot;</span><br><span class="line">    public static final Locale MALAYSIA = new Locale(&quot;ms&quot;);</span><br><span class="line">    public static final String MALAYSIA_LANGUAGE_TAG = MALAYSIA.toLanguageTag();//&quot;ms&quot;</span><br><span class="line">    public static final String KEY = &quot;store_language&quot;;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * gradle 中配置值区分不同版本，发布时需要修改配置值</span><br><span class="line">     */</span><br><span class="line">    public static final int COUNTRY_VERSION_ID = 1;// 印尼版本</span><br><span class="line">    public static final int COUNTRY_VERSION_MY = 2;// 马来版本</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置 app 语言，兼容 8.0 及以上系统</span><br><span class="line">     *</span><br><span class="line">     * @param context</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static Context setAppLocalLanguage(Context context) &#123;</span><br><span class="line">        Locale locale = getUserSetLanguageLocal(context);</span><br><span class="line">        return updateConfiguration(context, locale);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * @param context</span><br><span class="line">     * @param locale</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private static Context updateConfiguration(Context context, Locale locale) &#123;</span><br><span class="line">        if (context == null) &#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        Locale.setDefault(locale);</span><br><span class="line">        Resources res = context.getResources();</span><br><span class="line">        Configuration config = res.getConfiguration();</span><br><span class="line">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N) &#123;</span><br><span class="line">            config.setLocale(locale);</span><br><span class="line">            context = context.createConfigurationContext(config);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            config.locale = locale;</span><br><span class="line">            res.updateConfiguration(config, res.getDisplayMetrics());</span><br><span class="line">        &#125;</span><br><span class="line">        return context;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 更新 application 的 updateConfiguration,否则 context.getResource.getString</span><br><span class="line">     * 中 当 context 为applicationContext 时不会生效</span><br><span class="line">     *</span><br><span class="line">     * @param context</span><br><span class="line">     */</span><br><span class="line">    public static void updateApplicationConfiguration(Context context, Locale locale) &#123;</span><br><span class="line">        if (context == null) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        Resources resources = context.getApplicationContext().getResources();</span><br><span class="line">        DisplayMetrics dm = resources.getDisplayMetrics();</span><br><span class="line">        Configuration config = resources.getConfiguration();</span><br><span class="line">        config.locale = locale;</span><br><span class="line">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N) &#123;</span><br><span class="line">            LocaleList localeList = new LocaleList(locale);</span><br><span class="line">            LocaleList.setDefault(localeList);</span><br><span class="line">            config.setLocales(localeList);</span><br><span class="line">            context.getApplicationContext().createConfigurationContext(config);</span><br><span class="line">            Locale.setDefault(locale);</span><br><span class="line">        &#125;</span><br><span class="line">        resources.updateConfiguration(config, dm);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取用户设置的语言 locale</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static Locale getUserSetLanguageLocal(Context context) &#123;</span><br><span class="line">        return Locale.forLanguageTag(getUserSetLanguageTag(context));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取用户设置的语言 tag</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static String getUserSetLanguageTag(Context context) &#123;</span><br><span class="line">        if (context == null) &#123;</span><br><span class="line">            LogUtils.e(KEY, &quot;context is empty!&quot;);</span><br><span class="line">            return &quot;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        return SharePreferenceUtils.getString(context, KEY, getLanguageLocaleFromGradle().toLanguageTag());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 从 gradle 中根据国家配置获取 locale 值</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static Locale getLanguageLocaleFromGradle() &#123;</span><br><span class="line">        Locale locale = Locale.ENGLISH;</span><br><span class="line">        switch (com.shopee.fms.BuildConfig.countryVersion) &#123;</span><br><span class="line">            case COUNTRY_VERSION_ID:</span><br><span class="line">                locale = INDONESIA;</span><br><span class="line">                break;</span><br><span class="line">            case COUNTRY_VERSION_MY:</span><br><span class="line">                locale = MALAYSIA;</span><br><span class="line">                break;</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        return locale;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 保存用户设置的语言 tag</span><br><span class="line">     *</span><br><span class="line">     * @param locale</span><br><span class="line">     */</span><br><span class="line">    public static void saveLanguage(Context context, Locale locale) &#123;</span><br><span class="line">        if (locale == null) &#123;</span><br><span class="line">            LogUtils.e(KEY, &quot;locale is empty!&quot;);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        SharePreferenceUtils.putString(context, KEY, locale.toLanguageTag());</span><br><span class="line">        updateApplicationConfiguration(context, locale);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void saveSystemCurrentLanguage(Context context) &#123;</span><br><span class="line">        Locale userSetLocale = getUserSetLanguageLocal(context);</span><br><span class="line">        if (userSetLocale == null) &#123;</span><br><span class="line">            Locale defaultLocale = getLanguageLocaleFromGradle();</span><br><span class="line">            SharePreferenceUtils.putString(context, KEY, defaultLocale.toLanguageTag());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 当用户手机切换语言时，不跟随</span><br><span class="line">     *</span><br><span class="line">     * @param context</span><br><span class="line">     */</span><br><span class="line">    public static void onConfigurationChanged(Context context) &#123;</span><br><span class="line">        Locale locale = getUserSetLanguageLocal(context);</span><br><span class="line">        updateConfiguration(context, locale);</span><br><span class="line">        updateApplicationConfiguration(context, locale);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="在相应地方调用"><a href="#在相应地方调用" class="headerlink" title="在相应地方调用"></a>在相应地方调用</h4><ol>
+<li>Application 里使用</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void onBaseContextAttached(Context base) &#123;</span><br><span class="line">    LanguageUtils.saveSystemCurrentLanguage(base);// 保存默认语言</span><br><span class="line">    super.onBaseContextAttached(LanguageUtils.setAppLocalLanguage(base));</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">@Override</span><br><span class="line">public void onConfigurationChanged(Configuration newConfig) &#123;</span><br><span class="line">	super.onConfigurationChanged(newConfig);</span><br><span class="line">	// 用户切换系统语言时，不影响 app 语言设置</span><br><span class="line">	LanguageUtils.onConfigurationChanged(getApplication());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>BaseActivity 里设置方便统一管理</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">protected void attachBaseContext(Context newBase) &#123;</span><br><span class="line">    Context context = LanguageUtils.setAppLocalLanguage(newBase);</span><br><span class="line">    super.attachBaseContext(context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>多语言实现方案中，当切换语言后，需要记得更新 Application 的 updateConfiguration，否则使用代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">context.getResource.getString()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>来获取文本时，当 context 为 Application 时会失效。</p>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5ac8d62c518825557e78a514">Android国际化(多语言)实现，支持8.0</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>bashellwang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://bashellwang.github.io/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/" title="Android 多语言(国际化) 实现，兼容8.0+">https://bashellwang.github.io/2019-01-07-Android-多语言-实现，兼容8-0/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/%E5%A4%9A%E8%AF%AD%E8%A8%80/" rel="tag"># 多语言</a>
+              <a href="/tags/%E5%9B%BD%E9%99%85%E5%8C%96/" rel="tag"># 国际化</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" rel="prev" title="Android 内存优化">
+      <i class="fa fa-chevron-left"></i> Android 内存优化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/" rel="next" title="Android 架构设计MV系列">
+      Android 架构设计MV系列 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">生成资源文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%A4%9A%E8%AF%AD%E8%A8%80%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="nav-number">2.2.</span> <span class="nav-text">创建多语言工具类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E7%9B%B8%E5%BA%94%E5%9C%B0%E6%96%B9%E8%B0%83%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text">在相应地方调用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-number">4.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bashellwang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">bashellwang</p>
+  <div class="site-description" itemprop="description">路漫漫其修远兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/bashellwang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;bashellwang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://theme-next.iissnan.com/theme-settings.html" title="http:&#x2F;&#x2F;theme-next.iissnan.com&#x2F;theme-settings.html" rel="noopener" target="_blank">Next</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000" title="https:&#x2F;&#x2F;www.liaoxuefeng.com&#x2F;wiki&#x2F;0014316089557264a6b348958f449949df42a6d3a2e542c000" rel="noopener" target="_blank">Python</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bashellwang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言：App 的内存使用情况是我们评价 App 性能高低的一个重要指标，为了提高 App 的质量，提供用户更良好的体验，需要我们对 App 的内存使用有一定的控制。因此，内存优化也是我们开发过程中不可避免的一个工作。本文将从内存优化的背景知识、内存优化工具、常见内存泄漏类型及解决方案等方面做一个简单介绍。   注：目前 Android Studio 已到最新版 3.2.1，部分内存分析工具已被官">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 内存优化">
+<meta property="og:url" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="bashellwang 的小书屋">
+<meta property="og:description" content="前言：App 的内存使用情况是我们评价 App 性能高低的一个重要指标，为了提高 App 的质量，提供用户更良好的体验，需要我们对 App 的内存使用有一定的控制。因此，内存优化也是我们开发过程中不可避免的一个工作。本文将从内存优化的背景知识、内存优化工具、常见内存泄漏类型及解决方案等方面做一个简单介绍。   注：目前 Android Studio 已到最新版 3.2.1，部分内存分析工具已被官">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/generational_heap_memory.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-overview.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-number.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-see-useage.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-dump.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-save-hprof.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-overview.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-dorminator-tree.png">
+<meta property="og:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-histogram.png">
+<meta property="article:published_time" content="2019-01-03T06:57:08.000Z">
+<meta property="article:modified_time" content="2021-12-12T09:29:24.350Z">
+<meta property="article:author" content="bashellwang">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="内存优化">
+<meta property="article:tag" content="内存泄漏">
+<meta property="article:tag" content="Profiler">
+<meta property="article:tag" content="MAT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/generational_heap_memory.png">
+
+<link rel="canonical" href="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android 内存优化 | bashellwang 的小书屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">bashellwang 的小书屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/bashellwang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="bashellwang">
+      <meta itemprop="description" content="路漫漫其修远兮">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bashellwang 的小书屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 内存优化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-03 14:57:08" itemprop="dateCreated datePublished" datetime="2019-01-03T14:57:08+08:00">2019-01-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-12 17:29:24" itemprop="dateModified" datetime="2021-12-12T17:29:24+08:00">2021-12-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>前言：App 的内存使用情况是我们评价 App 性能高低的一个重要指标，为了提高 App 的质量，提供用户更良好的体验，需要我们对 App 的内存使用有一定的控制。因此，内存优化也是我们开发过程中不可避免的一个工作。本文将从内存优化的背景知识、内存优化工具、常见内存泄漏类型及解决方案等方面做一个简单介绍。</p>
+</blockquote>
+<blockquote>
+<p>注：目前 Android Studio 已到最新版 3.2.1，部分内存分析工具已被官方废弃或移除，本文将以 Studio 最新版进行内存优化的相关介绍说明。 </p>
+</blockquote>
+<h3 id="Java-内存基础知识介绍"><a href="#Java-内存基础知识介绍" class="headerlink" title="Java 内存基础知识介绍"></a>Java 内存基础知识介绍</h3><h4 id="Java-内存分配策略"><a href="#Java-内存分配策略" class="headerlink" title="Java 内存分配策略"></a>Java 内存分配策略</h4><p>Java 程序运行时会把它所管理的内存划分为若干个不同的数据区域，这些数据区域各有用途。主要分为下面几个部分：</p>
+<ul>
+<li>静态存储区（方法区）：主要存放已被虚拟机加载的类信息、常量、静态变量等。这块内存在程序编译时就已经分配好，并且在程序整个运行期间都存在。</li>
+<li>栈区：方法体内的局部变量（一些基本类型的变量和对象的引用变量）都在栈上创建，并在方法执行结束时这些局部变量所持有的内存将会被自动释放</li>
+<li>堆区：又称动态内存分配区，主要用来存放 Java 对象实例（包括该对象其中的所有成员变量）和数组。它们不再使用时，由 Java 垃圾回收器来负责回收。在堆中产生了一个数组或者对象后，还可以在栈中定义一个特殊的变量，这个变量的取值等于数组或者对象在堆内存中的首地址，这个特殊的变量就是我们上面说的引用变量。我们可以通过这个引用变量来访问堆中的对象或者数组。</li>
+</ul>
+<span id="more"></span>
+
+<h4 id="Java-内存释放策略"><a href="#Java-内存释放策略" class="headerlink" title="Java 内存释放策略"></a>Java 内存释放策略</h4><p>Java 内存的分配由程序员来处理，内存的释放则由 GC(垃圾回收机制)来负责。程序员不需要通过调用函数来释放内存，也因此带来了内存泄漏的可能</p>
+<blockquote>
+<p>静态分配不需要释放，栈式内存分配仅通过帧栈自动出入栈，这里不讨论</p>
+</blockquote>
+<h5 id="Generational-Heap-Memory-内存模型"><a href="#Generational-Heap-Memory-内存模型" class="headerlink" title="Generational Heap Memory 内存模型"></a>Generational Heap Memory 内存模型</h5><p>在 Android 和 Java 中都存在着一个 Generational Heap Memory 模型，系统会根据内存中不同的内存数据类型分别执行不同的 GC 操作。Generational Heap Memory 模型也叫三级 Generation 内存模型，主要由由以下区域组成：</p>
+<ul>
+<li>Young Generation（新生代）</li>
+<li>Old Generation（老年代）</li>
+<li>Permanent Generation（持久代）</li>
+</ul>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/generational_heap_memory.png" class="" title="generational_heap_memory.png">
+
+<p>Young Generation 存放最近被创建的对象，当对象在该区域停留到一定时间，它会被移动到 Old Generation 区域，同理，也会被移动到 Permanent Generation 区域。新生代区域创建快，销毁也很快。</p>
+<p>在三级内存模型中，每一个区域的大小都是有固定值的，当进入到该区域的内存对象大小超过阈值时就会触发 GC 机制，进行内存回收。不仅如此，不同区域的 GC 时间也是不同的。</p>
+<p>同等对象数目下，新生代所需时间最短，老年代次之，持久代需要的时间最长。当然 GC 执行的长短也和当前 Generation 区域中的对象数目有关。数量越多，GC 时间越久。</p>
+<h5 id="判定对象是否存活"><a href="#判定对象是否存活" class="headerlink" title="判定对象是否存活"></a>判定对象是否存活</h5><p>内存对象释放的原则就是<code>『对象不再被引用』</code>，垃圾收集器在对堆进行回收前，需要确定哪些对象还 “存活” 着。</p>
+<ul>
+<li>引用计数法：给对象添加一个引用计数器，每当有一个地方引用它时，计数器值就加 1；当引用失效时，计数器值就减 1；任何时刻计数器为 0 的对象就是不可能再被使用的。该算法实现简单，判定效率也很高，但是由于它很难解决对象之间相互循环引用的问题，因而在主流的 Java 虚拟机里没有选用它来管理内存。</li>
+<li>可达性分析算法：通过一系列的称为 “GC Roots” 的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到 GC Roots 没有任何引用链时，则证明该对象是不可用的。目前主流商用程序语言的主流实现中，都是通过该算法来判定对象是否存活的。</li>
+</ul>
+<h5 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h5><p>内存释放的核心是垃圾回收算法，我们这里介绍最常见的几种垃圾回收算法。</p>
+<ul>
+<li>标记-清除算法：首先标记出所有需要回收的对象，在标记完成后统一回收所有被标记的对象。</li>
+<li>复制算法：将可用内存按容量划分为大小相等的两块，每次只使用其中一块。当这一块内存用完了，就将还存活的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。</li>
+<li>标记-整理算法：首先标记出所有需要回收的对象，然后让所有存货的对象都向一端移动，之后直接清理掉端边界以外的内存。</li>
+<li>分代收集算法：根据对象存活周期不同将 Java 堆分为新生代和老年代，然后根据每个区域特点选择对应的垃圾收集算法。</li>
+</ul>
+<p><strong>标记-清除算法</strong>：是最基础的收集算法，后续的收集算法都是基于这种思路并对其不足进行改进而得到的。它的主要不足有两个：一是效率问题，标记和清除两个过程的效率都不高；另一个是空间问题，标记清除后会产生大量不连续的内存碎片，空间碎片太多可能会导致以后在程序运行过程中需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。</p>
+<p><strong>复制算法</strong>：实现简单，运行高效，它每次回收内存一半区域解决了标记-清除算法中清除效率低的问题；将已使用内存的存活对象移动到栈顶，按顺序分配内存解决了产生不连续空间碎片的问题。但是代价是内存缩小为原来的一半，代价太高了。当存活对象较高时，此时需要很多复制操作，效率会变低。<code>该算法一般被用来回收新生代数据。</code></p>
+<p><strong>标记-整理算法</strong>：该算法一次清除端外区域解决了标记-清除算法中清除效率低的问题；将已使用内存的存活对象移动到栈顶，按顺序分配内存解决了产生不连续空间碎片的问题。<code>该算法一般被用来回收老年代数据。</code></p>
+<p><strong>分代收集算法</strong>：效率高，空间利用率高。新生代和老年代分别采用复制算法，“标记-清除”或“标记-整理”算法。<code>虚拟机基本都采用这种算法</code></p>
+<h3 id="内存分析工具"><a href="#内存分析工具" class="headerlink" title="内存分析工具"></a>内存分析工具</h3><p>在掌握了基本的内存管理相关的知识后，我们需要对 App 进行分析找到内存占用大头，找到的异常内存占用越多，那么我们的优化效果就越明显。</p>
+<p>之前的好多内存分析工具在 Android Studio 最新版 3.2.1 中已经被<a target="_blank" rel="noopener" href="https://developer.android.com/studio/profile/monitor">移除</a>，取而代之的是 <a target="_blank" rel="noopener" href="https://developer.android.com/studio/profile/memory-profiler">memory-profiler</a> 。</p>
+<h4 id="Memory-Profile-工具"><a href="#Memory-Profile-工具" class="headerlink" title="Memory Profile 工具"></a>Memory Profile 工具</h4><p><a target="_blank" rel="noopener" href="https://developer.android.com/studio/profile/memory-profiler">memory-profiler</a> 是 Android Profiler 中的一个组件，可以帮助我们识别应用卡顿、冻结甚至崩溃的内存泄漏和流失。</p>
+<h5 id="如何开启-Memory-Profiler"><a href="#如何开启-Memory-Profiler" class="headerlink" title="如何开启 Memory Profiler"></a>如何开启 Memory Profiler</h5><ul>
+<li>点击 <code>View &gt; Tool Windows &gt; Android Profiler</code>（也可以点击工具栏中的 Android Profiler ）。</li>
+<li>从 Android Profiler 工具栏中选择您想要分析的设备和应用进程。 如果您通过 USB 连接了某个设备但该设备未在设备列表中列出，请确保您已启用 USB 调试。</li>
+<li>点击 **MEMORY **时间线中的任意位置可打开 Memory Profiler。</li>
+</ul>
+<h5 id="面板说明"><a href="#面板说明" class="headerlink" title="面板说明"></a>面板说明</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-overview.png" class="" title="memory-profiler-overview.png">
+
+<p>如图所示，Memory Profiler 默认视图包含以下各项：</p>
+<ol>
+<li>用于强制执行垃圾回收 Event 的按钮。</li>
+<li>用于捕获堆转储的按钮。</li>
+<li>用于记录内存分配情况的按钮。 此按钮仅在连接至运行 Android 7.1 或更低版本的设备时才会显示。</li>
+<li>用于放大/缩小时间线的按钮。</li>
+<li>用于跳转至实时内存数据的按钮。</li>
+<li>Event 时间线，其显示 Activity 状态、用户输入 Event 和屏幕旋转 Event。</li>
+<li>内存使用量时间线，其包含以下内容：<ul>
+<li>一个显示每个内存类别使用多少内存的堆叠图表，如左侧的 y 轴以及顶部的彩色键所示。</li>
+<li>虚线表示分配的对象数，如右侧的 y 轴所示。</li>
+<li>用于表示每个垃圾回收 Event 的图标</li>
+</ul>
+</li>
+</ol>
+<h5 id="指标参数说明"><a href="#指标参数说明" class="headerlink" title="指标参数说明"></a>指标参数说明</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-number.png" class="" title="memory-profiler-number.png">
+
+<p>如图所示，内存计数中类别如下：</p>
+<ul>
+<li><p><strong>Java</strong>：从 Java 或 Kotlin 代码分配的对象内存。</p>
+</li>
+<li><p><strong>Native</strong>：从 C 或 C++ 代码分配的对象内存。</p>
+<p>  即使您的应用中不使用 C++，您也可能会看到此处使用的一些原生内存，因为 Android 框架使用原生内存代表您处    理各种任务，如处理图像资源和其他图形时，即使您编写的代码采用 Java 或 Kotlin 语言。</p>
+</li>
+<li><p><strong>Graphics</strong>：图形缓冲区队列向屏幕显示像素（包括 GL 表面、GL 纹理等等）所使用的内存。 （请注意，这是与 CPU 共享的内存，不是 GPU 专用内存。）</p>
+</li>
+<li><p><strong>Stack</strong>： 您的应用中的原生堆栈和 Java 堆栈使用的内存。 这通常与您的应用运行多少线程有关。</p>
+</li>
+<li><p><strong>Code</strong>：您的应用用于处理代码和资源（如 dex 字节码、已优化或已编译的 dex 码、.so 库和字体）的内存。</p>
+</li>
+<li><p><strong>Other</strong>：您的应用使用的系统不确定如何分类的内存。</p>
+</li>
+<li><p><strong>Allocated</strong>：您的应用分配的 Java/Kotlin 对象数。 它没有计入 C 或 C++ 中分配的对象。</p>
+</li>
+</ul>
+<p>当连接至运行 Android 7.1 及更低版本的设备时，此分配仅在 Memory Profiler 连接至您运行的应用时才开始计数。 因此，您开始分析之前分配的任何对象都不会被计入。 不过，Android 8.0 附带一个设备内置分析工具，该工具可记录所有分配，因此，在 Android 8.0 及更高版本上，此数字始终表示您的应用中待处理的 Java 对象总数。</p>
+<h5 id="查看内存区域"><a href="#查看内存区域" class="headerlink" title="查看内存区域"></a>查看内存区域</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-see-useage.png" class="" title="memory-profile-see-useage.png">
+
+<p>在点击并按住时间线，并拖动选择您想要查看分配的区域之后，已分配对象的列表将显示在时间线下方，默认按类名称分类，并按堆计数排好序。</p>
+<ol>
+<li>浏览列表以查找堆计数异常大且可能存在泄漏的对象。 为帮助查找已知类，点击 Class Name 列标题以按字母顺序排序。 然后点击一个类名称。 此时在右侧将出现 Instance View 窗格，显示该类的每个实例，如图中所示。</li>
+<li>在 Instance View 窗格中，点击一个实例。 此时下方将出现 Call Stack 标签，显示该实例被分配到何处以及哪个线程中。</li>
+<li>在 Call Stack 标签中，点击任意行以在编辑器中跳转到该代码。</li>
+</ol>
+<p>默认情况下，左侧的分配列表按类名称排列。 在列表顶部，您可以使用右侧的下拉列表在以下排列方式之间进行切换：</p>
+<ul>
+<li><strong>Arrange by class</strong>：基于类名称对所有分配进行分组。</li>
+<li><strong>Arrange by package</strong>：基于软件包名称对所有分配进行分组。</li>
+<li><strong>Arrange by callstack</strong>：将所有分配分组到其对应的调用堆栈。</li>
+</ul>
+<h5 id="捕获堆转储"><a href="#捕获堆转储" class="headerlink" title="捕获堆转储"></a>捕获堆转储</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-dump.png" class="" title="memory-profile-dump.png">
+
+<p>在点击 Dump Java Heap 按钮后，Studio 会自动记录一段时间内的 Java Heap，如图所示，这里我们可以看到很多信息。</p>
+<p>在类列表，可以查看下吗信息：</p>
+<ul>
+<li><strong>Heap Count</strong>：堆中的实例数。</li>
+<li><strong>Shallow Size</strong>：此堆中所有实例的总大小（以字节为单位）。</li>
+<li><strong>Retained Size</strong>：为此类的所有实例而保留的内存总大小（以字节为单位）。</li>
+</ul>
+<p>在类列表顶部，可以使用左侧下拉列表在以下堆转储之间进行切换：</p>
+<ul>
+<li><strong>Default heap</strong>：系统未指定堆时。</li>
+<li><strong>App heap</strong>：您的应用在其中分配内存的主堆。</li>
+<li><strong>Image heap</strong>：系统启动映像，包含启动期间预加载的类。 此处的分配保证绝不会移动或消失。</li>
+<li><strong>Zygote heap</strong>：写时复制堆，其中的应用进程是从 Android 系统中派生的。</li>
+</ul>
+<p>在 Instance View 中，每个实例都包含以下信息：</p>
+<ul>
+<li><strong>Depth</strong>：从任意 GC 根到所选实例的最短 hop 数。</li>
+<li><strong>Shallow Size</strong>：此实例的大小。</li>
+<li><strong>Retained Size</strong>：此实例支配的内存大小（根据 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dominator_(graph_theory)">dominator 树</a>）。</li>
+</ul>
+<h5 id="堆转储另存为-HPROF"><a href="#堆转储另存为-HPROF" class="headerlink" title="堆转储另存为 HPROF"></a>堆转储另存为 HPROF</h5><p>我们之前查看堆转储时都是在设备连接在 Studio 上进行的，如果我们设备不在了，或者需要将堆转储发给其它人，就需要将堆转储另存为 HPROF 文件了。</p>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-save-hprof.png" class="" title="memory-profile-save-hprof.png">
+
+<p>如图所示，在 Sessions 面板下，可以点击保存图标或者右键我们要保存的 Heap Dump 即可保存为 HPROF 文件了。然后在 Studio 中即可双击打开分析了。</p>
+<p>如果需要使用到其它的 HPROF 分析器，则需要将 HPROF 文件从 Android 格式转换为 Java SE HPROF 格式。 我们可以使用 <code>android_sdk/platform-tools/</code> 目录中提供的 <code>hprof-conv</code> 工具执行此操作。 运行包括以下两个参数的 hprof-conv 命令：<code>原始 HPROF 文件和转换后 HPROF 文件的写入位置</code>。 例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hprof-conv heap-original.hprof heap-converted.hprof</span><br></pre></td></tr></table></figure>
+
+<p>Memory Profiler 的功能十分强大，需要在实际使用中不断熟悉，总结经验</p>
+<h4 id="MAT"><a href="#MAT" class="headerlink" title="MAT"></a>MAT</h4><p>虽然 Memory Profile 功能很强大，能够满足大部分需求，但是在需要更详细的分析时，还是需要借用 Eclipse 的 <a target="_blank" rel="noopener" href="https://www.eclipse.org/mat/">MAT</a> 来分析。</p>
+<p>MAT 有独立的不依赖 Eclipse 的版本可供使用，<a target="_blank" rel="noopener" href="https://www.eclipse.org/mat/downloads.php">下载地址</a>，<a target="_blank" rel="noopener" href="https://wiki.eclipse.org/MemoryAnalyzer">官方文档</a>, <a target="_blank" rel="noopener" href="https://help.eclipse.org/luna/index.jsp?topic=/org.eclipse.mat.ui.help/tasks/analyzingjavacollectionusage.html">Introduction</a>。</p>
+<p>这里有一篇讲解很详细的博文可参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/yxz329130952/article/details/50288145">利用 MAT 进行内存泄漏分析</a></p>
+<h5 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h5><p>在获取了 HPROF 文件后，通过 MAT 打开就可以直观的看到当前的内存信息。一般来说，包含以下这些信息：</p>
+<ul>
+<li>所有的对象信息，包括对象实例、成员变量、存储于栈中的基本类型值和存储于堆中的其他对象的引用值。</li>
+<li>所有的类信息，包括classloader、类名称、父类、静态变量等</li>
+<li>GCRoot 到所有的这些对象的引用路径</li>
+<li>线程信息，包括线程的调用栈及此线程的线程局部变量（TLS）</li>
+</ul>
+<p>通过 Android Studio 保存的 HPROF 文件无法直接通过 MAT 打开，需要使用 <code>hprof-conv</code> 转换，转换后打开的界面如下图所示：</p>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-overview.png" class="" title="mat-overview.png">
+
+<h5 id="Dorminator-Tree"><a href="#Dorminator-Tree" class="headerlink" title="Dorminator Tree"></a>Dorminator Tree</h5><p>支配树可以直观反映一个对象的 retained heap，会将所有内存中的对象按大小进行排序，并且我们可以分析对象之间的引用结构。</p>
+<ul>
+<li>shallow heap:指的是某一个对象所占内存大小。</li>
+<li>retained heap:指的是一个对象的 retained set所包含对象所占内存的总大小。</li>
+</ul>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-dorminator-tree.png" class="" title="mat-dorminator-tree.png">
+
+<h5 id="Histogram"><a href="#Histogram" class="headerlink" title="Histogram"></a>Histogram</h5><p>以直方图的方式来显示当前内存使用情况可能更加适合较为复杂的内存泄漏分析，它默认直接显示当前内存中各种类型对象的数量及这些对象的 shallow heap 和 retained heap 。结合 MAT 提供的不同显示方式，往往能够直接定位问题，当我们切换到 histogram 视图下时，如图所示</p>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-histogram.png" class="" title="mat-histogram.png">
+
+<p>通常我们可以在怀疑的对象上，右键选择 list objects -&gt; with incoming reference ，从而可以获取到达 GC Roots 的最短引用路径，以此来判定是哪里在引用导致的内存没被回收。</p>
+<h5 id="两个-HPROF-文件对比"><a href="#两个-HPROF-文件对比" class="headerlink" title="两个 HPROF 文件对比"></a>两个 HPROF 文件对比</h5><p>通过对比两个 HPROF 文件，可以知道两个版本之间，内存的增量在哪些地方</p>
+<h4 id="LeakCanary-工具"><a href="#LeakCanary-工具" class="headerlink" title="LeakCanary 工具"></a>LeakCanary 工具</h4><p><a target="_blank" rel="noopener" href="https://github.com/square/leakcanary">LeakCanary</a> 是开源大户 Square 提供的给 Android 和 Java 做内存泄漏检测的库。它的优势是集成简单，易于发现问题，检测结果可视化</p>
+<p>更多详情可参考 <a target="_blank" rel="noopener" href="https://github.com/square/leakcanary/wiki/FAQ">FAQ</a></p>
+<h3 id="内存优化排查套路"><a href="#内存优化排查套路" class="headerlink" title="内存优化排查套路"></a>内存优化排查套路</h3><p>内存优化最核心的就是需要尽可能多的找到异常内存占用，找到的异常占用越多，异常占用越大，我们优化后的效果就会越好。</p>
+<p>这里简单介绍下我的内存优化排查套路，由简单到复杂：</p>
+<ol>
+<li>Android lint 扫描，对扫描出来的内存泄漏、循环体内字符串拼接等进行修复</li>
+<li>bugly 等异常上报系统上报的 OOM 修复</li>
+<li>leakcanary 检查出的内存泄漏</li>
+<li>图片相关</li>
+<li>静态内存分析优化</li>
+<li>动态内存分析优化</li>
+</ol>
+<p>通过前三步可以将一些很明显的内存泄漏的问题给修复掉；然后是修复图片相关的，下一节会给出解决方案。</p>
+<p>静态内存分析是整个 App 运行期都存在的那部分内存，分析方法是：打开 App 大量重度使用，然后回到首页，进开发者选项打开 “不保留后台活动”，之后 App 退到后台。最后 gc 并 dump 出内存快照进行分析。</p>
+<p>动态内存分析就是分析每个页面运行时的内存状态，这一部分是随着 App 运行而不断变化的内存，主要有两种方式：</p>
+<ul>
+<li>导出每个页面的内存快照，并和上一个页面进行对比，针对性的优化处理</li>
+<li>通过 USB 连接设备，在 Memory Profiler 里实时观察每个页面的内存变化情况，对异常内存变化进行分析</li>
+</ul>
+<h3 id="常见内存问题及解决"><a href="#常见内存问题及解决" class="headerlink" title="常见内存问题及解决"></a>常见内存问题及解决</h3><p>根据经验，内存优化中的大头主要是两个：<strong>内存泄漏和图片</strong>，除了这两个之外还有一些其他常见的内存优化点</p>
+<ul>
+<li>内存泄漏</li>
+<li>图片 Bitmap 相关</li>
+<li>内存抖动</li>
+<li>其它</li>
+</ul>
+<p>下面分别介绍下各个常见内存问题场景及解决方案</p>
+<h4 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h4><p>内存泄漏应该是最常见的内存问题了，这里简单介绍下 <a target="_blank" rel="noopener" href="https://blog.csdn.net/u010687392/article/details/49909477">Android 性能优化之常见的内存泄漏</a></p>
+<ul>
+<li>单例</li>
+<li>静态变量</li>
+<li>Handler 内存泄漏</li>
+<li>非静态内部类创建静态实例：通过静态变量持有内部类对象的引用，也会发生内存泄漏</li>
+<li>匿名内部类</li>
+<li>资源使用完未关闭：SensorManager以及广播接收器，对于使用了 BraodcastReceiver，ContentObserver，File， Cursor，Stream，Bitmap 等资源的使用，应该在 Activity 销毁时及时关闭或者注销，否则这些资源将不会被回收，造成内存泄漏</li>
+<li>不良代码</li>
+</ul>
+<h5 id="单例导致的内存泄漏"><a href="#单例导致的内存泄漏" class="headerlink" title="单例导致的内存泄漏"></a>单例导致的内存泄漏</h5><p>单例的静态特性使得单例的生命周期和 App 生命周期一样长，因此如果一个对象不再被使用，但是单例对象持有了该对象的引用，则会导致该对象无法被释放，从而导致内存泄漏。举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class AppManager &#123;</span><br><span class="line">    private static AppManager instance;</span><br><span class="line">    private Context context;</span><br><span class="line">    private AppManager(Context context) &#123;</span><br><span class="line">        this.context = context;</span><br><span class="line">    &#125;</span><br><span class="line">    public static AppManager getInstance(Context context) &#123;</span><br><span class="line">        if (instance != null) &#123;</span><br><span class="line">            instance = new AppManager(context);</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个普通的单例模式，当 Context 传入的是 Activity 的 Context 时，就会导致内存泄漏。因此可这样修改：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private AppManager(Context context) &#123;</span><br><span class="line">        this.context = context.getApplicationContext();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="非静态内部类创建静态实例（静态变量）导致的内存泄漏"><a href="#非静态内部类创建静态实例（静态变量）导致的内存泄漏" class="headerlink" title="非静态内部类创建静态实例（静态变量）导致的内存泄漏"></a>非静态内部类创建静态实例（静态变量）导致的内存泄漏</h5><p>如下例所示，内部类默认持有外部类即 Activity 的引用，而内部类有一个静态实例，导致静态实例引用了外部 Activity。当 Activity 不再使用时，由于它被静态变量所引用，无法被回收，导致内存泄漏。</p>
+<p>修改方案是将该内部类设为静态内部类或将该内部类抽取出来封装成一个单例，如果需要使用 Context，请使用 ApplicationContext</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    private static TestResource mResource = null;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        if(mManager == null)&#123;</span><br><span class="line">            mManager = new TestResource();</span><br><span class="line">        &#125;</span><br><span class="line">        //...</span><br><span class="line">    &#125;</span><br><span class="line">    class TestResource &#123;</span><br><span class="line">        //...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Handler-内存泄漏"><a href="#Handler-内存泄漏" class="headerlink" title="Handler 内存泄漏"></a>Handler 内存泄漏</h5><p>Handler 使用造成的内存泄漏问题也比较常见，如下例所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    private Handler mHandler = new Handler() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void handleMessage(Message msg) &#123;</span><br><span class="line">            //...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        loadData();</span><br><span class="line">    &#125;</span><br><span class="line">    private void loadData()&#123;</span><br><span class="line">        //...request</span><br><span class="line">        Message message = Message.obtain();</span><br><span class="line">        mHandler.sendMessage(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种创建 Handler 的方式会造成内存泄漏，由于 mHandler 是 Handler 的非静态匿名内部类的实例，所以它持有外部类 Activity 的引用，我们知道消息队列是在一个 Looper 线程中不断轮询处理消息，那么当这个 Activity 退出时消息队列中还有未处理的消息或者正在处理消息，而消息队列中的 Message 持有 mHandler 实例的引用， mHandler 又持有 Activity 的引用，所以导致该 Activity 的内存资源无法及时回收，引发内存泄漏，所以另外一种做法为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    private MyHandler mHandler = new MyHandler(this);</span><br><span class="line">    private TextView mTextView ;</span><br><span class="line">    private static class MyHandler extends Handler &#123;</span><br><span class="line">        private WeakReference&lt;Context&gt; reference;</span><br><span class="line">        public MyHandler(Context context) &#123;</span><br><span class="line">            reference = new WeakReference&lt;&gt;(context);</span><br><span class="line">        &#125;</span><br><span class="line">        @Override</span><br><span class="line">        public void handleMessage(Message msg) &#123;</span><br><span class="line">            MainActivity activity = (MainActivity) reference.get();</span><br><span class="line">            if(activity != null)&#123;</span><br><span class="line">                activity.mTextView.setText(&quot;&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        mTextView = (TextView)findViewById(R.id.textview);</span><br><span class="line">        loadData();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void loadData() &#123;</span><br><span class="line">        //...request</span><br><span class="line">        Message message = Message.obtain();</span><br><span class="line">        mHandler.sendMessage(message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onDestroy() &#123;</span><br><span class="line">        super.onDestroy();</span><br><span class="line">        mHandler.removeCallbacksAndMessages(null);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建一个静态 Handler 内部类，然后对 Handler 持有的对象使用弱引用，这样在回收时也可以回收 Handler 持有的对象，这样避免了 Activity 泄漏。</p>
+<p>不过 Looper 线程的消息队列中还是可能会有待处理的消息，所以我们在 Activity 的 Destroy 时或者 Stop 时应该移除消息队列中的消息，使用 <code>mHandler.removeCallbacksAndMessages(null)</code> 是移除消息队列中所有消息和所有的 Runnable。</p>
+<p>也可以使用 <code>mHandler.removeCallbacks()</code> 或 <code>mHandler.removeMessages()</code> 来移除指定的 Runnable 和 Message 。</p>
+<h5 id="线程造成的内存泄漏"><a href="#线程造成的内存泄漏" class="headerlink" title="线程造成的内存泄漏"></a>线程造成的内存泄漏</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">//——————test1</span><br><span class="line">        new AsyncTask&lt;Void, Void, Void&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            protected Void doInBackground(Void... params) &#123;</span><br><span class="line">                SystemClock.sleep(10000);</span><br><span class="line">                return null;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.execute();</span><br><span class="line">//——————test2</span><br><span class="line">        new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                SystemClock.sleep(10000);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br></pre></td></tr></table></figure>
+<p>上面的异步任务和 Runnable 都是一个匿名内部类，因此它们对当前 Activity 都有一个隐式引用。如果 Activity 在销毁之前，任务还未完成，<br>那么将导致 Activity 的内存资源无法回收，造成内存泄漏。</p>
+<p>正确的做法还是使用静态内部类的方式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">static class MyAsyncTask extends AsyncTask&lt;Void, Void, Void&gt; &#123;</span><br><span class="line">        private WeakReference&lt;Context&gt; weakReference;</span><br><span class="line"></span><br><span class="line">        public MyAsyncTask(Context context) &#123;</span><br><span class="line">            weakReference = new WeakReference&lt;&gt;(context);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        protected Void doInBackground(Void... params) &#123;</span><br><span class="line">            SystemClock.sleep(10000);</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        protected void onPostExecute(Void aVoid) &#123;</span><br><span class="line">            super.onPostExecute(aVoid);</span><br><span class="line">            MainActivity activity = (MainActivity) weakReference.get();</span><br><span class="line">            if (activity != null) &#123;</span><br><span class="line">                //...</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    static class MyRunnable implements Runnable&#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            SystemClock.sleep(10000);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">//——————</span><br><span class="line">    new Thread(new MyRunnable()).start();</span><br><span class="line">    new MyAsyncTask(this).execute();</span><br></pre></td></tr></table></figure>
+<p>这样就避免了 Activity 的内存资源泄漏，当然在 Activity 销毁时候也应该取消相应的任务 AsyncTask::cancel()，避免任务在后台执行浪费资源</p>
+<h5 id="集合中对象未清理造成的内存泄漏"><a href="#集合中对象未清理造成的内存泄漏" class="headerlink" title="集合中对象未清理造成的内存泄漏"></a>集合中对象未清理造成的内存泄漏</h5><p>这个比较好理解，如果一个对象放入到 ArrayList、HashMap 等集合中，这个集合就会持有该对象的引用。当我们不再需要这个对象时，也并没有将它从集合中移除，这样只要集合还在使用（而此对象已经无用了），这个对象就造成了内存泄露。并且如果集合被静态引用的话，集合里面那些没有用的对象更会造成内存泄露了。所以在使用集合时要及时将不用的对象从集合 remove，或者 clear 集合，以避免内存泄漏。</p>
+<h5 id="资源使用完未关闭导致内存泄漏"><a href="#资源使用完未关闭导致内存泄漏" class="headerlink" title="资源使用完未关闭导致内存泄漏"></a>资源使用完未关闭导致内存泄漏</h5><p>对于使用了 BraodcastReceiver，ContentObserver，File，Cursor，Stream，Bitmap 等资源的使用，这些资源在进行读写操作时通常都使用了缓冲，如果不及时关闭，这些缓冲对象就会一直被占用而得不到释放，以致发生内存泄露。因此在不使用时需要及时关闭或释放它们。</p>
+<h5 id="属性动画导致内存泄漏"><a href="#属性动画导致内存泄漏" class="headerlink" title="属性动画导致内存泄漏"></a>属性动画导致内存泄漏</h5><p>动画同样是一个耗时任务，比如在 Activity 中启动了属性动画（ObjectAnimator），但是在销毁的时候，没有调用 cancle 方法，虽然我们看不到动画了，但是这个动画依然会不断地播放下去，动画引用所在的控件，所在的控件引用 Activity，这就造成 Activity 无法正常释放。因此同样要在 Activity 销毁的时候 cancel 掉属性动画，避免发生内存泄漏。</p>
+<h5 id="WebView-导致内存泄漏"><a href="#WebView-导致内存泄漏" class="headerlink" title="WebView 导致内存泄漏"></a>WebView 导致内存泄漏</h5><p>关于 WebView 的内存泄露，因为 WebView 在加载网页后会长期占用内存而不能被释放，因此我们在 Activity 销毁后要调用它的 destory() 方法来销毁它以释放内存。</p>
+<p>Webview 下面的 Callback 持有 Activity 引用，造成 Webview 内存无法释放，即使是调用了 Webview.destory() 等方法都无法解决问题（Android5.1 之后）。</p>
+<p>因此，在销毁 webview 之前需要先将其从父容器中移除，然后再销毁 webview。详细分析过程参考 <a target="_blank" rel="noopener" href="https://blog.csdn.net/xygy8860/article/details/53334476">WebView 内存泄漏解决方法</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">protected void onDestroy() &#123;</span><br><span class="line">    super.onDestroy();</span><br><span class="line">    // 先从父控件中移除WebView</span><br><span class="line">    mWebViewContainer.removeView(mWebView);</span><br><span class="line">    mWebView.stopLoading();</span><br><span class="line">    mWebView.getSettings().setJavaScriptEnabled(false);</span><br><span class="line">    mWebView.clearHistory();</span><br><span class="line">    mWebView.removeAllViews();</span><br><span class="line">    mWebView.destroy();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="图片-Bitmap-相关"><a href="#图片-Bitmap-相关" class="headerlink" title="图片 Bitmap 相关"></a>图片 Bitmap 相关</h4><h5 id="分辨率适配问题"><a href="#分辨率适配问题" class="headerlink" title="分辨率适配问题"></a>分辨率适配问题</h5><p>通常我们可以通过将图片放在 hdpi/xhdpi/xxhdpi 等不同文件夹中进行适配，系统在解析时会对 Bitmap 根据当前设备屏幕像素密度 densityDpi 的值进行缩放适配操作，使得解析出来的 Bitmap 与当前设备的分辨率匹配，达到一个最佳的显示效果，并且 Bitmap 的大小将比原始的大。具体分析可参考：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=403263974&idx=1&sn=b0315addbc47f3c38e65d9c633a12cd6&scene=21#wechat_redirect">你的 Bitmap 究竟占多大内存？</a></p>
+<p>因此在存放图片资源目录时需要注意选择合适的目录位置。</p>
+<h5 id="选择合适的颜色模式"><a href="#选择合适的颜色模式" class="headerlink" title="选择合适的颜色模式"></a>选择合适的颜色模式</h5><p><strong><code>ARGB_8888</code></strong> 和 <strong><code>RGB_565</code></strong> 颜色模式在大部分场景下没有明显区别，但是 由于 ARGB_8888 多了一个透明度通道，导致的内存占用会翻倍，因此在实际程序使用时需要好好考虑如何选择合适的颜色模式。</p>
+<h5 id="适当降低图片大小"><a href="#适当降低图片大小" class="headerlink" title="适当降低图片大小"></a>适当降低图片大小</h5><p>不要使用多大的图片，可以使用类似 <a target="_blank" rel="noopener" href="https://tinypng.com/">tinypng</a> 的工具进行无损压缩</p>
+<h5 id="图片压缩"><a href="#图片压缩" class="headerlink" title="图片压缩"></a>图片压缩</h5><p>Bitmap 在解码图片时，可以使用一个 Option 来进行一些自定义的设置</p>
+<ul>
+<li><p>inTargetDensity 表示要被画出来时的目标像素密度</p>
+</li>
+<li><p>inSampleSize 这个值是一个 int，当它小于 1 的时候，将会被当做 1 处理，如果大于 1，那么就会按照比例（1 / inSampleSize）缩小 bitmap 的宽和高、降低分辨率，大于 1 时这个值将会被处置为 2 的倍数。例如，width=100，height=100，inSampleSize=2，那么就会将 bitmap 处理为，width=50，height=50，宽高降为 1 / 2，像素数降为 1 / 4</p>
+</li>
+<li><p>inJustDecodeBounds 字面意思就可以理解就是只解析图片的边界，有时如果只是为了获取图片的大小就可以用这个，而不必直接加载整张图片。</p>
+</li>
+<li><p>inPreferredConfig 默认会使用 ARGB_8888,在这个模式下一个像素点将会占用 4 个 byte,而对一些没有透明度要求或者图片质量要求不高的图片，可以使用 RGB_565，一个像素只会占用 2 个 byte，一下可以省下 50% 内存。</p>
+</li>
+<li><p>inPurgeable 和 inInputShareable 这两个需要一起使用，BitmapFactory.java 的源码里面有注释，大致意思是表示在系统内存不足时是否可以回收这个 bitmap，有点类似软引用，但是实际在 5.0 以后这两个属性已经被忽略，因为系统认为回收后再解码实际会反而可能导致性能问题</p>
+</li>
+<li><p>inBitmap 官方推荐使用的参数，表示重复利用图片内存，减少内存分配，在 4.4 以前只有相同大小的图片内存区域可以复用，4.4 以后只要原有的图片比将要解码的图片大既可以复用了。</p>
+</li>
+</ul>
+<h5 id="使用完毕后释放图片资源"><a href="#使用完毕后释放图片资源" class="headerlink" title="使用完毕后释放图片资源"></a>使用完毕后释放图片资源</h5><p>在 Android 2.3.3（API 10）前，使用 Bitmap.recycle() 方法，而使用该 API 的设备基本被淘汰了。</p>
+<p>现在尽量使用软引用 (SoftReference) 的方式来使用图片资源</p>
+<h5 id="设置图片缓存"><a href="#设置图片缓存" class="headerlink" title="设置图片缓存"></a>设置图片缓存</h5><p>对于一些重复图片可以使用全局 bitmap 缓存池，App 全局使用同一张 bitmap，复用同一份。</p>
+<h4 id="内存抖动"><a href="#内存抖动" class="headerlink" title="内存抖动"></a>内存抖动</h4><p>Android 里内存抖动是指内存频繁地分配和回收，而频繁的 gc 会导致卡顿，严重时还会导致 OOM。因为大量小对象的创建会造成内存碎片，虽然整体上内存大小还足够，但是不能分配出连续的可用内存，导致系统 OOM。</p>
+<p>一个典型案例就是 string 拼接创建大量小的对象（比如在一些频繁打印字符串拼接的日志里），见<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/vfush/article/details/53038437">Android 性能优化之 String 篇</a></p>
+<h4 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h4><ul>
+<li>构造 Adapter 时，没有使用缓存的 convertView</li>
+<li>对象的注册和反注册没有成对出现</li>
+<li>不在执行频率很高的地方，或者循环体内创建对象</li>
+<li>避免循环引用</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>本文简单介绍了 Java 内存基础知识背景，常见内存分析工具 Memory Profiler 和 MAT 的使用，内存优化的排查套路以及常见内存问题的修复。</p>
+<p>Android 内存优化是一个实践性非常强的工作，需要在实际工作中不断应用总结。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/studio/profile/memory-profiler">使用 Memory Profiler 查看 Java 堆和内存分配</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/Double2hao/article/details/78784758">（Android Studio 3.0）Android Profiler 内存泄漏检查</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/yxz329130952/article/details/50288145">利用 MAT 进行内存泄漏分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/itachi85/article/details/77075455">Android内存优化（五）详解内存分析工具MAT</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html">Java Garbage Collection Basics</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=403263974&idx=1&sn=b0315addbc47f3c38e65d9c633a12cd6&scene=21#wechat_redirect">Android 开发绕不过的坑：你的 Bitmap 究竟占多大内存？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ab4a7e353076">Android 内存优化——常见内存泄露及优化方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010687392/article/details/49909477">Android 性能优化之常见的内存泄漏</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/2MsEAR9pQfMr1Sfs7cPdWQ">Android 内存优化总结 &amp; 实践</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/595371d0f265da6c375a7879">[贝聊科技]使用 Android Studio 和 MAT 进行内存泄漏分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/carson_ho/article/details/79549382">Android 性能优化：那些关于 Bitmap 图片资源优化的小事</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>bashellwang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://bashellwang.github.io/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" title="Android 内存优化">https://bashellwang.github.io/2019-01-03-Android-内存优化/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" rel="tag"># 内存优化</a>
+              <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag"># 内存泄漏</a>
+              <a href="/tags/Profiler/" rel="tag"># Profiler</a>
+              <a href="/tags/MAT/" rel="tag"># MAT</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018-12-10-Mac-%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AA-git-%E8%B4%A6%E6%88%B7/" rel="prev" title="2018-12-10 Mac 配置多个 git 账户">
+      <i class="fa fa-chevron-left"></i> 2018-12-10 Mac 配置多个 git 账户
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/" rel="next" title="Android 多语言(国际化) 实现，兼容8.0+">
+      Android 多语言(国际化) 实现，兼容8.0+ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-%E5%86%85%E5%AD%98%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">Java 内存基础知识介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5"><span class="nav-number">1.1.</span> <span class="nav-text">Java 内存分配策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BE%E7%AD%96%E7%95%A5"><span class="nav-number">1.2.</span> <span class="nav-text">Java 内存释放策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Generational-Heap-Memory-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">Generational Heap Memory 内存模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A4%E5%AE%9A%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%90%A6%E5%AD%98%E6%B4%BB"><span class="nav-number">1.2.2.</span> <span class="nav-text">判定对象是否存活</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.</span> <span class="nav-text">垃圾回收算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="nav-number">2.</span> <span class="nav-text">内存分析工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Memory-Profile-%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.</span> <span class="nav-text">Memory Profile 工具</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%BC%80%E5%90%AF-Memory-Profiler"><span class="nav-number">2.1.1.</span> <span class="nav-text">如何开启 Memory Profiler</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%A2%E6%9D%BF%E8%AF%B4%E6%98%8E"><span class="nav-number">2.1.2.</span> <span class="nav-text">面板说明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E6%A0%87%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">2.1.3.</span> <span class="nav-text">指标参数说明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">2.1.4.</span> <span class="nav-text">查看内存区域</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8D%95%E8%8E%B7%E5%A0%86%E8%BD%AC%E5%82%A8"><span class="nav-number">2.1.5.</span> <span class="nav-text">捕获堆转储</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A0%86%E8%BD%AC%E5%82%A8%E5%8F%A6%E5%AD%98%E4%B8%BA-HPROF"><span class="nav-number">2.1.6.</span> <span class="nav-text">堆转储另存为 HPROF</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MAT"><span class="nav-number">2.2.</span> <span class="nav-text">MAT</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Overview"><span class="nav-number">2.2.1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Dorminator-Tree"><span class="nav-number">2.2.2.</span> <span class="nav-text">Dorminator Tree</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Histogram"><span class="nav-number">2.2.3.</span> <span class="nav-text">Histogram</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA-HPROF-%E6%96%87%E4%BB%B6%E5%AF%B9%E6%AF%94"><span class="nav-number">2.2.4.</span> <span class="nav-text">两个 HPROF 文件对比</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LeakCanary-%E5%B7%A5%E5%85%B7"><span class="nav-number">2.3.</span> <span class="nav-text">LeakCanary 工具</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%E6%8E%92%E6%9F%A5%E5%A5%97%E8%B7%AF"><span class="nav-number">3.</span> <span class="nav-text">内存优化排查套路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3"><span class="nav-number">4.</span> <span class="nav-text">常见内存问题及解决</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.</span> <span class="nav-text">内存泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E5%AF%BC%E8%87%B4%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.1.</span> <span class="nav-text">单例导致的内存泄漏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%9E%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB%E5%88%9B%E5%BB%BA%E9%9D%99%E6%80%81%E5%AE%9E%E4%BE%8B%EF%BC%88%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F%EF%BC%89%E5%AF%BC%E8%87%B4%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.2.</span> <span class="nav-text">非静态内部类创建静态实例（静态变量）导致的内存泄漏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Handler-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.3.</span> <span class="nav-text">Handler 内存泄漏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E9%80%A0%E6%88%90%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.4.</span> <span class="nav-text">线程造成的内存泄漏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E4%B8%AD%E5%AF%B9%E8%B1%A1%E6%9C%AA%E6%B8%85%E7%90%86%E9%80%A0%E6%88%90%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.5.</span> <span class="nav-text">集合中对象未清理造成的内存泄漏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8%E5%AE%8C%E6%9C%AA%E5%85%B3%E9%97%AD%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.6.</span> <span class="nav-text">资源使用完未关闭导致内存泄漏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E5%8A%A8%E7%94%BB%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.7.</span> <span class="nav-text">属性动画导致内存泄漏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#WebView-%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">4.1.8.</span> <span class="nav-text">WebView 导致内存泄漏</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%89%87-Bitmap-%E7%9B%B8%E5%85%B3"><span class="nav-number">4.2.</span> <span class="nav-text">图片 Bitmap 相关</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E8%BE%A8%E7%8E%87%E9%80%82%E9%85%8D%E9%97%AE%E9%A2%98"><span class="nav-number">4.2.1.</span> <span class="nav-text">分辨率适配问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E9%A2%9C%E8%89%B2%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.2.2.</span> <span class="nav-text">选择合适的颜色模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%82%E5%BD%93%E9%99%8D%E4%BD%8E%E5%9B%BE%E7%89%87%E5%A4%A7%E5%B0%8F"><span class="nav-number">4.2.3.</span> <span class="nav-text">适当降低图片大小</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9"><span class="nav-number">4.2.4.</span> <span class="nav-text">图片压缩</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%AE%8C%E6%AF%95%E5%90%8E%E9%87%8A%E6%94%BE%E5%9B%BE%E7%89%87%E8%B5%84%E6%BA%90"><span class="nav-number">4.2.5.</span> <span class="nav-text">使用完毕后释放图片资源</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%9B%BE%E7%89%87%E7%BC%93%E5%AD%98"><span class="nav-number">4.2.6.</span> <span class="nav-text">设置图片缓存</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%8A%96%E5%8A%A8"><span class="nav-number">4.3.</span> <span class="nav-text">内存抖动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E5%AE%83"><span class="nav-number">4.4.</span> <span class="nav-text">其它</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bashellwang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">bashellwang</p>
+  <div class="site-description" itemprop="description">路漫漫其修远兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/bashellwang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;bashellwang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://theme-next.iissnan.com/theme-settings.html" title="http:&#x2F;&#x2F;theme-next.iissnan.com&#x2F;theme-settings.html" rel="noopener" target="_blank">Next</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000" title="https:&#x2F;&#x2F;www.liaoxuefeng.com&#x2F;wiki&#x2F;0014316089557264a6b348958f449949df42a6d3a2e542c000" rel="noopener" target="_blank">Python</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bashellwang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近在做 web 离线包，需要使用到增量更新，这里对基于 Android Studio 编译 Bsdiff so 库做一个总结记录  web 离线包需要从服务端下载资源压缩包到本地并解压，当使用到对应资源时可以优先从本地读取，减少了网络耗时，优化了用户体验。当压缩包体积过大，或者变动量小时，如果还是整包下载，则会造成带宽流量的浪费。因此需要使用到增量更新的方式。 增量更新原理增量更新就是在服务端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Studio NDK 编译 Bsdiff 库">
+<meta property="og:url" content="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/index.html">
+<meta property="og:site_name" content="bashellwang 的小书屋">
+<meta property="og:description" content="最近在做 web 离线包，需要使用到增量更新，这里对基于 Android Studio 编译 Bsdiff so 库做一个总结记录  web 离线包需要从服务端下载资源压缩包到本地并解压，当使用到对应资源时可以优先从本地读取，减少了网络耗时，优化了用户体验。当压缩包体积过大，或者变动量小时，如果还是整包下载，则会造成带宽流量的浪费。因此需要使用到增量更新的方式。 增量更新原理增量更新就是在服务端">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_code_structure.png">
+<meta property="og:image" content="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_jni_code_tip.png">
+<meta property="og:image" content="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_build_so_path.png">
+<meta property="article:published_time" content="2020-05-07T09:35:34.000Z">
+<meta property="article:modified_time" content="2021-12-12T09:29:24.364Z">
+<meta property="article:author" content="bashellwang">
+<meta property="article:tag" content="cmake">
+<meta property="article:tag" content="ndk">
+<meta property="article:tag" content="bsdiff">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_code_structure.png">
+
+<link rel="canonical" href="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android Studio NDK 编译 Bsdiff 库 | bashellwang 的小书屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">bashellwang 的小书屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/bashellwang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="bashellwang">
+      <meta itemprop="description" content="路漫漫其修远兮">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bashellwang 的小书屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android Studio NDK 编译 Bsdiff 库
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-07 17:35:34" itemprop="dateCreated datePublished" datetime="2020-05-07T17:35:34+08:00">2020-05-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-12 17:29:24" itemprop="dateModified" datetime="2021-12-12T17:29:24+08:00">2021-12-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>最近在做 web 离线包，需要使用到增量更新，这里对基于 Android Studio 编译 Bsdiff so 库做一个总结记录</p>
+</blockquote>
+<p>web 离线包需要从服务端下载资源压缩包到本地并解压，当使用到对应资源时可以优先从本地读取，减少了网络耗时，优化了用户体验。当压缩包体积过大，或者变动量小时，如果还是整包下载，则会造成带宽流量的浪费。因此需要使用到增量更新的方式。</p>
+<h3 id="增量更新原理"><a href="#增量更新原理" class="headerlink" title="增量更新原理"></a>增量更新原理</h3><p>增量更新就是在服务端生成新包和旧包之间的差分包，然后客户端下载这个差分包，和本地的旧包进行合并成完整包再使用。</p>
+<p>增量更新的算法有很多，最常用的是 <a target="_blank" rel="noopener" href="http://www.daemonology.net/bsdiff/">bsdiff</a> 算法</p>
+<span id="more"></span>
+
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><h4 id="bsdiff-源码下载"><a href="#bsdiff-源码下载" class="headerlink" title="bsdiff 源码下载"></a>bsdiff 源码下载</h4><p><a target="_blank" rel="noopener" href="http://www.daemonology.net/bsdiff/bsdiff-4.3.tar.gz">bsdiff 4.3</a>，它依赖 bzip2，需要下载 bzip2 源码</p>
+<h4 id="bzip2-源码下载"><a href="#bzip2-源码下载" class="headerlink" title="bzip2 源码下载"></a>bzip2 源码下载</h4><p>目前版本是 1.0.6，下载地址如下：</p>
+<p><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/bzip2/files/latest/download">bzip2-1.0.6.tar.gz</a></p>
+<h4 id="添加-Native-代码支持"><a href="#添加-Native-代码支持" class="headerlink" title="添加 Native 代码支持"></a>添加 Native 代码支持</h4><p>Android Studio 上安装配置 Native 代码支持，可参考 <a target="_blank" rel="noopener" href="https://developer.android.com/studio/projects/add-native-code">添加 C 和 C++ 代码</a></p>
+<h3 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h3><p>我将生成 so 的代码单独成一个子 module ，总体代码结构如图所示</p>
+<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_code_structure.png" class="">
+
+<h4 id="源码文件修改"><a href="#源码文件修改" class="headerlink" title="源码文件修改"></a>源码文件修改</h4><p>main 下新建 cpp 目录，下面存放 bsdiff 的源码，同时新建 bzip2 目录存放对应 bzip2 源码。</p>
+<blockquote>
+<p>注意：</p>
+<ul>
+<li>bsdiff.c、bspatch.c 的头文件引用路径需要修改调整为自己路径</li>
+<li>bsdiff.c、bspatch.c 以及 bzip2 下的部分源码都有 main 函数入口，我们需要将他们屏蔽掉</li>
+</ul>
+</blockquote>
+<h4 id="关联-CMake-文件"><a href="#关联-CMake-文件" class="headerlink" title="关联 CMake 文件"></a>关联 CMake 文件</h4><p>在 <code>build.gradle</code> 文件中关联 <code>cmake</code>，配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">externalNativeBuild &#123;</span><br><span class="line">        cmake &#123;</span><br><span class="line">            path file(&#x27;src/main/cpp/CMakeLists.txt&#x27;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>更多 <code>cmake</code> 用法参考 <a target="_blank" rel="noopener" href="https://developer.android.com/studio/projects/gradle-external-native-builds">关联 Gradle</a></p>
+<p>Android Studio 同步一下，此时在 cmake 文件里则可看到对应提示帮助等。</p>
+<h4 id="配置-CMake-文件"><a href="#配置-CMake-文件" class="headerlink" title="配置 CMake 文件"></a>配置 CMake 文件</h4><p>添加 <code>CMakeLists.txt</code> 文件，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"># For more information about using CMake with Android Studio, read the</span><br><span class="line"># documentation: https://d.android.com/studio/projects/add-native-code.html</span><br><span class="line"></span><br><span class="line"># Sets the minimum version of CMake required to build your native library.</span><br><span class="line"># This ensures that a certain set of CMake features is available to</span><br><span class="line"># your build.</span><br><span class="line"></span><br><span class="line">cmake_minimum_required(VERSION 3.4.1)</span><br><span class="line"></span><br><span class="line"># 查找文件系统中指定模式的路径，如/* 匹配根目录的文件（注意路径）</span><br><span class="line">file(GLOB bzip2 bzip2/*.c)</span><br><span class="line"></span><br><span class="line"># Specifies a library name, specifies whether the library is STATIC or</span><br><span class="line"># SHARED, and provides relative paths to the source code. You can</span><br><span class="line"># define multiple libraries by adding multiple add_library() commands,</span><br><span class="line"># and CMake builds them for you. When you build your app, Gradle</span><br><span class="line"># automatically packages shared libraries with your APK.</span><br><span class="line"></span><br><span class="line">add_library( # Specifies the name of the library.</span><br><span class="line">        bsdiff</span><br><span class="line"></span><br><span class="line">        # Sets the library as a shared library.</span><br><span class="line">        SHARED</span><br><span class="line"></span><br><span class="line">        # Provides a relative path to your source file(s).</span><br><span class="line">        bsdiff.c</span><br><span class="line">        bspatch.c</span><br><span class="line">        # 这里名字需要完全匹配，不能你是 cpp 类型文件，这里只写 .c 后缀；会有问题</span><br><span class="line">        diffpatch-lib.cpp</span><br><span class="line">        $&#123;bzip2&#125;</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">include_directories(src/main/cpp)</span><br><span class="line"></span><br><span class="line">find_library( # Defines the name of the path variable that stores the</span><br><span class="line">        # location of the NDK library.</span><br><span class="line">        log-lib</span><br><span class="line"></span><br><span class="line">        # Specifies the name of the NDK library that</span><br><span class="line">        # CMake needs to locate.</span><br><span class="line">        log)</span><br><span class="line"></span><br><span class="line"># Links your native library against one or more other native libraries.</span><br><span class="line">target_link_libraries( # Specifies the target library.</span><br><span class="line">        bsdiff</span><br><span class="line"></span><br><span class="line">        # Links the log library to the target library.</span><br><span class="line">        $&#123;log-lib&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="编写-Java-层工具类"><a href="#编写-Java-层工具类" class="headerlink" title="编写 Java 层工具类"></a>编写 Java 层工具类</h4><p>此时进入 JNI 相关内容，编写 Java 工具类方便调用 Native 代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class BsdiffUtils &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&quot;bsdiff&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //生成差分包</span><br><span class="line">    public static native int diff(String oldFile, String newFile, String patchFile);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static native int patch(String oldFile, String patchFile, String newFile);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 cpp 目录下 新建<code>diffpatch-lib.cpp</code>来实现底层 Native 方法。</p>
+<p>在新版 AS 中(我的版本是 3.6.3)，在刚新建的 cpp 文件里输入 jni，IDE 会有提示帮助你自动生成对应的 JNI 方法声明，如图所示：</p>
+<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_jni_code_tip.png" class="">
+
+<p>在这里我们实现差分和合并两个方法的具体实现，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;jni.h&gt;</span><br><span class="line">#include &lt;cstdlib&gt;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; &#123;</span><br><span class="line">int bsdiff_main(int argc, const char *argv[]);</span><br><span class="line"></span><br><span class="line">int bspatch_main(int argc, const char *argv[]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; JNIEXPORT jint JNICALL</span><br><span class="line">Java_com_bashellwang_libbsdiff_BsdiffUtils_diff(JNIEnv *env, jclass clazz, jstring old_file,</span><br><span class="line">                                                jstring new_file, jstring patch_file) &#123;</span><br><span class="line"></span><br><span class="line">    // for cpp</span><br><span class="line">    const char *oldFile = env-&gt;GetStringUTFChars(old_file, 0);</span><br><span class="line">    const char *patchFile = env-&gt;GetStringUTFChars(patch_file, 0);</span><br><span class="line">    const char *newFile = env-&gt;GetStringUTFChars(new_file, 0);</span><br><span class="line"></span><br><span class="line">    const char *argv[] = &#123;&quot;&quot;, oldFile, newFile, patchFile&#125;;</span><br><span class="line"></span><br><span class="line">    int result = bsdiff_main(4, argv);</span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(old_file, oldFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(patch_file, patchFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(new_file, newFile);</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; JNIEXPORT jint JNICALL</span><br><span class="line">Java_com_bashellwang_libbsdiff_BsdiffUtils_patch(JNIEnv *env, jclass clazz, jstring old_file,</span><br><span class="line">                                                 jstring patch_file, jstring new_file) &#123;</span><br><span class="line"></span><br><span class="line">    // for cpp</span><br><span class="line">    const char *oldFile = env-&gt;GetStringUTFChars(old_file, 0);</span><br><span class="line">    const char *patchFile = env-&gt;GetStringUTFChars(patch_file, 0);</span><br><span class="line">    const char *newFile = env-&gt;GetStringUTFChars(new_file, 0);</span><br><span class="line"></span><br><span class="line">    const char *argv[] = &#123;&quot;&quot;, oldFile, newFile, patchFile&#125;;</span><br><span class="line"></span><br><span class="line">    int result = bspatch_main(4, argv);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(old_file, oldFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(new_file, newFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(patch_file, patchFile);</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Rebuild Project</code>后可在<code>build-&gt;intermediates-&gt;cmake</code>找到对应 so 文件，其他工程可拷贝此 so 文件进行复用。也可上传到 maven 库供其他工程引用。</p>
+<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_build_so_path.png" class="">
+
+<p>此时相关功能就完成了，剩下就是写测试代码验证了。</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>这里主页面有两个按钮，一个是差分按钮，一个是合并按钮，分别调用差分和合并功能。</p>
+<h4 id="差分"><a href="#差分" class="headerlink" title="差分"></a>差分</h4><ul>
+<li>在电脑上安装 bsdiff 命令工具，进行差分获取 patch 包并计算 md5 值</li>
+<li>在手机中调用 so 库进行差分得到 patch 包，并计算 md5 值</li>
+<li>比较两个 md5 是否一致</li>
+</ul>
+<h4 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h4><ul>
+<li>合并后得到新包计算 md5 值</li>
+<li>与差分前的完整包做 md5 比对</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本文基于 Android Studio 和 Cmake ，搭建 NDK 环境并编译成功 bsdiff so 库，并进行测试验证。后续有需要可直接使用</p>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p><a target="_blank" rel="noopener" href="https://github.com/bashellwang/MakeBsdiffSo">GitHub 地址</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>bashellwang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://bashellwang.github.io/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/" title="Android Studio NDK 编译 Bsdiff 库">https://bashellwang.github.io/2020-05-07-Android-Studio-NDK编译Bsdiff库/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cmake/" rel="tag"># cmake</a>
+              <a href="/tags/ndk/" rel="tag"># ndk</a>
+              <a href="/tags/bsdiff/" rel="tag"># bsdiff</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/" rel="prev" title="Android 架构设计MV系列">
+      <i class="fa fa-chevron-left"></i> Android 架构设计MV系列
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/" rel="next" title="Gradle 依赖管理的几种方式">
+      Gradle 依赖管理的几种方式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E9%87%8F%E6%9B%B4%E6%96%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">增量更新原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#bsdiff-%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD"><span class="nav-number">2.1.</span> <span class="nav-text">bsdiff 源码下载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bzip2-%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD"><span class="nav-number">2.2.</span> <span class="nav-text">bzip2 源码下载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-Native-%E4%BB%A3%E7%A0%81%E6%94%AF%E6%8C%81"><span class="nav-number">2.3.</span> <span class="nav-text">添加 Native 代码支持</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">代码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E6%96%87%E4%BB%B6%E4%BF%AE%E6%94%B9"><span class="nav-number">3.1.</span> <span class="nav-text">源码文件修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E8%81%94-CMake-%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">关联 CMake 文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-CMake-%E6%96%87%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">配置 CMake 文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E5%86%99-Java-%E5%B1%82%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="nav-number">3.4.</span> <span class="nav-text">编写 Java 层工具类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%AE%E5%88%86"><span class="nav-number">4.1.</span> <span class="nav-text">差分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%88%E5%B9%B6"><span class="nav-number">4.2.</span> <span class="nav-text">合并</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81"><span class="nav-number">6.</span> <span class="nav-text">源码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bashellwang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">bashellwang</p>
+  <div class="site-description" itemprop="description">路漫漫其修远兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/bashellwang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;bashellwang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://theme-next.iissnan.com/theme-settings.html" title="http:&#x2F;&#x2F;theme-next.iissnan.com&#x2F;theme-settings.html" rel="noopener" target="_blank">Next</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000" title="https:&#x2F;&#x2F;www.liaoxuefeng.com&#x2F;wiki&#x2F;0014316089557264a6b348958f449949df42a6d3a2e542c000" rel="noopener" target="_blank">Python</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bashellwang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

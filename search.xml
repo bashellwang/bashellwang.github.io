@@ -1,0 +1,1234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Python3 入门之环境搭建</title>
+    <url>/2017-08-04-Python3-%E5%85%A5%E9%97%A8%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<blockquote>
+<p>前言 ：人生苦短，我用 Python</p>
+</blockquote>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><code>Python</code> 是目前最为火热的脚本语言之一，它 “优雅、明确、简单”，被应用于后台服务，网站 Web，数据分析，机器学习等方方面面。作为一个 Android 开发人员，也是很有必要掌握一门第二语言，这里就记录下我的 Python 学习之路，主要学习<a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000">廖雪峰的 Python 教程</a>。</p>
+<h3 id="Python-安装"><a href="#Python-安装" class="headerlink" title="Python 安装"></a>Python 安装</h3><p>Python 是跨平台的，可以运行于 Windows、Mac 和各种 Linux／Unix 系统上。目前 Python 有两个版本，一个是 2.x 版，一个是 3.x 版，可气的是 3.x 版本居然不向前兼容 2.x 版本；由于目前 3.x 版本越来越普及， 我们就以 Python 3.x 版本开始学习吧。</p>
+<span id="more"></span>
+
+<h4 id="Mac-安装-Python"><a href="#Mac-安装-Python" class="headerlink" title="Mac 安装 Python"></a>Mac 安装 Python</h4><p>我的 Mac 版本号是 10.12.5，系统自带 Python 2.7，因此我们需要安装 Python 3.x 版本。</p>
+<ul>
+<li><a href="https://www.python.org/">Python 官网</a> 下载最新版本，双击安装即可</li>
+<li>如果安装了 <code>Homebrew</code>，直接通过命令 <code>brew install python3</code> 安装即可</li>
+</ul>
+<h4 id="运行-Python"><a href="#运行-Python" class="headerlink" title="运行 Python"></a>运行 Python</h4><p>在命令行中输入 <code>python3</code> 即可看到如下信息，说明我们安装成功。前面不是说系统有自带 Python 2.7 版本吗，在命令行中输入 python 即可使用 2.7 版本。</p>
+<img src="/2017-08-04-Python3-%E5%85%A5%E9%97%A8%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/python3_cmd.png" class="" title="Python 3.6 版本运行">
+
+<p>看到如上图所示的系统提示符 &gt;&gt;&gt;，说明已经进入 Python 运行环境，在这里即可开始进行程序的编辑及运行。退出 Python 运行环境也很简单，直接命令行输入 exit() 即可。</p>
+<h3 id="第一个-Python-程序"><a href="#第一个-Python-程序" class="headerlink" title="第一个 Python 程序"></a>第一个 Python 程序</h3><h4 id="Python-交互式环境"><a href="#Python-交互式环境" class="headerlink" title="Python 交互式环境"></a>Python 交互式环境</h4><p>在交互式环境提示符 <code>&gt;&gt;&gt;</code> 下，使用 <code>print()</code> 函数输出指定字符串，字符串使用单引号或双引号均可，但是不能混用单双引号。交互式模式相当于启动了 Python 解释器，等待一行行的代码输入并一行行执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; print(&#x27;Hello Python!&#x27;)</span><br><span class="line">Hello Python!</span><br></pre></td></tr></table></figure>
+
+<h4 id="命令行模式"><a href="#命令行模式" class="headerlink" title="命令行模式"></a>命令行模式</h4><p>新建文件 <code>hello.py</code> ，将上述内容写入后保存，打开命令行，输入 <code>python3 hello.py</code> 即可得到输出结果。这种模式相当于启动解释器，一次性将源代码读取执行了，用户不能向交互式模式那样输入源码。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">➜  Desktop python3 hello.py</span><br><span class="line">Hello Python!</span><br></pre></td></tr></table></figure>
+
+<h4 id="文本编辑器"><a href="#文本编辑器" class="headerlink" title="文本编辑器"></a>文本编辑器</h4><p>在交互模式下，可以一下子就得到结果，但是没法保存程序，每次运行时都需要重新输入一遍。因此我们一般都是把程序保存成 <code>.py</code> 格式的文件，后续就可以反复使用运行了。</p>
+<p>编辑器使用 <code>Sublime Text</code> 或 <code>Nodepad++</code> 等市面上常见的编辑器均可，但是千万不要使用 Word 和 Windows 系统自带的记事本编辑。</p>
+<h4 id="直接运行-Python-文件"><a href="#直接运行-Python-文件" class="headerlink" title="直接运行 Python 文件"></a>直接运行 Python 文件</h4><p>如果你想在 Mac 下直接运行 Python 文件，那么只需要在 .py 文件的第一行加上如下特殊解释</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/user/bin/env python3</span><br><span class="line">print(&#x27;Hello Python!&#x27;)</span><br></pre></td></tr></table></figure>
+<p>然后，给文件添加执行权限</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod a+x hello.py</span><br></pre></td></tr></table></figure>
+<p>即可直接在命令行运行该文件了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./hello.py</span><br></pre></td></tr></table></figure>
+
+<p>ok，到现在为止，我们已经安装了 Python 开发环境、开发了第一个 Python 程序，怎么样，是不是感觉比较简单呢。我们下一篇将开始进行 Python 的语法学习！</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RecyclerView 控件的使用</title>
+    <url>/2017-08-02-RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h3 id="RecyclerView-控件的使用"><a href="#RecyclerView-控件的使用" class="headerlink" title="RecyclerView 控件的使用"></a>RecyclerView 控件的使用</h3><blockquote>
+<p>前言 最近在做一个滑动列表的需求，现将 RecyclerView 的使用知识记录总结下</p>
+</blockquote>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView">RecyclerView</a> 是 android.support.v7 包下的一个组件，根据官方文档说明，它是一个可以在有限屏幕区域提供大量数据集的灵活视图组件。</p>
+<p>那么它和我们熟悉的 ListView 和 GridView 有什么区别呢，或者说对比已有的两个组件，RecyclerView 有什么优势呢？整体来说，RecyclerView 提供了更为灵活的体验，高度解耦，开发者可以使用不同的 LayoutManager，ItemDecoration，ItemAnimator 来实现各种自定义效果。</p>
+<span id="more"></span>
+
+<ul>
+<li>LayoutManager 通过布局管理器，可以轻松实现类似 ListView，GridView 和 流式布局等效果</li>
+<li>ItemDecoration 通过它可以控制 Item 间的间隔，实现自定义间隔样式</li>
+<li>ItemAnimator 使用它来控制 Item 的增删等动画效果</li>
+<li>点击事件 RecyclerView 的点击事件需要自己来实现（提供了 OnItemTouchListener 接口）</li>
+</ul>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h4 id="导入库包"><a href="#导入库包" class="headerlink" title="导入库包"></a>导入库包</h4><p>在 gradle 文件中引入 v7 包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">compile &#x27;com.android.support:recyclerview-v7:21.0.3&#x27;</span><br></pre></td></tr></table></figure>
+<h4 id="布局中使用"><a href="#布局中使用" class="headerlink" title="布局中使用"></a>布局中使用</h4><p>在 xml 布局文件中使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;android.support.v7.widget.RecyclerView</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;&gt;</span><br><span class="line">&lt;/android.support.v7.widget.RecyclerView&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Activity-中设置"><a href="#Activity-中设置" class="headerlink" title="Activity 中设置"></a>Activity 中设置</h4><p>在 Activity 中获取 RecyclerView 组件，进行以下设置：</p>
+<ul>
+<li>设置数据适配器（必须）</li>
+<li>设置布局管理器（必须）</li>
+<li>设置 Item 增加、移除动画（非必须）</li>
+<li>添加分割线（非必须）</li>
+</ul>
+<h4 id="Adapter"><a href="#Adapter" class="headerlink" title="Adapter"></a>Adapter</h4><p>继承实现 <code>RecyclerView.Adapter&lt;VH extends ViewHolder&gt;</code> 类，作为 <code>RecyclerView</code> 的数据适配器，主要实现以下几个方法</p>
+<ul>
+<li>onCreateViewHolder（创建 ViewHoldre，初始化填充 ItemView 布局）</li>
+<li>onBindViewHolder（绑定 ViewHolder，进行数据的展示处理）</li>
+<li>getItemViewType（获取 ItemView 类型，主要运用于多布局）</li>
+<li>getItemCount（获取 Item 个数）</li>
+</ul>
+<p><em><strong>注意:</strong></em> 在 onCreateViewHolder 中，填充 View 时建议使用如下格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_1, parent, false);</span><br></pre></td></tr></table></figure>
+<h4 id="LayoutManager"><a href="#LayoutManager" class="headerlink" title="LayoutManager"></a>LayoutManager</h4><p><code>RecyclerView.LayoutManager</code> 是一个抽象类，系统默认提供了三个实现类：</p>
+<ul>
+<li>LinearLayoutManager 线性布局管理器，支持横向及纵向布局</li>
+<li>GridLayoutManager 网格式布局管理器</li>
+<li>StaggeredGridLayoutManager 瀑布流式布局管理器</li>
+</ul>
+<p>将不同布局管理器设置到 RecyclerView 中，即可实现不同的布局；当然也可以继承 RecyclerView.LayoutManager 从而实现自定义布局</p>
+<h4 id="ItemDecoration"><a href="#ItemDecoration" class="headerlink" title="ItemDecoration"></a>ItemDecoration</h4><p>通过 <code>RecyclerView.addItemDecoration()</code> 方法可以添加分割线，该类为一个抽象类，开发者需要自己来进行实现</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static abstract class ItemDecoration &#123;</span><br><span class="line"></span><br><span class="line">    public void onDraw(Canvas c, RecyclerView parent, State state) &#123;</span><br><span class="line">        onDraw(c, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void onDraw(Canvas c, RecyclerView parent) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void onDrawOver(Canvas c, RecyclerView parent, State state) &#123;</span><br><span class="line">        onDrawOver(c, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void onDrawOver(Canvas c, RecyclerView parent) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) &#123;</span><br><span class="line">        outRect.set(0, 0, 0, 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) &#123;</span><br><span class="line">        getItemOffsets(outRect, ((LayoutParams) view.getLayoutParams()).getViewPosition(),parent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们使用 <code>RecyclerView.addItemDecoration`` 方法时，RecyclerView 会进行绘制，主要是通过 onDraw()</code> 和 <code>onDrawOver()</code> 方法</p>
+<ul>
+<li>onDraw() : 绘制分割线</li>
+<li>onDrawOver() : 在 onDraw() 之后绘制，一般覆写其中一个即可</li>
+<li>getItemOffsets() : 通过 outRect.set() 为每个 item 设置偏移量，即用来设置分割线的宽、高</li>
+</ul>
+<h4 id="Item-Animator"><a href="#Item-Animator" class="headerlink" title="Item Animator"></a>Item Animator</h4><p>RecyclerView 能够通过 <code>mRecyclerView.setItemAnimator(ItemAnimator animator)</code> 设置添加、删除、移动、改变的动画效果。RecyclerView 提供了默认的 ItemAnimator 实现类：<code>DefaultItemAnimator</code></p>
+<h4 id="多布局实现"><a href="#多布局实现" class="headerlink" title="多布局实现"></a>多布局实现</h4><p>RecyclerView 可以通过 getItemViewType 获取不同的布局类型，进行对应布局的填充，有点类似 ListView ；利用这个接口可以轻松实现头布局和尾布局的添加</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>综合来看，RecyclerView 提供了一种低耦合，插拔式的滑动布局体验，通过 LayoutManager 可以只需一行代码实现布局格式的切换，轻松实现 ListView、GridView 等布局效果，更是可以支持自定义分割线处理。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://blog.csdn.net/lmj623565791/article/details/45059587">Android RecyclerView 使用完全解析</a></li>
+<li><a href="https://gist.github.com/alexfu/0f464fc3742f134ccd1e">DividerItemDecoration</a></li>
+<li><a href="https://github.com/CymChad/CymChad.github.io">RecyclerView 优秀文集</a></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>RecyclerView</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mac 下 Hexo 和 Github 搭建博客</title>
+    <url>/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>之前在 Windows 下操作过一次博客搭建过程，不过后面没有写什么内容，也就慢慢废弃了。转岗到新部门后申请到了 Mac 电脑，在使用了一段时间之后，不得不感慨 Mac 电脑对于开发人员的便捷舒适。这里尽量将自己平时的工作总结进行记录备忘，那么就从搭建博客开始吧。</p>
+<h3 id="注册-GitHub-账号"><a href="#注册-GitHub-账号" class="headerlink" title="注册 GitHub 账号"></a>注册 GitHub 账号</h3><p>在 <a href="https://github.com/">Github</a> 上进行注册，这个比较简单，按照正常操作即可。</p>
+<p>创建仓库 (repo)，这个仓库是和我们的博客关联起来的，后续博客文章资源都是存放在这个仓库当中。使用 Hexo 时，repo 的名字应该按照 <code>your_github_username.github.io</code> 来命名。一个账号一般只能对应一个博客。</p>
+<span id="more"></span>
+
+<h3 id="安装-Git、Node-js-和-Hexo"><a href="#安装-Git、Node-js-和-Hexo" class="headerlink" title="安装 Git、Node.js 和 Hexo"></a>安装 Git、Node.js 和 Hexo</h3><ul>
+<li>Mac 电脑本身自带 Git ，无需安装</li>
+<li>在 <a href="https://nodejs.org/en/">Nodejs</a> 官网下载安装；用来下载 Hexo 等工具及插件</li>
+<li>在命令行使用 <code>npm install -g hexo-cli</code> 来下载安装 Hexo</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>公司开发网需要设置代理 <code>npm config set proxy=http://dev-proxy.oa.com:8080</code></li>
+<li>如果发现没有权限，则使用如下命令 <code>sudo npm install -g hexo-cli</code></li>
+</ul>
+<h3 id="搭建博客"><a href="#搭建博客" class="headerlink" title="搭建博客"></a>搭建博客</h3><h4 id="博客初始化"><a href="#博客初始化" class="headerlink" title="博客初始化"></a>博客初始化</h4><p>建立一个博客文件夹，比如 “GitRoom”，进入到文件夹后进行初始化操作</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ cd GitRoom</span><br><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
+<p>安装依赖包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
+<p>这样设置后，我们就可以在博客文件夹中看到多了很多文件和目录</p>
+<h3 id="博客配置"><a href="#博客配置" class="headerlink" title="博客配置"></a>博客配置</h3><p>博客站点的配置信息在 <code>_config.yml</code> 文件中，我们主要修改如下几点即可（注意每一项的「 : 」后需要保留一个空格）</p>
+<p>网站基本信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: bashellwang 的小书屋</span><br><span class="line">subtitle:</span><br><span class="line">description: 路漫漫其修远兮</span><br><span class="line">author: bashellwang</span><br><span class="line">language: zh-Hans</span><br><span class="line">timezone: Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<p>绑定 Github</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/bashellwang/bashellwang.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<h3 id="博客本地部署测试"><a href="#博客本地部署测试" class="headerlink" title="博客本地部署测试"></a>博客本地部署测试</h3><p>一般我们在发布到正式环境前会先本地部署看看效果，使用如下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>此时，正常情况下应该会显示如下；在浏览器中输入 <code>http://localhost:4000/</code> 即可看到搭建好的博客和文章了。</p>
+<h3 id="博客发布到正式环境"><a href="#博客发布到正式环境" class="headerlink" title="博客发布到正式环境"></a>博客发布到正式环境</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>这时我们就可以在 GitHub 的仓库中看见我们提交的网站相关资源了；此时在浏览器中输入 <code>your_github_name.github.io</code> 就可以打开我们博客的主页了。</p>
+<h3 id="新建文章"><a href="#新建文章" class="headerlink" title="新建文章"></a>新建文章</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ hexo new &quot;article_title&quot;</span><br></pre></td></tr></table></figure>
+<p>即可在本地文件夹 <code>/source/_post</code> 下看到我们新建的 markdown 文件；<br>使用 markdown 编辑器编写文章内容后保存（ mac 推荐使用 MacDown 软件）；<br>生成静态网页文件并发布到网上</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>更多 Hexo 操作请参考 <a href="https://hexo.io/zh-cn/docs/">Hexo 操作指南</a></p>
+<h3 id="删除文章"><a href="#删除文章" class="headerlink" title="删除文章"></a>删除文章</h3><p>在本地文件夹 <code>/source/_post</code> 目录下删除对应的 .md 文件，然后重新生成静态网页文件并发布</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>每次当博客发生问题或错误时，建议先进行 clean 操作并重新生成静态网页</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">$ hexo g</span><br></pre></td></tr></table></figure>
+
+<h3 id="草稿相关命令操作"><a href="#草稿相关命令操作" class="headerlink" title="草稿相关命令操作"></a>草稿相关命令操作</h3><h4 id="编写草稿"><a href="#编写草稿" class="headerlink" title="编写草稿"></a>编写草稿</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ hexo new draft &quot;article_title&quot;</span><br></pre></td></tr></table></figure>
+<p>生成的文件作为草稿被放到 <code>/source/_draft</code> 目录下。</p>
+<p>放在该目录下的草稿，在使用 <code>hexo generate</code> 命令生成静态文件时不会被处理。</p>
+<h4 id="预览草稿"><a href="#预览草稿" class="headerlink" title="预览草稿"></a>预览草稿</h4><p>如果想要查看草稿效果，可以在启动本地服务时增加一个参数 <code>hexo server --draft</code>，或者在 <code>_config.yml</code> 文件中进行配置，这样每次在启动本地服务时都会渲染草稿。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">render_drafts: true</span><br></pre></td></tr></table></figure>
+
+<h4 id="发布草稿"><a href="#发布草稿" class="headerlink" title="发布草稿"></a>发布草稿</h4><p>编写好草稿之后，如果想将草稿发布到 <code>source_posts</code> 目录下，可以使用如下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ hexo publish post &quot;article_title&quot;</span><br></pre></td></tr></table></figure>
+<p>在发布成功后，<code>_drafts</code> 目录下的草稿会被移除</p>
+<h3 id="Hexo-常用命令"><a href="#Hexo-常用命令" class="headerlink" title="Hexo 常用命令"></a>Hexo 常用命令</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo help #查看帮助</span><br><span class="line">hexo init #初始化一个目录</span><br><span class="line">hexo new &quot;postName&quot; #新建文章</span><br><span class="line">hexo new page &quot;pageName&quot; #新建页面</span><br><span class="line">hexo generate #生成网页，可以在 public 目录查看整个网站的文件</span><br><span class="line">hexo server #本地预览，&#x27;Ctrl+C&#x27;关闭</span><br><span class="line">hexo deploy #部署.deploy目录</span><br><span class="line">hexo clean #清除缓存，**强烈建议每次执行命令前先清理缓存，每次部署前先删除 .deploy 文件夹**</span><br><span class="line">简写：</span><br><span class="line">hexo n == hexo new</span><br><span class="line">hexo g == hexo generate</span><br><span class="line">hexo s == hexo server</span><br><span class="line">hexo d == hexo deploy</span><br></pre></td></tr></table></figure>
+
+<h3 id="博客主题修改"><a href="#博客主题修改" class="headerlink" title="博客主题修改"></a>博客主题修改</h3><p>Hexo 支持多种主题，并且可以轻易修改主题风格。下面以我的站点 <a href="https://bashellwang.github.io/">https://bashellwang.github.io/</a> 来进行简单说明<br>Hexo 主要有两份配置文件（文件名均为 <code>_config.yml</code>）：一份在站点根目录下，一份在主题 <code>theme</code> 目录下，我们可以分别称为站点配置文件和主题配置文件。</p>
+<p>在 <code>theme</code> 目录下下载主题</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ git clone https://github.com/iissnan/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>站点配置文件中启用主题</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">theme: next</span><br></pre></td></tr></table></figure>
+
+<p>主题配置文件中选用主题特性，使用 <code>Pisces</code> 特性</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#scheme: Muse</span><br><span class="line">#scheme: Mist</span><br><span class="line">scheme: Pisces</span><br></pre></td></tr></table></figure>
+<p>这样即完成了基本的网站主题设置，更多详情请参考 <a href="http://theme-next.iissnan.com/getting-started.html">NexT 使用文档</a></p>
+<h3 id="博客中插入图片"><a href="#博客中插入图片" class="headerlink" title="博客中插入图片"></a>博客中插入图片</h3><p>可参考文章 <a href="https://univer2012.github.io/2017/04/23/6how-to-insert-picture-in-hexo-blog/">hexo 博客插入图片</a></p>
+<h3 id="最终成品"><a href="#最终成品" class="headerlink" title="最终成品"></a>最终成品</h3><p><a href="https://bashellwang.github.io/">https://bashellwang.github.io/</a></p>
+<img src="/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/blog_home_page.png" class="" title="blog_home_page.png">]]></content>
+      <tags>
+        <tag>Mac</tag>
+        <tag>Hexo</tag>
+        <tag>Next</tag>
+        <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python3 入门之基础语法</title>
+    <url>/2017-08-09%20Python3%20%E5%85%A5%E9%97%A8%E4%B9%8B%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="输入和输出"><a href="#输入和输出" class="headerlink" title="输入和输出"></a>输入和输出</h2><p>计算机程序都是需要进行输入，并将计算结果反馈输出。输入是 Input，输出是 Output，统称 Input/Output，简称 I/O。</p>
+<h3 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h3><p>使用 <code>print()</code> 方法可以输出指定字符串到屏幕上</p>
+<ul>
+<li>括号中填入要输出的字符串即可</li>
+<li>该函数可以接受多个字符串，使用逗号 <code>,</code> 隔开，即可将字符串拼接成一串输出</li>
+<li>在拼接字符串的时候，使用空格替换 <code>,</code></li>
+<li>可以打印整数，进行数学计算</li>
+</ul>
+<span id="more"></span>
+
+<p>例子如下所示：</p>
+<pre><code>&gt;&gt;&gt; print(&#39;This is&#39;,&#39;a example&#39;,&#39;for output method:&#39;,&#39;5+6 =&#39;,5+6)
+This is a example for output method: 5+6 = 11
+</code></pre>
+<h3 id="输入"><a href="#输入" class="headerlink" title="输入"></a>输入</h3><p>使用 <code>input()</code> 可以让用户输入字符串，并存放到一个变量中</p>
+<pre><code>&gt;&gt;&gt; name = input(&#39;please input your name: &#39;)
+please input your name: bashellwang
+&gt;&gt;&gt; print(name)
+bashellwang
+</code></pre>
+<h2 id="Python-基础"><a href="#Python-基础" class="headerlink" title="Python 基础"></a>Python 基础</h2><ul>
+<li>Python 使用缩进来组织代码块，每一行都是一个语句</li>
+<li>当语句以 <code>:</code> 结尾时，缩进的语句视为代码块</li>
+<li>一般使用 4 个空格的锁进，文本编辑器中需要设置把 Tab 自动转换为 4 个空格，确保不混用 Tab 和空格</li>
+<li>Python 程序是大小写敏感的</li>
+</ul>
+<h3 id="数据类型和变量"><a href="#数据类型和变量" class="headerlink" title="数据类型和变量"></a>数据类型和变量</h3><h4 id="整数"><a href="#整数" class="headerlink" title="整数"></a>整数</h4><p>Python 可以处理任意大小的整数，包括负整数，没有大小限制</p>
+<h4 id="浮点数"><a href="#浮点数" class="headerlink" title="浮点数"></a>浮点数</h4><p>浮点数没有大小写限制，但是超过一定范围就直接表示为 <code>inf</code>（无限大）。</p>
+<h4 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h4><p>以单引号 <code>&#39;</code> 或 <code>&quot;</code> 括起来的文本。<code>&#39;</code> 和 <code>&quot;</code> 本身是一种表示方式，如果想要显示它们，需要使用转义字符 <code>\</code> 来标识。</p>
+<p>转义字符可以转义很多字符，比如 <code>\n</code> 表示换行，<code>\t</code> 表示制表符，<code>\\</code> 表示转义字符本身</p>
+<pre><code>&gt;&gt;&gt; print(&#39;this is a \\n string ,\nthe result is string&#39;)
+this is a \n string ,
+the result is string
+</code></pre>
+<ul>
+<li>如果有很多转义字符，就需要增加很多 <code>\</code></li>
+<li>为了简化，Python 可以使用 <code>r&#39;&#39;</code> 表示 <code>&#39;&#39;</code> 内部的字符串默认不转义</li>
+<li>Python 可以使用 <code>&#39;&#39;&#39;...&#39;&#39;&#39;</code> 格式来表示多行内容（命令行里显示为 <code>...</code>，文本编辑器里则没有 <code>...</code> ）</li>
+<li>多行字符串 <code>&#39;&#39;&#39;...&#39;&#39;&#39;</code> 还可以在前面加上 <code>r</code> 使用</li>
+</ul>
+<pre><code>&gt;&gt;&gt; print(&#39;\\\t\\&#39;)
+\    \
+&gt;&gt;&gt; print(r&#39;\\\t\\&#39;)
+\\\t\\
+&gt;&gt;&gt; print(&#39;&#39;&#39;line1
+... line2
+... line3&#39;&#39;&#39;)
+line1
+line2
+line3
+&gt;&gt;&gt; print(r&#39;&#39;&#39;\\hello
+... wold \\n&#39;&#39;&#39;)
+\\hello
+wold \\n
+</code></pre>
+<h4 id="布尔值"><a href="#布尔值" class="headerlink" title="布尔值"></a>布尔值</h4><ul>
+<li>布尔值与布尔代数的运算完全一样，布尔值只有 <code>True</code> 和 <code>False</code> 两种（注意大小写）</li>
+<li>布尔值可以进行与、或、非等运算： <code>and</code> <code>or</code> <code>not</code> </li>
+</ul>
+<h4 id="空值"><a href="#空值" class="headerlink" title="空值"></a>空值</h4><p>空值是 Python 中的一个特殊值，使用 <code>None</code> 表示，它不能理解为 <code>0</code>，因为 <code>0</code> 表示为整数。</p>
+<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><ul>
+<li>变量和我们代数中理解的方程变量是一样的，在程序里变量可以是任意数据类型。</li>
+<li>变量使用变量名来表示，变量名必须是大小写英文、数字和下划线的组合，且不能以数字开头</li>
+<li><code>=</code> 是赋值语句，<em><strong>可以把任意数据类型赋值给变量，同一个变量可以反复赋值，而且可以是不同类型的变量</strong></em></li>
+</ul>
+<p>这种变量本身类型不固定的语言称之为动态语言，与之对应的则是静态语言。静态语言在定义时必须指定变量类型，如果赋值时类型不匹配，则会报错。</p>
+<p>可以把一个变量 <code>a</code> 赋值给另一个变量 <code>b</code>，这个操作实质上是把变量 <code>b</code> 指向变量 <code>a</code> 所指向的数据</p>
+<pre><code>&gt;&gt;&gt; a=&#39;ABC&#39;
+&gt;&gt;&gt; b=a
+&gt;&gt;&gt; a=&#39;xyz&#39;
+&gt;&gt;&gt; print(b)
+ABC
+</code></pre>
+<h4 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h4><p>所谓常量就是不能变的变量，在 Python 中，通常用全部大写的变量名表示常量。不过全部大写只是一种习惯写法，本质上它还是一个变量，如果你非要改变它的值，也是可以的。</p>
+<ul>
+<li><code>/</code> 除法计算，结果是浮点数，即使是两个整数整除</li>
+<li><code>//</code> 地板除，两个整数的除法为整数，就是结果取整</li>
+<li><code>%</code> 求余计算，结果为整数</li>
+</ul>
+<h4 id="list"><a href="#list" class="headerlink" title="list"></a>list</h4><p>list 是一种<em><strong>有序的集合</strong></em>，叫「列表」，<em><strong>它可以随时添加和删除其中的元素</strong></em>。</p>
+<ul>
+<li>使用中括号 <code>[]</code> 来表示，如：<code>list = [&#39;Zhangsan&#39;,&#39;Lisi&#39;,&#39;Wangwu&#39;]</code></li>
+<li>用索引来访问，从 0 开始，<code>list[0]</code></li>
+<li>索引越界时会报错 IndexError</li>
+<li><code>list[-1]</code> 可以直接获取最后一个元素，以此类推倒数第二个，第三个元素</li>
+<li>列表可以追加元素到末尾，<code>list.append(&#39;abc&#39;)</code></li>
+<li>列表可以把元素插入到指定位置，<code>list.insert(1,&#39;abc&#39;)</code></li>
+<li>删除 list 末尾的元素，使用 <code>pop()</code> 方法</li>
+<li>删除指定位置元素，使用 <code>pop(i)</code> 方法</li>
+<li>替换某个元素，可以直接给它赋值对应的值</li>
+<li>list 里面的元素的数据类型可以不一样，<code>L = [&#39;Apple&#39;,12,[&#39;apple&#39;,True]]</code></li>
+</ul>
+<h4 id="tuple"><a href="#tuple" class="headerlink" title="tuple"></a>tuple</h4><p>tuple 是另一种<em><strong>有序列表</strong></em>，叫「元组」，<em><strong>但是 tuple 一旦初始化，就不能修改</strong></em>。</p>
+<ul>
+<li>使用小括号 <code>()</code> 来表示，在定义时，tuple 的元素必须被确定下来,如：<code>tuple = (&#39;Zhangsan&#39;,&#39;Lisi&#39;,&#39;Wangwu&#39;)</code></li>
+<li>定义一个空的 tuple，可以写成 <code>t = ()</code> </li>
+<li>定义一个只有一个元素的 tuple，必须是 <code>t = (1,)</code> ，元素后添加一个逗号表示</li>
+<li>获取元素与列表一样，<code>tuple[0]</code>, <code>tuple[-1]</code> 等方式</li>
+<li>定义一个「可变」的 tuple</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; t = (&#x27;a&#x27;,&#x27;b&#x27;,[&#x27;A&#x27;,&#x27;B&#x27;])</span><br><span class="line">&gt;&gt;&gt; t[2][0]=&#x27;X&#x27;</span><br><span class="line">&gt;&gt;&gt; t[2][1]=&#x27;Y&#x27;</span><br><span class="line">&gt;&gt;&gt; t</span><br><span class="line">(&#x27;a&#x27;, &#x27;b&#x27;, [&#x27;X&#x27;, &#x27;Y&#x27;])</span><br></pre></td></tr></table></figure>
+<p>表面上看，tuple 的元素确实变了，但其实变的不是 tuple 的元素，而是 list 的元素。tuple 一开始指向的 list 并没有改成别的 list，所以，tuple 所谓的「不变」是说，tuple 的每个元素，指向永远不变。即指向 <code>a</code>，就不能改成指向 <code>b</code>，指向一个 list，就不能改成指向其他对象，但指向的这个 list 本身是可变的！</p>
+<p>理解了「指向不变」后，要创建一个内容也不变的 tuple 怎么做？那就必须保证 tuple 的每一个元素本身也不能变。</p>
+<h4 id="dict"><a href="#dict" class="headerlink" title="dict"></a>dict</h4><ul>
+<li>dict 全称 dictionary，名为字典，在其它语言中称为「map」，使用「键-值 (key-value)」形式存储</li>
+<li>使用大括号 <code>&#123;&#125;</code> 表示，如：<code>dict = &#123;&#39;Zhangsan&#39;:18,&#39;Lisi&#39;:20,&#39;Wangwu&#39;:18&#125;</code></li>
+<li>数据除了初始化时设置外，还可以通过 key 设置值</li>
+<li><em><strong>dict 的 key 必须是不可变对象</strong></em></li>
+<li>获取值使用 <code>dict[key]</code> 方式</li>
+<li>多次设置值时，后面的赋值会将前面的覆盖掉</li>
+<li>key 不存在时会报错，在获取值时可以先使用 <code>in</code> 来判断 key 是否存在</li>
+<li>通过 get 方法，如果 key 不存在，则返回 None 或指定值</li>
+<li>删除一个 key，使用 <code>pop(key)</code> 方法，对应 value 也会被删除</li>
+<li>dict 内部存放顺序与 key 放入顺序无关，是无序的</li>
+<li>查找速度极快，占用内存空间高，即空间换时间</li>
+</ul>
+<h4 id="set"><a href="#set" class="headerlink" title="set"></a>set</h4><ul>
+<li>和 dict 类似，也是一组 key 的集合，但不存储 value；<em><strong>无序，无重复 key</strong></em></li>
+<li>创建一个 set，需要提供一个 list 作为输入集合，如：set = ([1,2,3])，表示 set 内部有三个元素</li>
+<li>重复元素在 set 中自动被过滤</li>
+<li>通过 <code>add(key)</code> 方法可以添加元素到 set 中，可重复添加，但是无效果</li>
+<li>通过 <code>remove(key)</code> 方法可以删除元素</li>
+<li>set 可以看作数学意义上的无序和无重复元素集合，因此两个 set 可以做数学意义上的交集、并集等运算</li>
+<li>不可以放入可变对象</li>
+<li>set 和 dict <em><strong>唯一区别</strong></em>就是没有存储对应的 value</li>
+</ul>
+<h3 id="字符串和编码"><a href="#字符串和编码" class="headerlink" title="字符串和编码"></a>字符串和编码</h3><p>字符编码可以看看这篇文章 <a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431664106267f12e9bef7ee14cf6a8776a479bdec9b9000">字符编码</a></p>
+<p>在最新的 Python 3 版本中，字符串是以 Unicode 编码的。如果要在网络上传输或者保存到磁盘上，需要把 str 变为以字节为单位的 bytes。Python 中对 bytes 类型的数据用带 <code>b</code> 前缀的单引号或双引号表示，每个 bytes 占用一个字节。</p>
+<p>以 Unicode 表示的 str 通过 <code>encode()</code> 方法可以编码为指定的 bytes。纯英文的 str 可以用 ASCII 编码为 bytes，内容是一样的，含有中文的 str 可以用 UTF-8 编码为 bytes。含有中文的 str 无法用 ASCII 编码，因为中文编码的范围超过了 ASCII 编码的范围，Python 会报错。在 bytes 中，无法显示为 ASCII 字符的字节，用 <code>\x##</code> 表示。</p>
+<p>反过来，从网络或磁盘上获取的字节流，读取的数据为 bytes，需要使用 <code>decode()</code> 方法转换为 str。</p>
+<p><code>len()</code> 函数计算的是字符串 str 的字符数或者 bytes 的字节数。</p>
+<p>由于 Python 源代码是一个文本文件，当源码中包含中文时，务必要指定保存为 UTF-8 编码。通常我们在文件开头写上这两行：</p>
+<pre><code>#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+</code></pre>
+<ul>
+<li>第一行注释是为了告诉 Linux/OS X 系统，这是一个 Python 可执行程序，Windows 系统会忽略这个注释；</li>
+<li>第二行注释是为了告诉 Python 解释器，按照 UTF-8 编码读取源代码，否则，你在源代码中写的中文输出可能会有乱码。</li>
+<li>申明了 UTF-8 编码并不意味着你的 .py 文件就是 UTF-8 编码的，必须并且要确保文本编辑器正在使用 UTF-8 without BOM 编码</li>
+</ul>
+<h4 id="字符串的格式化"><a href="#字符串的格式化" class="headerlink" title="字符串的格式化"></a>字符串的格式化</h4><p>Python 中，采用与 C 语言一致的格式化方法，使用 <code>%</code> 实现</p>
+<ul>
+<li><code>%s</code> 字符串替换</li>
+<li><code>%d</code> 整数替换</li>
+<li><code>%f</code> 浮点数替换</li>
+<li><code>%x</code> 十六进制整数替换</li>
+<li><code>%%</code> 表示一个 <code>%</code> </li>
+</ul>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python3 入门之函数基础</title>
+    <url>/2017-08-22%20Python3%20%E5%85%A5%E9%97%A8%E4%B9%8B%E5%87%BD%E6%95%B0%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h2 id="函数基础"><a href="#函数基础" class="headerlink" title="函数基础"></a>函数基础</h2><p>函数是最基本的一种代码抽象方式</p>
+<h3 id="条件判断"><a href="#条件判断" class="headerlink" title="条件判断"></a>条件判断</h3><p>根据 Python 的缩进规则，如果 <code>if</code> 语句判断为 <code>True</code> ，就把接下来缩进的语句执行，否则执行 <code>else</code> 的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; age = 20</span><br><span class="line">&gt;&gt;&gt; if age&gt;= 18:</span><br><span class="line">...     print(&quot;your age is&quot;,age)</span><br><span class="line">... else:</span><br><span class="line">...     print(&quot;haha child&quot;)</span><br><span class="line">...</span><br><span class="line">your age is 20</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>注意不要漏了 <code>:</code> ，也可以使用 <code>elif</code> 来表示 <code>else if</code> 。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">if &lt;条件判断1&gt;:</span><br><span class="line">    &lt;执行1&gt;</span><br><span class="line">elif &lt;条件判断2&gt;:</span><br><span class="line">    &lt;执行2&gt;</span><br><span class="line">elif &lt;条件判断3&gt;:</span><br><span class="line">    &lt;执行3&gt;</span><br><span class="line">else:</span><br><span class="line">    &lt;执行4&gt;</span><br></pre></td></tr></table></figure>
+
+<p><code>if</code> 语句是从上向下判断的，如果在某个判断上为 <code>True</code>,则把对应语句执行后就忽略掉剩下的语句。</p>
+<p><code>if</code> 语句可以简写如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">if x:</span><br><span class="line">    print(&#x27;True&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>只要 <code>x</code> 是非零数值、非空字符串、非空list等，就判断为 <code>True</code>，否则为 <code>False</code>。</p>
+<h3 id="再看-input"><a href="#再看-input" class="headerlink" title="再看 input"></a>再看 input</h3><p>我们使用 <code>input()</code> 来获取用户的输入，比如以下程序段：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">birth = input(&#x27;birth: &#x27;)</span><br><span class="line">if birth &lt; 2000:</span><br><span class="line">    print(&#x27;00前&#x27;)</span><br><span class="line">else:</span><br><span class="line">    print(&#x27;00后&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>输入 <code>1982</code> 或 <code>abc</code> 均会报错，这是为什么呢？</p>
+<p>原来 <code>input()</code> 返回的数据类型是 <code>str</code> ,它是不能直接和整数相比较的，我们必须把它进行转换。 使用 <code>int()</code> 可以转换 <code>1982</code> 为整数；而 <code>abc</code> 则需要进行数据类型的合法检查，它是不能转换成整数的。</p>
+<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><p>Python 的循环有两种，一种是 <code>for ... in</code> 循环，一种是 <code>while</code> 循环</p>
+<h4 id="for-循环"><a href="#for-循环" class="headerlink" title="for 循环"></a>for 循环</h4><p>for 循环依次把 list 或 tuple 中的每个元素迭代出来</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; names = [&#x27;jack&#x27;,&#x27;tom&#x27;,&#x27;rose&#x27;]</span><br><span class="line">&gt;&gt;&gt; for name in names:</span><br><span class="line">...     print(name)</span><br><span class="line">...</span><br><span class="line">jack</span><br><span class="line">tom</span><br><span class="line">rose</span><br></pre></td></tr></table></figure>
+
+<p>Python 提供了一个 range() 函数，再通过 list() 函数可以将其转换为 list。比如 range(101) 就是生存从 0 开始小于 101 的整数序列。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; sum = 0</span><br><span class="line">&gt;&gt;&gt; for x in range(101):</span><br><span class="line">...     sum = sum + x</span><br><span class="line">...</span><br><span class="line">&gt;&gt;&gt; print(sum)</span><br><span class="line">5050</span><br></pre></td></tr></table></figure>
+
+<h4 id="while-循环"><a href="#while-循环" class="headerlink" title="while 循环"></a>while 循环</h4><p>while 循环是只要条件满足，就不断循环；条件不满足时，退出循环</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; sum = 0</span><br><span class="line">&gt;&gt;&gt; n = 100</span><br><span class="line">&gt;&gt;&gt; while n &gt; 0:</span><br><span class="line">...     sum = sum + n</span><br><span class="line">...     n = n - 1</span><br><span class="line">...</span><br><span class="line">&gt;&gt;&gt; print(sum)</span><br><span class="line">5050</span><br></pre></td></tr></table></figure>
+
+<h4 id="break"><a href="#break" class="headerlink" title="break"></a>break</h4><p>在循环中，break 语句可以提前退出循环</p>
+<p>continue 语句可以跳过这次循环，直接开始下一次循环</p>
+<h3 id="函数调用"><a href="#函数调用" class="headerlink" title="函数调用"></a>函数调用</h3><p>Python 内置了很多函数，可以直接调用。调用函数需要知道函数名及函数参数，可参考 <a href="https://docs.python.org/3/library/functions.html#abs">官方文档</a></p>
+<p>当调用函数出错时，系统会给出相应的错误信息，查看信息即可知道原因并进行修改</p>
+<h4 id="max-函数"><a href="#max-函数" class="headerlink" title="max 函数"></a>max 函数</h4><p>max() 函数可以接收多个参数，并输出其中最大的那个</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; max(2,0,-5,8)</span><br><span class="line">8</span><br></pre></td></tr></table></figure>
+
+<h4 id="数据类型转换函数"><a href="#数据类型转换函数" class="headerlink" title="数据类型转换函数"></a>数据类型转换函数</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; int(&#x27;123&#x27;)</span><br><span class="line">123</span><br><span class="line">&gt;&gt;&gt; int(12.34)</span><br><span class="line">12</span><br><span class="line">&gt;&gt;&gt; float(&#x27;12.34&#x27;)</span><br><span class="line">12.34</span><br><span class="line">&gt;&gt;&gt; str(1.23)</span><br><span class="line">&#x27;1.23&#x27;</span><br><span class="line">&gt;&gt;&gt; bool(1)</span><br><span class="line">True</span><br><span class="line">&gt;&gt;&gt; bool(&#x27;&#x27;)</span><br><span class="line">False</span><br></pre></td></tr></table></figure>
+
+<p>函数名其实就是指向一个函数对象的引用，完全可以把函数名赋给一个变量，相当于给这个函数起了一个「别名」：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; a = int</span><br><span class="line">&gt;&gt;&gt; a(&#x27;123&#x27;)</span><br><span class="line">123</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数定义"><a href="#函数定义" class="headerlink" title="函数定义"></a>函数定义</h3><p>在 Python 中定义一个函数需要使用 <code>def</code> 语句，依次写出函数名、括号、括号中的参数和冒号，在缩进块中编写函数体，函数的返回值使用 <code>return</code> 返回。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def isGood(x):</span><br><span class="line">    if x&gt;=60:</span><br><span class="line">        return True</span><br><span class="line">    else :</span><br><span class="line">        return False</span><br><span class="line"></span><br><span class="line">print(isGood(89))</span><br></pre></td></tr></table></figure>
+
+<p>函数体内部一旦执行到 return 时，函数就执行完毕，并将结果返回。如果没有 return 语句，函数执行完毕后也会返回结果，只不过结果是 None 。<code>return None</code> 可以简写为 <code>return</code> 。</p>
+<h4 id="空函数"><a href="#空函数" class="headerlink" title="空函数"></a>空函数</h4><p>如果想定义一个空函数，什么也不干，那么可以使用 pass 语句；实际上 pass 语句可以用来做占位符，比如现在没有想好该怎么做，就可以先使用 pass 语句让代码跑起来。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def nop():</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure>
+
+<p>pass 语句还可以放在其它语句里，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">if age &gt;= 18:</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure>
+
+<p>如果缺少 pass，则程序会报错</p>
+<h4 id="参数检查"><a href="#参数检查" class="headerlink" title="参数检查"></a>参数检查</h4><p>调用参数时，如果参数个数不对，Python 解释器会自动检查出来并抛出错误 TypeError</p>
+<p>我们可以给自己的函数加上参数类型检测，使用 isinstance() 内置函数方法。如下是只允许整数和浮点数类型的参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def isGood(x):</span><br><span class="line">    if not isinstance(x,(int,float)):</span><br><span class="line">        raise TypeError(&#x27;bad operation type&#x27;)</span><br><span class="line">    if x&gt;=60 :</span><br><span class="line">        return True</span><br><span class="line">    else :</span><br><span class="line">        return False</span><br><span class="line"></span><br><span class="line">print(isGood(89))</span><br></pre></td></tr></table></figure>
+
+<h4 id="返回多个值"><a href="#返回多个值" class="headerlink" title="返回多个值"></a>返回多个值</h4><p>函数是可以返回多个值的。比如游戏中从其中一个点移动到另一个点，给出坐标、位移、角度，可以计算出新的坐标：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import math</span><br><span class="line"></span><br><span class="line">def move(x, y, step, angle=0):</span><br><span class="line">    nx = x + step * math.cos(angle)</span><br><span class="line">    ny = y - step * math.sin(angle)</span><br><span class="line">    return nx, ny</span><br></pre></td></tr></table></figure>
+
+<p>我们可以同时获得返回值</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; x, y = move(100, 100, 60, math.pi / 6)</span><br><span class="line">&gt;&gt;&gt; print(x, y)</span><br><span class="line">151.96152422706632 70.0</span><br></pre></td></tr></table></figure>
+
+<p>但是这只是一个假象，Python 函数返回的仍是单一值：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; r = move(100, 100, 60, math.pi / 6)</span><br><span class="line">&gt;&gt;&gt; print(r)</span><br><span class="line">(151.96152422706632, 70.0)</span><br></pre></td></tr></table></figure>
+
+<p>原来返回的是一个 tuple ！在语法上，返回一个 tuple 可以省略括号，而多个变量可以同时接收一个 tuple，按位置给对应的值。所以，Python 的函数返回多个值其实就是返回一个 tuple。</p>
+<h4 id="函数的参数"><a href="#函数的参数" class="headerlink" title="函数的参数"></a>函数的参数</h4><p>Python 的函数定义非常简单，灵活度很大，除了必须的参数外，还有<code>默认参数、可变参数和关键字参数</code>。</p>
+<h5 id="位置参数"><a href="#位置参数" class="headerlink" title="位置参数"></a>位置参数</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def power(x):</span><br><span class="line">    return x * x</span><br></pre></td></tr></table></figure>
+<p>对于该函数来说，x 就是一个位置参数；当我们对函数进行改造以便生成 x 的 n 次方：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def power(x,n):</span><br><span class="line">    s = 1</span><br><span class="line">    while n &gt; 0:</span><br><span class="line">        n = n - 1</span><br><span class="line">        s = s * x</span><br><span class="line">    return s</span><br></pre></td></tr></table></figure>
+<p>修改后的函数有两个参数，两个都是位置参数，调用函数时，传入的值按照位置顺序依次赋给参数。</p>
+<h5 id="默认参数"><a href="#默认参数" class="headerlink" title="默认参数"></a>默认参数</h5><p>新建的函数 power(x,n) 调用没有问题，但是原有的一个参数的函数调用出问题了，系统告诉我们是因为缺少一个位置参数。因此，我们可以将第二个参数的默认值设置为 n = 2 :</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def power(x,n=2):</span><br><span class="line">    s = 1</span><br><span class="line">    while n &gt; 0:</span><br><span class="line">        n = n - 1</span><br><span class="line">        s = s * x</span><br><span class="line">    return s</span><br></pre></td></tr></table></figure>
+
+<p>这样，当我们调用 power(5) 时，实际就是调用 power(5,2)。而对于其它 n&gt;2 的情况下，则必须明确的传入参数值。</p>
+<p>注意：</p>
+<ul>
+<li>必选参数在前，默认参数在后</li>
+<li>变化大的参数放在前面，变化小的参数放在后面；变化小的参数可以作为默认参数</li>
+<li>默认参数降低了函数调用的难度</li>
+<li>当有多个默认参数时，既可以按顺序提供默认参数，也可以不按顺序提供默认参数</li>
+<li>当不按顺序提供默认参数时，必须要把参数名写上</li>
+<li><em><strong>默认参数必须指向不变对象</strong></em></li>
+</ul>
+<h5 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h5><p>Python 中，可以定义可变参数。可变参数就是参数的个数是可变的，可以是 1 个，2 个到任意个，也可以是 0 个。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def calc(*numbers)</span><br><span class="line">    sum = 0</span><br><span class="line">    for n in numbers:</span><br><span class="line">        sum = sum + n * n</span><br><span class="line">    return sum</span><br></pre></td></tr></table></figure>
+
+<p>定义一个可变参数和定义一个 list 或 tuple 相比，仅仅在参数前多了一个 * 号。<code> *numbers</code> 表示把 numbers 这个 list 的所有元素作为可变参数传进去。</p>
+<h5 id="关键字参数"><a href="#关键字参数" class="headerlink" title="关键字参数"></a>关键字参数</h5><p>可变参数允许你传入 0 个或任意个参数，这些可变参数在函数调用时自动组装成一个 tuple。而关键字参数允许你传入 0 个或任意个<code>含参数名</code>的参数，这些关键字参数在函数内部自动组装为一个 dict。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def person(name,age,**kw)</span><br><span class="line">    print(&#x27;name&#x27;,name,&#x27;age&#x27;,age,&#x27;other&#x27;,kw)</span><br></pre></td></tr></table></figure>
+
+<p>可以传入任意个数的关键字参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; person(&#x27;Bob&#x27;, 35, city=&#x27;Beijing&#x27;)</span><br><span class="line">name: Bob age: 35 other: &#123;&#x27;city&#x27;: &#x27;Beijing&#x27;&#125;</span><br><span class="line">&gt;&gt;&gt; person(&#x27;Adam&#x27;, 45, gender=&#x27;M&#x27;, job=&#x27;Engineer&#x27;)</span><br><span class="line">name: Adam age: 45 other: &#123;&#x27;gender&#x27;: &#x27;M&#x27;, &#x27;job&#x27;: &#x27;Engineer&#x27;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种函数可以扩展函数功能，除了保证能接收到必要参数，对于调用者额外提供的参数也能获取到。</p>
+<p>和可变参数一样，我们也可以先组装出一个 dict，然后把该 dict 转换为关键字参数传进去。</p>
+<h5 id="命名关键字参数"><a href="#命名关键字参数" class="headerlink" title="命名关键字参数"></a>命名关键字参数</h5><p>对于关键字参数，函数调用者可以传入任意不受限制的关键字参数。对于传入参数的判断，只能在 kw 内部进行检查。以上面的 person() 函数为例，当我们只想调用者传入 city 和 job 做为关键字参数时，我们就可以使用「命名关键字参数」。这种函数的定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def person(name,age,*,city,job)</span><br><span class="line">    print(name,age,city,job)</span><br></pre></td></tr></table></figure>
+
+<p>和关键字参数不一样的地方就是命名关键字参数需要使用分隔符 <code>*</code> ，<code>*</code> 后面的参数被视为命名关键字参数。</p>
+<p>如果函数定义中已经有了一个可变参数，那么后面跟着的命名关键字参数就不再需要 <code>*</code> 分隔符了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def person(name, age, *args, city, job):</span><br><span class="line">    print(name, age, args, city, job)</span><br></pre></td></tr></table></figure>
+
+<p>命名关键字参数和位置参数不同，它必须要传入参数名，否则将报错。命名关键字参数可以有缺省值，类似默认参数。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def person(name, age, *, city=&#x27;Beijing&#x27;, job):</span><br><span class="line">    print(name, age, city, job)</span><br></pre></td></tr></table></figure>
+
+<p>使用命名关键字参数时，要特别注意，如果没有可变参数，就必须加一个 <code>*</code> 作为特殊分隔符。如果缺少 <code>*</code> ，Python 解释器将无法识别位置参数和命名关键字参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def person(name, age, city, job):</span><br><span class="line">    # 缺少 *，city和job被视为位置参数</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure>
+
+<h5 id="参数组合"><a href="#参数组合" class="headerlink" title="参数组合"></a>参数组合</h5><p>在 Python 中定义函数，可以使用必选参数、默认参数、可变参数、关键字参数和命名关键字参数，这五种参数都可以组合使用。但是，参数的定义顺序必须是：***<code>必选参数、默认参数、可变参数、命名关键字参数和关键字参数</code>***</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def f1(a, b, c=0, *args, **kw):</span><br><span class="line">    print(&#x27;a =&#x27;, a, &#x27;b =&#x27;, b, &#x27;c =&#x27;, c, &#x27;args =&#x27;, args, &#x27;kw =&#x27;, kw)</span><br><span class="line"></span><br><span class="line">def f2(a, b, c=0, *, d, **kw):</span><br><span class="line">    print(&#x27;a =&#x27;, a, &#x27;b =&#x27;, b, &#x27;c =&#x27;, c, &#x27;d =&#x27;, d, &#x27;kw =&#x27;, kw)</span><br></pre></td></tr></table></figure>
+
+<p>调用结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; f1(1, 2)</span><br><span class="line">a = 1 b = 2 c = 0 args = () kw = &#123;&#125;</span><br><span class="line">&gt;&gt;&gt; f1(1, 2, c=3)</span><br><span class="line">a = 1 b = 2 c = 3 args = () kw = &#123;&#125;</span><br><span class="line">&gt;&gt;&gt; f1(1, 2, 3, &#x27;a&#x27;, &#x27;b&#x27;)</span><br><span class="line">a = 1 b = 2 c = 3 args = (&#x27;a&#x27;, &#x27;b&#x27;) kw = &#123;&#125;</span><br><span class="line">&gt;&gt;&gt; f1(1, 2, 3, &#x27;a&#x27;, &#x27;b&#x27;, x=99)</span><br><span class="line">a = 1 b = 2 c = 3 args = (&#x27;a&#x27;, &#x27;b&#x27;) kw = &#123;&#x27;x&#x27;: 99&#125;</span><br><span class="line">&gt;&gt;&gt; f2(1, 2, d=99, ext=None)</span><br><span class="line">a = 1 b = 2 c = 0 d = 99 kw = &#123;&#x27;ext&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过一个 tuple 和 dict ，也可以调用上述函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; args = (1, 2, 3, 4)</span><br><span class="line">&gt;&gt;&gt; kw = &#123;&#x27;d&#x27;: 99, &#x27;x&#x27;: &#x27;#&#x27;&#125;</span><br><span class="line">&gt;&gt;&gt; f1(*args, **kw)</span><br><span class="line">a = 1 b = 2 c = 3 args = (4,) kw = &#123;&#x27;d&#x27;: 99, &#x27;x&#x27;: &#x27;#&#x27;&#125;</span><br><span class="line">&gt;&gt;&gt; args = (1, 2, 3)</span><br><span class="line">&gt;&gt;&gt; kw = &#123;&#x27;d&#x27;: 88, &#x27;x&#x27;: &#x27;#&#x27;&#125;</span><br><span class="line">&gt;&gt;&gt; f2(*args, **kw)</span><br><span class="line">a = 1 b = 2 c = 3 d = 88 kw = &#123;&#x27;x&#x27;: &#x27;#&#x27;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此，对于任意函数，均可以使用类似 <code>func(*args,**kw)</code> 的形式进行调用，而不管它的参数是如何定义的。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>Python 的函数具有非常灵活的参数形态，既可以实现简单的调用，又可以传入非常复杂的参数。</p>
+<p>默认参数一定要用不可变对象，如果是可变对象，程序运行时会有逻辑错误！</p>
+<p>要注意定义可变参数和关键字参数的语法：</p>
+<ul>
+<li><code>*args</code> 是可变参数，args 接收的是一个 tuple；</li>
+<li><code>**kw</code> 是关键字参数，kw 接收的是一个 dict。</li>
+</ul>
+<p>以及调用函数时如何传入可变参数和关键字参数的语法：</p>
+<p>可变参数既可以直接传入：func(1, 2, 3)，又可以先组装 list 或 tuple，再通过 <code>*args</code> 传入：func(*(1, 2, 3))；</p>
+<p>关键字参数既可以直接传入：func(a=1, b=2)，又可以先组装dict，再通过 <code>**kw</code> 传入：func(**{‘a’: 1, ‘b’: 2})。</p>
+<p>使用 <code>*args</code> 和 <code>**kw</code> 是 Python 的习惯写法，当然也可以用其他参数名，但最好使用习惯用法。</p>
+<p>命名的关键字参数是为了限制调用者可以传入的参数名，同时可以提供默认值。</p>
+<p>定义命名的关键字参数在没有可变参数的情况下不要忘了写分隔符*，否则定义的将是位置参数。</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2018-12-09 APP 接入 Bugly 热更新</title>
+    <url>/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/</url>
+    <content><![CDATA[<h2 id="APP-接入-Bugly-热更新"><a href="#APP-接入-Bugly-热更新" class="headerlink" title="APP 接入 Bugly 热更新"></a>APP 接入 Bugly 热更新</h2><blockquote>
+<p>公司最近项目在考虑加入热更新能力，综合目前开源的多个项目方案，我们采取了基于 Tinker 封装的 Bugly 热更新解决方案。</p>
+</blockquote>
+<h3 id="热补丁方案对比"><a href="#热补丁方案对比" class="headerlink" title="热补丁方案对比"></a>热补丁方案对比</h3><p>主要参考阿里的 <a href="http://techforum-img.cn-hangzhou.oss-pub.aliyun-inc.com/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2Android%E7%83%AD%E4%BF%AE%E5%A4%8D%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%867.3Q.pdf">深入探索 Android 热修复技术原理</a></p>
+<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/hot_patch_overview.jpg" class="" title="hot_patch_overview.jpg">
+
+<p>我们项目规模小，热修复实际运用场景很少，增加热补丁功能没有后台人力支援，没有项目经费；根据这些实际情况，我们选择了免费开源的 Tinker 项目，并使用了基于 Tinker 的免费后台发布系统 bugly。</p>
+<span id="more"></span>
+
+<h4 id="Tinker-原理"><a href="#Tinker-原理" class="headerlink" title="Tinker 原理"></a>Tinker 原理</h4><p>Tinker 原理用官方的一张图展示</p>
+<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/tinker_theory.png" class="" title="tinker_theory.png">
+
+<h3 id="Bugly-介绍"><a href="#Bugly-介绍" class="headerlink" title="Bugly 介绍"></a>Bugly 介绍</h3><p>Bugly 热更新能力目前采用微信 Tinker 开源方案，无需重新发版即可解决线上问题，同时 Bugly 提供热更新管理后台免费给开发者使用。</p>
+<p>下面是 Bugly 官方给出的一些优势，可参考 <a href="https://bugly.qq.com/docs/user-guide/instruction-manual-android-hotfix/?v=20181014122344">Bugly Android 热更新指南</a> :</p>
+<ul>
+<li>无需关注Tinker是如何合成补丁的</li>
+<li>无需自己搭建补丁管理后台</li>
+<li>无需考虑后台下发补丁策略的任何事情</li>
+<li>无需考虑补丁下载合成的时机，处理后台下发的策略</li>
+<li>提供了更加方便集成Tinker的方式</li>
+<li>通过HTTPS及签名校验等机制保障补丁下发的安全性</li>
+<li>丰富的下发维度控制，有效控制补丁影响范围</li>
+<li>提供了应用升级一站式解决方案</li>
+</ul>
+<h3 id="Bugly-接入"><a href="#Bugly-接入" class="headerlink" title="Bugly 接入"></a>Bugly 接入</h3><h4 id="第一步：添加依赖"><a href="#第一步：添加依赖" class="headerlink" title="第一步：添加依赖"></a>第一步：添加依赖</h4><p>工程根目录下 <code>build.gradle</code> 里添加</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        ...</span><br><span class="line">        classpath &quot;com.tencent.bugly:tinker-support:1.1.5&quot;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="第二步：集成-SDK"><a href="#第二步：集成-SDK" class="headerlink" title="第二步：集成 SDK"></a>第二步：集成 SDK</h4><p>在 app module 下的 <code>build.gradle</code> 文件中添加</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    ...</span><br><span class="line">    // recommend</span><br><span class="line">    dexOptions &#123;</span><br><span class="line">        jumboMode = true</span><br><span class="line">    &#125;</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        ...</span><br><span class="line">        ndk &#123;</span><br><span class="line">            // 设置支持的SO库架构</span><br><span class="line">            abiFilters &#x27;arm64-v8a&#x27;, &#x27;x86&#x27;, &#x27;armeabi-v7a&#x27;, &#x27;x86_64&#x27;</span><br><span class="line">        &#125;</span><br><span class="line">        // 开启multidex</span><br><span class="line">        multiDexEnabled true</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">dependencies &#123;</span><br><span class="line">    ...</span><br><span class="line">    compile &quot;com.android.support:multidex:1.0.1&quot; // 多dex配置</span><br><span class="line">    compile &#x27;com.tencent.bugly:crashreport_upgrade:1.3.6&#x27;</span><br><span class="line">    compile &#x27;com.tencent.tinker:tinker-android-lib:1.9.9&#x27;</span><br><span class="line">    compile &#x27;com.tencent.bugly:nativecrashreport:latest.release&#x27;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 依赖插件脚本</span><br><span class="line">apply from: &#x27;tinker-support.gradle&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>上面最后一行是将 tinker 相关的配置单独抽离出来，便于我们单独统一管理。我们在同级目录下新建 <code>tinker-support.gradle</code> 文件，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">apply plugin: &#x27;com.tencent.bugly.tinker-support&#x27;</span><br><span class="line"></span><br><span class="line">def bakPath = file(&quot;$&#123;buildDir&#125;/bakApk/&quot;)</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 此处填写每次构建生成的基准包目录</span><br><span class="line"> */</span><br><span class="line">def baseApkDir = &quot;app-1205-11-28-48&quot;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 对于插件各参数的详细解析请参考</span><br><span class="line"> */</span><br><span class="line">tinkerSupport &#123;</span><br><span class="line"></span><br><span class="line">    // 开启tinker-support插件，默认值true</span><br><span class="line">    enable = true</span><br><span class="line"></span><br><span class="line">    // 指定归档目录，默认值当前module的子目录tinker</span><br><span class="line">    autoBackupApkDir = &quot;$&#123;bakPath&#125;&quot;</span><br><span class="line"></span><br><span class="line">    // 是否启用覆盖tinkerPatch配置功能，默认值false</span><br><span class="line">    // 开启后tinkerPatch配置不生效，即无需添加tinkerPatch</span><br><span class="line">    overrideTinkerPatchConfiguration = true</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 单渠道apk 打补丁包配置</span><br><span class="line">     */</span><br><span class="line">    // 编译补丁包时，必需指定基线版本的apk，默认值为空</span><br><span class="line">    // 如果为空，则表示不是进行补丁包的编译</span><br><span class="line">    // @&#123;link tinkerPatch.oldApk &#125;</span><br><span class="line">    baseApk = &quot;$&#123;bakPath&#125;/$&#123;baseApkDir&#125;/app-release.apk&quot;</span><br><span class="line"></span><br><span class="line">    // 对应tinker插件applyMapping</span><br><span class="line">    baseApkProguardMapping = &quot;$&#123;bakPath&#125;/$&#123;baseApkDir&#125;/app-release-mapping.txt&quot;</span><br><span class="line"></span><br><span class="line">    // 对应tinker插件applyResourceMapping</span><br><span class="line">    baseApkResourceMapping = &quot;$&#123;bakPath&#125;/$&#123;baseApkDir&#125;/app-release-R.txt&quot;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 多渠道apk 构建补丁时使用</span><br><span class="line">     */</span><br><span class="line">//    buildAllFlavorsDir = &quot;$&#123;bakPath&#125;/$&#123;baseApkDir&#125;&quot;</span><br><span class="line"></span><br><span class="line">    // 构建基准包和补丁包都要指定不同的tinkerId，并且必须保证唯一性</span><br><span class="line">    tinkerId = &quot;patch-1.0.test&quot;</span><br><span class="line"></span><br><span class="line">    // 是否启用加固模式，默认为false.(tinker-spport 1.0.7起支持）</span><br><span class="line">    // isProtectedApp = true</span><br><span class="line"></span><br><span class="line">    // 是否开启反射Application模式</span><br><span class="line">    enableProxyApplication = false</span><br><span class="line"></span><br><span class="line">    // 是否支持新增非export的Activity（注意：设置为true才能修改AndroidManifest文件）</span><br><span class="line">    supportHotplugComponent = true</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 一般来说,我们无需对下面的参数做任何的修改</span><br><span class="line"> * 对于各参数的详细介绍请参考:</span><br><span class="line"> * https://github.com/Tencent/tinker/wiki/Tinker-%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97</span><br><span class="line"> */</span><br><span class="line">tinkerPatch &#123;</span><br><span class="line">    //oldApk =&quot;$&#123;bakPath&#125;/$&#123;appName&#125;/app-release.apk&quot;</span><br><span class="line">    ignoreWarning = false</span><br><span class="line">    useSign = true</span><br><span class="line">    dex &#123;</span><br><span class="line">        dexMode = &quot;jar&quot;</span><br><span class="line">        pattern = [&quot;classes*.dex&quot;]</span><br><span class="line">        loader = []</span><br><span class="line">    &#125;</span><br><span class="line">    lib &#123;</span><br><span class="line">        pattern = [&quot;lib/*/*.so&quot;]</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    res &#123;</span><br><span class="line">        pattern = [&quot;res/*&quot;, &quot;r/*&quot;, &quot;assets/*&quot;, &quot;resources.arsc&quot;, &quot;AndroidManifest.xml&quot;]</span><br><span class="line">        ignoreChange = []</span><br><span class="line">        largeModSize = 100</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    packageConfig &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    sevenZip &#123;</span><br><span class="line">        zipArtifact = &quot;com.tencent.mm:SevenZip:1.1.10&quot;</span><br><span class="line">//        path = &quot;/usr/local/bin/7za&quot;</span><br><span class="line">    &#125;</span><br><span class="line">    buildConfig &#123;</span><br><span class="line">        keepDexApply = false</span><br><span class="line">        //tinkerId = &quot;1.0.1-base&quot;</span><br><span class="line">        //  可选，设置mapping文件，建议保持旧apk的proguard混淆方式</span><br><span class="line">        //applyMapping = &quot;$&#123;bakPath&#125;/$&#123;appName&#125;/app-release-mapping.txt&quot; </span><br><span class="line">        // 可选，设置R.txt文件，通过旧apk文件保持ResId的分配</span><br><span class="line">        //applyResourceMapping = &quot;$&#123;bakPath&#125;/$&#123;appName&#125;/app-release-R.txt&quot; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>注意：</strong></em>详细配置可参考 <a href="https://bugly.qq.com/docs/utility-tools/plugin-gradle-hotfix/">tinker-support 配置说明</a></p>
+<p>这里面有针对单渠道的 apk 打补丁包 以及 多渠道的补丁包，下面会分别介绍。</p>
+<h4 id="第三步-初始化-SDK"><a href="#第三步-初始化-SDK" class="headerlink" title="第三步 初始化 SDK"></a>第三步 初始化 SDK</h4><p>初始化时包含两种接入，即 <code>enableProxyApplication</code> 为 true 和 false 两种情况。</p>
+<p>推荐是 <code>enableProxyApplication=false</code>，有一定的接入成本，但是兼容性更好。</p>
+<blockquote>
+<p><code>enableProxyApplication=false</code> 的情况</p>
+</blockquote>
+<p>主要是做了两件事情</p>
+<ul>
+<li>自定义 Application</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 注意：这个类集成TinkerApplication类，这里面不做任何操作</span><br><span class="line"> * 所有Application的代码都会放到ApplicationLike继承类当中</span><br><span class="line"> * </span><br><span class="line"> * 参数解析：</span><br><span class="line"> * 参数1：int tinkerFlags 表示Tinker支持的类型 </span><br><span class="line"> * 		dex only、library only or all suuport，default: TINKER_ENABLE_ALL</span><br><span class="line"> * 参数2：String delegateClassName Application代理类 </span><br><span class="line"> * 		这里填写你自定义的ApplicationLike</span><br><span class="line"> * 参数3：String loaderClassName  Tinker的加载器，使用默认即可</span><br><span class="line"> * 参数4：boolean tinkerLoadVerifyFlag  加载dex或者lib是否验证md5，默认为false</span><br><span class="line"> */</span><br><span class="line">public class AppApplication extends TinkerApplication &#123;</span><br><span class="line"></span><br><span class="line">    public AppApplication() &#123;</span><br><span class="line">        super(ShareConstants.TINKER_ENABLE_ALL, </span><br><span class="line">        &quot;com.shopee.fms.common.AppApplicationLike&quot;,</span><br><span class="line">        &quot;com.tencent.tinker.loader.TinkerLoader&quot;, false);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里记得在 <code>AndroidManifest.xml</code> 中配置成新的 application</p>
+<p>这里要注意几点：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">- 将我们自己 Application 类以及它的继承类的所有代码拷贝到自己的 ApplicationLike 继承类中</span><br><span class="line">- Application 的 attachBaseContext 方法实现要单独移动到 onBaseContextAttached 中</span><br><span class="line">- 在 ApplicationLike 中，引用 application 的地方改成 getApplication()</span><br><span class="line">- 对其他引用 Application 或它的静态对象与方法的地方，改成引用 ApplicationLike 的静态对象与方法</span><br></pre></td></tr></table></figure>
+
+<p>更详细的可以参考 Tinker 官方的做法 <a href="https://github.com/Tencent/tinker/blob/master/tinker-sample-android/app/src/main/java/tinker/sample/android/app/SampleApplicationLike.java">SampleApplicationLike</a></p>
+<ul>
+<li>自定义 ApplicationLike</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class AppApplicationLike extends DefaultApplicationLike &#123;</span><br><span class="line"></span><br><span class="line">    public static final String TAG = &quot;Tinker.SampleApplicationLike&quot;;</span><br><span class="line">    private static Application app;</span><br><span class="line"></span><br><span class="line">    public AppApplicationLike(Application application, int tinkerFlags,</span><br><span class="line">                              boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime,</span><br><span class="line">                              long applicationStartMillisTime, Intent tinkerResultIntent) &#123;</span><br><span class="line">        super(application, tinkerFlags, tinkerLoadVerifyFlag, </span><br><span class="line">        		applicationStartElapsedTime, </span><br><span class="line">        		applicationStartMillisTime,</span><br><span class="line">         		tinkerResultIntent);</span><br><span class="line">        app = getApplication();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static synchronized Application getApplicationContext() &#123;</span><br><span class="line">        if (app == null) &#123;</span><br><span class="line">            app = new AppApplication();</span><br><span class="line">        &#125;</span><br><span class="line">        return app;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onCreate() &#123;</span><br><span class="line">        super.onCreate();</span><br><span class="line">        initBuglySdk();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)</span><br><span class="line">    @Override</span><br><span class="line">    public void onBaseContextAttached(Context base) &#123;</span><br><span class="line">        super.onBaseContextAttached(base);</span><br><span class="line">        // you must install multiDex whatever tinker is installed!</span><br><span class="line">        MultiDex.install(base)</span><br><span class="line">        // 安装tinker</span><br><span class="line">        // TinkerManager.installTinker(this); 替换成下面Bugly提供的方法</span><br><span class="line">        Beta.installTinker(this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onTerminate() &#123;</span><br><span class="line">        super.onTerminate();</span><br><span class="line">        Beta.unInit();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)</span><br><span class="line">    public void registerActivityLifecycleCallbacks(Application.ActivityLifecycleCallbacks callback) &#123;</span><br><span class="line">        getApplication().registerActivityLifecycleCallbacks(callback);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 初始化 Bugly SDK</span><br><span class="line">     */</span><br><span class="line">    private void initBuglySdk() &#123;</span><br><span class="line"></span><br><span class="line">        // 设置是否开启热更新能力，默认为true</span><br><span class="line">        Beta.enableHotfix = true;</span><br><span class="line">        // 设置是否自动下载补丁，默认为true</span><br><span class="line">        Beta.canAutoDownloadPatch = true;</span><br><span class="line">        // 设置是否自动合成补丁，默认为true</span><br><span class="line">        Beta.canAutoPatch = true;</span><br><span class="line">        // 设置是否提示用户重启，默认为false</span><br><span class="line">        Beta.canNotifyUserRestart = true;</span><br><span class="line">        // 设置开发设备，默认为false，上传补丁如果下发范围指定为“开发设备”，需要调用此接口来标识开发设备</span><br><span class="line">        Bugly.setIsDevelopmentDevice(getApplication(), true);</span><br><span class="line"></span><br><span class="line">//        CrashReport.initCrashReport(getApplication(), &quot;a3a0d5c1aa&quot;, true);</span><br><span class="line">        Bugly.init(getApplication(), &quot;a3a0d5c1aa&quot;, true);</span><br><span class="line">        </span><br><span class="line">        Task.callInBackground(new Callable&lt;Void&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Void call() throws Exception &#123;</span><br><span class="line">                String userId = LoginInstance.getInstance().getUserUid() </span><br><span class="line">                + &quot;:&quot; + LoginInstance.getInstance().getUserPhone();</span><br><span class="line">                if (!TextUtils.isEmpty(userId)) &#123;</span><br><span class="line">                    CrashReport.setUserId(userId);</span><br><span class="line">                &#125;</span><br><span class="line">                return null;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><em><strong>注意</strong></em></p>
+<p>如果之前有集成过 bugly 的 crash 上报，这里需要统一采用 <code>Bugly.init(getApplication(), &quot;bugly注册分配的appid&quot;, true)</code> 的方式初始化</p>
+<blockquote>
+<p><code>enableProxyApplication=true</code> 的情况</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class MyApplication extends Application &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onCreate() &#123;</span><br><span class="line">        super.onCreate();</span><br><span class="line">        // 这里实现SDK初始化，appId替换成你的在Bugly平台申请的appId</span><br><span class="line">        // 调试时，将第三个参数改为true</span><br><span class="line">        Bugly.init(this, &quot;appId&quot;, false);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void attachBaseContext(Context base) &#123;</span><br><span class="line">        super.attachBaseContext(base);</span><br><span class="line">        // you must install multiDex whatever tinker is installed!</span><br><span class="line">        MultiDex.install(base);</span><br><span class="line">        // 安装tinker</span><br><span class="line">        Beta.installTinker();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>无须改造 Application，插件会自动反射来替换 Manifest 中的 Application 为真实的 Application</p>
+<h4 id="第四步-AndroidManifest-xml-配置"><a href="#第四步-AndroidManifest-xml-配置" class="headerlink" title="第四步 AndroidManifest.xml 配置"></a>第四步 AndroidManifest.xml 配置</h4><p>#####权限配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.permission.READ_PHONE_STATE&quot; /&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot; /&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.READ_LOGS&quot; /&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Activity-配置以及-FileProvider-配置用于应用升级，我们只使用热更新，因此这里可不用处理"><a href="#Activity-配置以及-FileProvider-配置用于应用升级，我们只使用热更新，因此这里可不用处理" class="headerlink" title="Activity 配置以及 FileProvider 配置用于应用升级，我们只使用热更新，因此这里可不用处理"></a>Activity 配置以及 FileProvider 配置用于应用升级，我们只使用热更新，因此这里可不用处理</h5><p>如若需要，请参考 <a href="https://bugly.qq.com/docs/user-guide/instruction-manual-android-hotfix/?v=20181014122344">Android 热更新使用指南</a></p>
+<h4 id="第五步-混淆配置"><a href="#第五步-混淆配置" class="headerlink" title="第五步 混淆配置"></a>第五步 混淆配置</h4><p>混淆文件中配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-dontwarn com.tencent.bugly.**</span><br><span class="line">-keep public class com.tencent.bugly.**&#123;*;&#125;</span><br><span class="line"># tinker混淆规则</span><br><span class="line">-dontwarn com.tencent.tinker.**</span><br><span class="line">-keep class com.tencent.tinker.** &#123; *; &#125;</span><br><span class="line"> -keep class android.support.**&#123;*;&#125;//如果使用了 support-v4 包</span><br></pre></td></tr></table></figure>
+
+<h3 id="打补丁包"><a href="#打补丁包" class="headerlink" title="打补丁包"></a>打补丁包</h3><p>前面讲了如何接入，下面我们来讲解下怎么生成补丁文件，上传补丁以及应用补丁等。</p>
+<p><em><strong>单渠道打补丁包模式</strong></em></p>
+<p>单渠道情况下，在打包发布 apk 时需要设置 tinkerid，便于后续可能需要打补丁使用。</p>
+<p>此 tinkerid 需要保证唯一，在生成基准包（即将发布的包）后，需要将对应的 apk、mapping 文件、R 文件保存。</p>
+<p><strong>1. 生成正式发布包（基准包）</strong></p>
+<p>如下图所示，这些都是在生成正式发布包时注意的。</p>
+<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/single_channel_base_apk.jpg" class="" title="single_channel_base_apk.jpg">
+
+<p><strong>2. 正式包出问题时，生成补丁文件</strong></p>
+<p>需要生成补丁文件时，需要修改 <code>tinker-support.gradle</code> 脚本文件。详细说明如图所示：</p>
+<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/single_channel_patch_apk.jpg" class="" title="single_channel_patch_apk.jpg">
+
+<p><strong>3. 上传补丁文件并下发用户</strong></p>
+<p>在 bugly 官网，找到对应的产品热更新模块，如图所示操作，用户重启 app 即可修复。</p>
+<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/upload_patch_on_bugly.jpg" class="" title="upload_patch_on_bugly.jpg">
+
+<p><em><strong>注意：这里选择文件上传时可能会报错，没有对应版本。这是因为需要目标 apk 进行联网，将 tinkerid 上报，后台才能识别到。当然正式包上线，这里肯定有联网会匹配到目标版本；如果是自己测试，需要注意这一点。</strong></em></p>
+<p><em><strong>多渠道打补丁包模式</strong></em></p>
+<p>前面介绍了单渠道模式下的补丁包生成过程，大部分情况下我们还是有很多渠道包的，可以看看这篇文章 <a href="https://buglydevteam.github.io/2017/05/15/solution-of-multiple-channel-hotpatch/">Bugly多渠道热更新解决方案</a>。</p>
+<p>多渠道打包官方原生支持是 productFlavors，这种方式每打一个渠道包需要全部编译一次，因此效率比较低。</p>
+<p>bugly 官方这里推荐使用美团的多渠道打包组件 <a href="https://github.com/Meituan-Dianping/walle">walle</a>，只需要修改 apk signature block 来添加自定义的渠道信息即可生成渠道包，速度非常快。</p>
+<p>考虑到我们项目多渠道包主要针对不同国家版本，每个国家一个渠道包，虽然整体代码是同一套，但是不同渠道线上版本不能保证一致，因此无法通过一个补丁完成所有渠道修复工作。这里我们项目采用的是 productFlavors 这种方式。</p>
+<p><strong>1. 多渠道生成正式发布包（基准包）</strong></p>
+<p>如图所示：</p>
+<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/multiple_channel_base_apk.jpg" class="" title="multiple_channel_base_apk.jpg">
+
+<p><strong>2. 生成补丁文件</strong></p>
+<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/multiple_channel_patch_apk.jpg" class="" title="multiple_channel_patch_apk.jpg">
+
+<p><strong>3. 上传补丁文件并下发用户</strong><br>这里和单渠道类似，只不过是针对每个渠道单独上传配置下发。</p>
+<p><em><strong>另外说明</strong></em></p>
+<p>1.tinkerid 是 tinker 识别每一个 apk 包的唯一标识，它被写入到 <code>AndroidManifest</code> 文件中。</p>
+<p>补丁文件中的 <code>YAPATCH.MF</code> 包含目标版本和补丁版本的相关信息，用于补丁生效使用。</p>
+<img src="/2018-12-09-APP-%E6%8E%A5%E5%85%A5-Bugly-%E7%83%AD%E6%9B%B4%E6%96%B0/tinkerid_in_apk.jpg" class="" title="tinkerid_in_apk.jpg">
+
+<p>2.如果生成补丁包时报错 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Execution failed for task &#x27;:app:tinkerProcessReleaseResourceId&#x27;. &gt; </span><br><span class="line">java.io.FileNotFoundException: build\intermediates\tinker_intermediates\values_backup</span><br></pre></td></tr></table></figure>
+
+<p>这个时候可以备份下基准文件，然后 clean 项目后再重新打补丁包即可，可以参考这个 <a href="https://github.com/Tencent/tinker/issues/961">issue</a></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>bugly 提供了一系列相关接口方法，如是否通知用户重启、如何打加固包等，更多详情可参考：</p>
+<ol>
+<li><a href="https://bugly.qq.com/docs/user-guide/instruction-manual-android-hotfix/?v=20180709165613">Bugly 热更新使用指南</a></li>
+<li><a href="https://github.com/BuglyDevTeam/Bugly-Android-Demo">Bugly Android Demo</a></li>
+<li><a href="https://bugly.qq.com/docs/user-guide/faq-android-hotfix/?v=20170504092424">Bugly 热更新常见问题</a></li>
+<li><a href="https://bugly.qq.com/docs/user-guide/api-hotfix/?v=20170504092424">Bugly 热更新常用 API</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>bugly</tag>
+        <tag>tinker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2018-12-10 Mac 配置多个 git 账户</title>
+    <url>/2018-12-10-Mac-%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AA-git-%E8%B4%A6%E6%88%B7/</url>
+    <content><![CDATA[<blockquote>
+<p>公司工作使用 Gitlab，自己需要使用 Github，那么该如何在同一台 Mac 上配置多个账号呢</p>
+</blockquote>
+<h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><p>ssh 方式链接到 Github/Gitlab,需要使用唯一的公钥，因此同一台 Mac 绑定多个账号，需要满足两个条件：</p>
+<ul>
+<li>生成对应的私钥/公钥</li>
+<li>设置不同的 Host 和 HostName 配置</li>
+<li>为每个仓库独立配置 用户名/用户邮箱</li>
+</ul>
+<span id="more"></span>
+
+<h4 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h4><p>1.命令行里输入 <code>ls ~/.ssh</code>,查看目前已有的密钥，如果有 <code>id_rsa</code> 和 <code>id_rsa.pub</code>，说明已经有了一对密钥。我的 mac 是已经有了 Gitlab 的密钥</p>
+<p>2.生成新的密钥：</p>
+<p><code>ssh-keygen -t rsa -f ~/.ssh/id_rsa_github_bashellwang -C &quot;youremail@xx.com&quot;</code></p>
+<p>生成密钥后，我的 ssh 目录下如图所示：</p>
+<img src="/2018-12-10-Mac-%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AA-git-%E8%B4%A6%E6%88%B7/file_in_ssh.jpg" class="" title="file_in_ssh.jpg">
+
+<p>3.在 <code>.ssh</code> 文件夹下新建 <code>config</code> 目录（如果没有的话），进行内容编辑如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># gitlab shopee</span><br><span class="line">                                                             </span><br><span class="line">Host gitlab.com</span><br><span class="line">HostName gitlab.com</span><br><span class="line">User git</span><br><span class="line">IdentityFile ~/.ssh/id_rsa</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># gitHub bashellwang</span><br><span class="line">                                                                        </span><br><span class="line">Host github.com</span><br><span class="line">HostName github.com</span><br><span class="line">User git</span><br><span class="line">IdentityFile ~/.ssh/id_rsa_github_bashellwang</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><p>将生成的新密钥 <code>id_rsa_github_bashellwang.pub</code> 中内容复制到 Github </p>
+</li>
+<li><p>测试连接</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li>将 Github 项目 clone 到本地，然后进入项目文件夹设置 用户名/邮箱</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config user.name &quot;xxx&quot;</span><br><span class="line">git config user.email &quot;xxx@xxx.com&quot;</span><br></pre></td></tr></table></figure>
+
+<p>由于工作用到 Gitlab 比较多，因此全局设置的公司账号，GitHub 的仓库则是单独设置的 用户名/邮箱，这样即可两个账号使用了。</p>
+]]></content>
+      <tags>
+        <tag>github</tag>
+        <tag>gitlab</tag>
+        <tag>mac</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android 内存优化</title>
+    <url>/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/</url>
+    <content><![CDATA[<blockquote>
+<p>前言：App 的内存使用情况是我们评价 App 性能高低的一个重要指标，为了提高 App 的质量，提供用户更良好的体验，需要我们对 App 的内存使用有一定的控制。因此，内存优化也是我们开发过程中不可避免的一个工作。本文将从内存优化的背景知识、内存优化工具、常见内存泄漏类型及解决方案等方面做一个简单介绍。</p>
+</blockquote>
+<blockquote>
+<p>注：目前 Android Studio 已到最新版 3.2.1，部分内存分析工具已被官方废弃或移除，本文将以 Studio 最新版进行内存优化的相关介绍说明。 </p>
+</blockquote>
+<h3 id="Java-内存基础知识介绍"><a href="#Java-内存基础知识介绍" class="headerlink" title="Java 内存基础知识介绍"></a>Java 内存基础知识介绍</h3><h4 id="Java-内存分配策略"><a href="#Java-内存分配策略" class="headerlink" title="Java 内存分配策略"></a>Java 内存分配策略</h4><p>Java 程序运行时会把它所管理的内存划分为若干个不同的数据区域，这些数据区域各有用途。主要分为下面几个部分：</p>
+<ul>
+<li>静态存储区（方法区）：主要存放已被虚拟机加载的类信息、常量、静态变量等。这块内存在程序编译时就已经分配好，并且在程序整个运行期间都存在。</li>
+<li>栈区：方法体内的局部变量（一些基本类型的变量和对象的引用变量）都在栈上创建，并在方法执行结束时这些局部变量所持有的内存将会被自动释放</li>
+<li>堆区：又称动态内存分配区，主要用来存放 Java 对象实例（包括该对象其中的所有成员变量）和数组。它们不再使用时，由 Java 垃圾回收器来负责回收。在堆中产生了一个数组或者对象后，还可以在栈中定义一个特殊的变量，这个变量的取值等于数组或者对象在堆内存中的首地址，这个特殊的变量就是我们上面说的引用变量。我们可以通过这个引用变量来访问堆中的对象或者数组。</li>
+</ul>
+<span id="more"></span>
+
+<h4 id="Java-内存释放策略"><a href="#Java-内存释放策略" class="headerlink" title="Java 内存释放策略"></a>Java 内存释放策略</h4><p>Java 内存的分配由程序员来处理，内存的释放则由 GC(垃圾回收机制)来负责。程序员不需要通过调用函数来释放内存，也因此带来了内存泄漏的可能</p>
+<blockquote>
+<p>静态分配不需要释放，栈式内存分配仅通过帧栈自动出入栈，这里不讨论</p>
+</blockquote>
+<h5 id="Generational-Heap-Memory-内存模型"><a href="#Generational-Heap-Memory-内存模型" class="headerlink" title="Generational Heap Memory 内存模型"></a>Generational Heap Memory 内存模型</h5><p>在 Android 和 Java 中都存在着一个 Generational Heap Memory 模型，系统会根据内存中不同的内存数据类型分别执行不同的 GC 操作。Generational Heap Memory 模型也叫三级 Generation 内存模型，主要由由以下区域组成：</p>
+<ul>
+<li>Young Generation（新生代）</li>
+<li>Old Generation（老年代）</li>
+<li>Permanent Generation（持久代）</li>
+</ul>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/generational_heap_memory.png" class="" title="generational_heap_memory.png">
+
+<p>Young Generation 存放最近被创建的对象，当对象在该区域停留到一定时间，它会被移动到 Old Generation 区域，同理，也会被移动到 Permanent Generation 区域。新生代区域创建快，销毁也很快。</p>
+<p>在三级内存模型中，每一个区域的大小都是有固定值的，当进入到该区域的内存对象大小超过阈值时就会触发 GC 机制，进行内存回收。不仅如此，不同区域的 GC 时间也是不同的。</p>
+<p>同等对象数目下，新生代所需时间最短，老年代次之，持久代需要的时间最长。当然 GC 执行的长短也和当前 Generation 区域中的对象数目有关。数量越多，GC 时间越久。</p>
+<h5 id="判定对象是否存活"><a href="#判定对象是否存活" class="headerlink" title="判定对象是否存活"></a>判定对象是否存活</h5><p>内存对象释放的原则就是<code>『对象不再被引用』</code>，垃圾收集器在对堆进行回收前，需要确定哪些对象还 “存活” 着。</p>
+<ul>
+<li>引用计数法：给对象添加一个引用计数器，每当有一个地方引用它时，计数器值就加 1；当引用失效时，计数器值就减 1；任何时刻计数器为 0 的对象就是不可能再被使用的。该算法实现简单，判定效率也很高，但是由于它很难解决对象之间相互循环引用的问题，因而在主流的 Java 虚拟机里没有选用它来管理内存。</li>
+<li>可达性分析算法：通过一系列的称为 “GC Roots” 的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到 GC Roots 没有任何引用链时，则证明该对象是不可用的。目前主流商用程序语言的主流实现中，都是通过该算法来判定对象是否存活的。</li>
+</ul>
+<h5 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h5><p>内存释放的核心是垃圾回收算法，我们这里介绍最常见的几种垃圾回收算法。</p>
+<ul>
+<li>标记-清除算法：首先标记出所有需要回收的对象，在标记完成后统一回收所有被标记的对象。</li>
+<li>复制算法：将可用内存按容量划分为大小相等的两块，每次只使用其中一块。当这一块内存用完了，就将还存活的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。</li>
+<li>标记-整理算法：首先标记出所有需要回收的对象，然后让所有存货的对象都向一端移动，之后直接清理掉端边界以外的内存。</li>
+<li>分代收集算法：根据对象存活周期不同将 Java 堆分为新生代和老年代，然后根据每个区域特点选择对应的垃圾收集算法。</li>
+</ul>
+<p><strong>标记-清除算法</strong>：是最基础的收集算法，后续的收集算法都是基于这种思路并对其不足进行改进而得到的。它的主要不足有两个：一是效率问题，标记和清除两个过程的效率都不高；另一个是空间问题，标记清除后会产生大量不连续的内存碎片，空间碎片太多可能会导致以后在程序运行过程中需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。</p>
+<p><strong>复制算法</strong>：实现简单，运行高效，它每次回收内存一半区域解决了标记-清除算法中清除效率低的问题；将已使用内存的存活对象移动到栈顶，按顺序分配内存解决了产生不连续空间碎片的问题。但是代价是内存缩小为原来的一半，代价太高了。当存活对象较高时，此时需要很多复制操作，效率会变低。<code>该算法一般被用来回收新生代数据。</code></p>
+<p><strong>标记-整理算法</strong>：该算法一次清除端外区域解决了标记-清除算法中清除效率低的问题；将已使用内存的存活对象移动到栈顶，按顺序分配内存解决了产生不连续空间碎片的问题。<code>该算法一般被用来回收老年代数据。</code></p>
+<p><strong>分代收集算法</strong>：效率高，空间利用率高。新生代和老年代分别采用复制算法，“标记-清除”或“标记-整理”算法。<code>虚拟机基本都采用这种算法</code></p>
+<h3 id="内存分析工具"><a href="#内存分析工具" class="headerlink" title="内存分析工具"></a>内存分析工具</h3><p>在掌握了基本的内存管理相关的知识后，我们需要对 App 进行分析找到内存占用大头，找到的异常内存占用越多，那么我们的优化效果就越明显。</p>
+<p>之前的好多内存分析工具在 Android Studio 最新版 3.2.1 中已经被<a href="https://developer.android.com/studio/profile/monitor">移除</a>，取而代之的是 <a href="https://developer.android.com/studio/profile/memory-profiler">memory-profiler</a> 。</p>
+<h4 id="Memory-Profile-工具"><a href="#Memory-Profile-工具" class="headerlink" title="Memory Profile 工具"></a>Memory Profile 工具</h4><p><a href="https://developer.android.com/studio/profile/memory-profiler">memory-profiler</a> 是 Android Profiler 中的一个组件，可以帮助我们识别应用卡顿、冻结甚至崩溃的内存泄漏和流失。</p>
+<h5 id="如何开启-Memory-Profiler"><a href="#如何开启-Memory-Profiler" class="headerlink" title="如何开启 Memory Profiler"></a>如何开启 Memory Profiler</h5><ul>
+<li>点击 <code>View &gt; Tool Windows &gt; Android Profiler</code>（也可以点击工具栏中的 Android Profiler ）。</li>
+<li>从 Android Profiler 工具栏中选择您想要分析的设备和应用进程。 如果您通过 USB 连接了某个设备但该设备未在设备列表中列出，请确保您已启用 USB 调试。</li>
+<li>点击 **MEMORY **时间线中的任意位置可打开 Memory Profiler。</li>
+</ul>
+<h5 id="面板说明"><a href="#面板说明" class="headerlink" title="面板说明"></a>面板说明</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-overview.png" class="" title="memory-profiler-overview.png">
+
+<p>如图所示，Memory Profiler 默认视图包含以下各项：</p>
+<ol>
+<li>用于强制执行垃圾回收 Event 的按钮。</li>
+<li>用于捕获堆转储的按钮。</li>
+<li>用于记录内存分配情况的按钮。 此按钮仅在连接至运行 Android 7.1 或更低版本的设备时才会显示。</li>
+<li>用于放大/缩小时间线的按钮。</li>
+<li>用于跳转至实时内存数据的按钮。</li>
+<li>Event 时间线，其显示 Activity 状态、用户输入 Event 和屏幕旋转 Event。</li>
+<li>内存使用量时间线，其包含以下内容：<ul>
+<li>一个显示每个内存类别使用多少内存的堆叠图表，如左侧的 y 轴以及顶部的彩色键所示。</li>
+<li>虚线表示分配的对象数，如右侧的 y 轴所示。</li>
+<li>用于表示每个垃圾回收 Event 的图标</li>
+</ul>
+</li>
+</ol>
+<h5 id="指标参数说明"><a href="#指标参数说明" class="headerlink" title="指标参数说明"></a>指标参数说明</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profiler-number.png" class="" title="memory-profiler-number.png">
+
+<p>如图所示，内存计数中类别如下：</p>
+<ul>
+<li><p><strong>Java</strong>：从 Java 或 Kotlin 代码分配的对象内存。</p>
+</li>
+<li><p><strong>Native</strong>：从 C 或 C++ 代码分配的对象内存。</p>
+<p>  即使您的应用中不使用 C++，您也可能会看到此处使用的一些原生内存，因为 Android 框架使用原生内存代表您处    理各种任务，如处理图像资源和其他图形时，即使您编写的代码采用 Java 或 Kotlin 语言。</p>
+</li>
+<li><p><strong>Graphics</strong>：图形缓冲区队列向屏幕显示像素（包括 GL 表面、GL 纹理等等）所使用的内存。 （请注意，这是与 CPU 共享的内存，不是 GPU 专用内存。）</p>
+</li>
+<li><p><strong>Stack</strong>： 您的应用中的原生堆栈和 Java 堆栈使用的内存。 这通常与您的应用运行多少线程有关。</p>
+</li>
+<li><p><strong>Code</strong>：您的应用用于处理代码和资源（如 dex 字节码、已优化或已编译的 dex 码、.so 库和字体）的内存。</p>
+</li>
+<li><p><strong>Other</strong>：您的应用使用的系统不确定如何分类的内存。</p>
+</li>
+<li><p><strong>Allocated</strong>：您的应用分配的 Java/Kotlin 对象数。 它没有计入 C 或 C++ 中分配的对象。</p>
+</li>
+</ul>
+<p>当连接至运行 Android 7.1 及更低版本的设备时，此分配仅在 Memory Profiler 连接至您运行的应用时才开始计数。 因此，您开始分析之前分配的任何对象都不会被计入。 不过，Android 8.0 附带一个设备内置分析工具，该工具可记录所有分配，因此，在 Android 8.0 及更高版本上，此数字始终表示您的应用中待处理的 Java 对象总数。</p>
+<h5 id="查看内存区域"><a href="#查看内存区域" class="headerlink" title="查看内存区域"></a>查看内存区域</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-see-useage.png" class="" title="memory-profile-see-useage.png">
+
+<p>在点击并按住时间线，并拖动选择您想要查看分配的区域之后，已分配对象的列表将显示在时间线下方，默认按类名称分类，并按堆计数排好序。</p>
+<ol>
+<li>浏览列表以查找堆计数异常大且可能存在泄漏的对象。 为帮助查找已知类，点击 Class Name 列标题以按字母顺序排序。 然后点击一个类名称。 此时在右侧将出现 Instance View 窗格，显示该类的每个实例，如图中所示。</li>
+<li>在 Instance View 窗格中，点击一个实例。 此时下方将出现 Call Stack 标签，显示该实例被分配到何处以及哪个线程中。</li>
+<li>在 Call Stack 标签中，点击任意行以在编辑器中跳转到该代码。</li>
+</ol>
+<p>默认情况下，左侧的分配列表按类名称排列。 在列表顶部，您可以使用右侧的下拉列表在以下排列方式之间进行切换：</p>
+<ul>
+<li><strong>Arrange by class</strong>：基于类名称对所有分配进行分组。</li>
+<li><strong>Arrange by package</strong>：基于软件包名称对所有分配进行分组。</li>
+<li><strong>Arrange by callstack</strong>：将所有分配分组到其对应的调用堆栈。</li>
+</ul>
+<h5 id="捕获堆转储"><a href="#捕获堆转储" class="headerlink" title="捕获堆转储"></a>捕获堆转储</h5><img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-dump.png" class="" title="memory-profile-dump.png">
+
+<p>在点击 Dump Java Heap 按钮后，Studio 会自动记录一段时间内的 Java Heap，如图所示，这里我们可以看到很多信息。</p>
+<p>在类列表，可以查看下吗信息：</p>
+<ul>
+<li><strong>Heap Count</strong>：堆中的实例数。</li>
+<li><strong>Shallow Size</strong>：此堆中所有实例的总大小（以字节为单位）。</li>
+<li><strong>Retained Size</strong>：为此类的所有实例而保留的内存总大小（以字节为单位）。</li>
+</ul>
+<p>在类列表顶部，可以使用左侧下拉列表在以下堆转储之间进行切换：</p>
+<ul>
+<li><strong>Default heap</strong>：系统未指定堆时。</li>
+<li><strong>App heap</strong>：您的应用在其中分配内存的主堆。</li>
+<li><strong>Image heap</strong>：系统启动映像，包含启动期间预加载的类。 此处的分配保证绝不会移动或消失。</li>
+<li><strong>Zygote heap</strong>：写时复制堆，其中的应用进程是从 Android 系统中派生的。</li>
+</ul>
+<p>在 Instance View 中，每个实例都包含以下信息：</p>
+<ul>
+<li><strong>Depth</strong>：从任意 GC 根到所选实例的最短 hop 数。</li>
+<li><strong>Shallow Size</strong>：此实例的大小。</li>
+<li><strong>Retained Size</strong>：此实例支配的内存大小（根据 <a href="https://en.wikipedia.org/wiki/Dominator_(graph_theory)">dominator 树</a>）。</li>
+</ul>
+<h5 id="堆转储另存为-HPROF"><a href="#堆转储另存为-HPROF" class="headerlink" title="堆转储另存为 HPROF"></a>堆转储另存为 HPROF</h5><p>我们之前查看堆转储时都是在设备连接在 Studio 上进行的，如果我们设备不在了，或者需要将堆转储发给其它人，就需要将堆转储另存为 HPROF 文件了。</p>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/memory-profile-save-hprof.png" class="" title="memory-profile-save-hprof.png">
+
+<p>如图所示，在 Sessions 面板下，可以点击保存图标或者右键我们要保存的 Heap Dump 即可保存为 HPROF 文件了。然后在 Studio 中即可双击打开分析了。</p>
+<p>如果需要使用到其它的 HPROF 分析器，则需要将 HPROF 文件从 Android 格式转换为 Java SE HPROF 格式。 我们可以使用 <code>android_sdk/platform-tools/</code> 目录中提供的 <code>hprof-conv</code> 工具执行此操作。 运行包括以下两个参数的 hprof-conv 命令：<code>原始 HPROF 文件和转换后 HPROF 文件的写入位置</code>。 例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hprof-conv heap-original.hprof heap-converted.hprof</span><br></pre></td></tr></table></figure>
+
+<p>Memory Profiler 的功能十分强大，需要在实际使用中不断熟悉，总结经验</p>
+<h4 id="MAT"><a href="#MAT" class="headerlink" title="MAT"></a>MAT</h4><p>虽然 Memory Profile 功能很强大，能够满足大部分需求，但是在需要更详细的分析时，还是需要借用 Eclipse 的 <a href="https://www.eclipse.org/mat/">MAT</a> 来分析。</p>
+<p>MAT 有独立的不依赖 Eclipse 的版本可供使用，<a href="https://www.eclipse.org/mat/downloads.php">下载地址</a>，<a href="https://wiki.eclipse.org/MemoryAnalyzer">官方文档</a>, <a href="https://help.eclipse.org/luna/index.jsp?topic=/org.eclipse.mat.ui.help/tasks/analyzingjavacollectionusage.html">Introduction</a>。</p>
+<p>这里有一篇讲解很详细的博文可参考：<a href="https://blog.csdn.net/yxz329130952/article/details/50288145">利用 MAT 进行内存泄漏分析</a></p>
+<h5 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h5><p>在获取了 HPROF 文件后，通过 MAT 打开就可以直观的看到当前的内存信息。一般来说，包含以下这些信息：</p>
+<ul>
+<li>所有的对象信息，包括对象实例、成员变量、存储于栈中的基本类型值和存储于堆中的其他对象的引用值。</li>
+<li>所有的类信息，包括classloader、类名称、父类、静态变量等</li>
+<li>GCRoot 到所有的这些对象的引用路径</li>
+<li>线程信息，包括线程的调用栈及此线程的线程局部变量（TLS）</li>
+</ul>
+<p>通过 Android Studio 保存的 HPROF 文件无法直接通过 MAT 打开，需要使用 <code>hprof-conv</code> 转换，转换后打开的界面如下图所示：</p>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-overview.png" class="" title="mat-overview.png">
+
+<h5 id="Dorminator-Tree"><a href="#Dorminator-Tree" class="headerlink" title="Dorminator Tree"></a>Dorminator Tree</h5><p>支配树可以直观反映一个对象的 retained heap，会将所有内存中的对象按大小进行排序，并且我们可以分析对象之间的引用结构。</p>
+<ul>
+<li>shallow heap:指的是某一个对象所占内存大小。</li>
+<li>retained heap:指的是一个对象的 retained set所包含对象所占内存的总大小。</li>
+</ul>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-dorminator-tree.png" class="" title="mat-dorminator-tree.png">
+
+<h5 id="Histogram"><a href="#Histogram" class="headerlink" title="Histogram"></a>Histogram</h5><p>以直方图的方式来显示当前内存使用情况可能更加适合较为复杂的内存泄漏分析，它默认直接显示当前内存中各种类型对象的数量及这些对象的 shallow heap 和 retained heap 。结合 MAT 提供的不同显示方式，往往能够直接定位问题，当我们切换到 histogram 视图下时，如图所示</p>
+<img src="/2019-01-03-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/mat-histogram.png" class="" title="mat-histogram.png">
+
+<p>通常我们可以在怀疑的对象上，右键选择 list objects -&gt; with incoming reference ，从而可以获取到达 GC Roots 的最短引用路径，以此来判定是哪里在引用导致的内存没被回收。</p>
+<h5 id="两个-HPROF-文件对比"><a href="#两个-HPROF-文件对比" class="headerlink" title="两个 HPROF 文件对比"></a>两个 HPROF 文件对比</h5><p>通过对比两个 HPROF 文件，可以知道两个版本之间，内存的增量在哪些地方</p>
+<h4 id="LeakCanary-工具"><a href="#LeakCanary-工具" class="headerlink" title="LeakCanary 工具"></a>LeakCanary 工具</h4><p><a href="https://github.com/square/leakcanary">LeakCanary</a> 是开源大户 Square 提供的给 Android 和 Java 做内存泄漏检测的库。它的优势是集成简单，易于发现问题，检测结果可视化</p>
+<p>更多详情可参考 <a href="https://github.com/square/leakcanary/wiki/FAQ">FAQ</a></p>
+<h3 id="内存优化排查套路"><a href="#内存优化排查套路" class="headerlink" title="内存优化排查套路"></a>内存优化排查套路</h3><p>内存优化最核心的就是需要尽可能多的找到异常内存占用，找到的异常占用越多，异常占用越大，我们优化后的效果就会越好。</p>
+<p>这里简单介绍下我的内存优化排查套路，由简单到复杂：</p>
+<ol>
+<li>Android lint 扫描，对扫描出来的内存泄漏、循环体内字符串拼接等进行修复</li>
+<li>bugly 等异常上报系统上报的 OOM 修复</li>
+<li>leakcanary 检查出的内存泄漏</li>
+<li>图片相关</li>
+<li>静态内存分析优化</li>
+<li>动态内存分析优化</li>
+</ol>
+<p>通过前三步可以将一些很明显的内存泄漏的问题给修复掉；然后是修复图片相关的，下一节会给出解决方案。</p>
+<p>静态内存分析是整个 App 运行期都存在的那部分内存，分析方法是：打开 App 大量重度使用，然后回到首页，进开发者选项打开 “不保留后台活动”，之后 App 退到后台。最后 gc 并 dump 出内存快照进行分析。</p>
+<p>动态内存分析就是分析每个页面运行时的内存状态，这一部分是随着 App 运行而不断变化的内存，主要有两种方式：</p>
+<ul>
+<li>导出每个页面的内存快照，并和上一个页面进行对比，针对性的优化处理</li>
+<li>通过 USB 连接设备，在 Memory Profiler 里实时观察每个页面的内存变化情况，对异常内存变化进行分析</li>
+</ul>
+<h3 id="常见内存问题及解决"><a href="#常见内存问题及解决" class="headerlink" title="常见内存问题及解决"></a>常见内存问题及解决</h3><p>根据经验，内存优化中的大头主要是两个：<strong>内存泄漏和图片</strong>，除了这两个之外还有一些其他常见的内存优化点</p>
+<ul>
+<li>内存泄漏</li>
+<li>图片 Bitmap 相关</li>
+<li>内存抖动</li>
+<li>其它</li>
+</ul>
+<p>下面分别介绍下各个常见内存问题场景及解决方案</p>
+<h4 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h4><p>内存泄漏应该是最常见的内存问题了，这里简单介绍下 <a href="https://blog.csdn.net/u010687392/article/details/49909477">Android 性能优化之常见的内存泄漏</a></p>
+<ul>
+<li>单例</li>
+<li>静态变量</li>
+<li>Handler 内存泄漏</li>
+<li>非静态内部类创建静态实例：通过静态变量持有内部类对象的引用，也会发生内存泄漏</li>
+<li>匿名内部类</li>
+<li>资源使用完未关闭：SensorManager以及广播接收器，对于使用了 BraodcastReceiver，ContentObserver，File， Cursor，Stream，Bitmap 等资源的使用，应该在 Activity 销毁时及时关闭或者注销，否则这些资源将不会被回收，造成内存泄漏</li>
+<li>不良代码</li>
+</ul>
+<h5 id="单例导致的内存泄漏"><a href="#单例导致的内存泄漏" class="headerlink" title="单例导致的内存泄漏"></a>单例导致的内存泄漏</h5><p>单例的静态特性使得单例的生命周期和 App 生命周期一样长，因此如果一个对象不再被使用，但是单例对象持有了该对象的引用，则会导致该对象无法被释放，从而导致内存泄漏。举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class AppManager &#123;</span><br><span class="line">    private static AppManager instance;</span><br><span class="line">    private Context context;</span><br><span class="line">    private AppManager(Context context) &#123;</span><br><span class="line">        this.context = context;</span><br><span class="line">    &#125;</span><br><span class="line">    public static AppManager getInstance(Context context) &#123;</span><br><span class="line">        if (instance != null) &#123;</span><br><span class="line">            instance = new AppManager(context);</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个普通的单例模式，当 Context 传入的是 Activity 的 Context 时，就会导致内存泄漏。因此可这样修改：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">private AppManager(Context context) &#123;</span><br><span class="line">        this.context = context.getApplicationContext();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="非静态内部类创建静态实例（静态变量）导致的内存泄漏"><a href="#非静态内部类创建静态实例（静态变量）导致的内存泄漏" class="headerlink" title="非静态内部类创建静态实例（静态变量）导致的内存泄漏"></a>非静态内部类创建静态实例（静态变量）导致的内存泄漏</h5><p>如下例所示，内部类默认持有外部类即 Activity 的引用，而内部类有一个静态实例，导致静态实例引用了外部 Activity。当 Activity 不再使用时，由于它被静态变量所引用，无法被回收，导致内存泄漏。</p>
+<p>修改方案是将该内部类设为静态内部类或将该内部类抽取出来封装成一个单例，如果需要使用 Context，请使用 ApplicationContext</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    private static TestResource mResource = null;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        if(mManager == null)&#123;</span><br><span class="line">            mManager = new TestResource();</span><br><span class="line">        &#125;</span><br><span class="line">        //...</span><br><span class="line">    &#125;</span><br><span class="line">    class TestResource &#123;</span><br><span class="line">        //...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Handler-内存泄漏"><a href="#Handler-内存泄漏" class="headerlink" title="Handler 内存泄漏"></a>Handler 内存泄漏</h5><p>Handler 使用造成的内存泄漏问题也比较常见，如下例所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    private Handler mHandler = new Handler() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void handleMessage(Message msg) &#123;</span><br><span class="line">            //...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        loadData();</span><br><span class="line">    &#125;</span><br><span class="line">    private void loadData()&#123;</span><br><span class="line">        //...request</span><br><span class="line">        Message message = Message.obtain();</span><br><span class="line">        mHandler.sendMessage(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种创建 Handler 的方式会造成内存泄漏，由于 mHandler 是 Handler 的非静态匿名内部类的实例，所以它持有外部类 Activity 的引用，我们知道消息队列是在一个 Looper 线程中不断轮询处理消息，那么当这个 Activity 退出时消息队列中还有未处理的消息或者正在处理消息，而消息队列中的 Message 持有 mHandler 实例的引用， mHandler 又持有 Activity 的引用，所以导致该 Activity 的内存资源无法及时回收，引发内存泄漏，所以另外一种做法为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    private MyHandler mHandler = new MyHandler(this);</span><br><span class="line">    private TextView mTextView ;</span><br><span class="line">    private static class MyHandler extends Handler &#123;</span><br><span class="line">        private WeakReference&lt;Context&gt; reference;</span><br><span class="line">        public MyHandler(Context context) &#123;</span><br><span class="line">            reference = new WeakReference&lt;&gt;(context);</span><br><span class="line">        &#125;</span><br><span class="line">        @Override</span><br><span class="line">        public void handleMessage(Message msg) &#123;</span><br><span class="line">            MainActivity activity = (MainActivity) reference.get();</span><br><span class="line">            if(activity != null)&#123;</span><br><span class="line">                activity.mTextView.setText(&quot;&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        mTextView = (TextView)findViewById(R.id.textview);</span><br><span class="line">        loadData();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void loadData() &#123;</span><br><span class="line">        //...request</span><br><span class="line">        Message message = Message.obtain();</span><br><span class="line">        mHandler.sendMessage(message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onDestroy() &#123;</span><br><span class="line">        super.onDestroy();</span><br><span class="line">        mHandler.removeCallbacksAndMessages(null);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建一个静态 Handler 内部类，然后对 Handler 持有的对象使用弱引用，这样在回收时也可以回收 Handler 持有的对象，这样避免了 Activity 泄漏。</p>
+<p>不过 Looper 线程的消息队列中还是可能会有待处理的消息，所以我们在 Activity 的 Destroy 时或者 Stop 时应该移除消息队列中的消息，使用 <code>mHandler.removeCallbacksAndMessages(null)</code> 是移除消息队列中所有消息和所有的 Runnable。</p>
+<p>也可以使用 <code>mHandler.removeCallbacks()</code> 或 <code>mHandler.removeMessages()</code> 来移除指定的 Runnable 和 Message 。</p>
+<h5 id="线程造成的内存泄漏"><a href="#线程造成的内存泄漏" class="headerlink" title="线程造成的内存泄漏"></a>线程造成的内存泄漏</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//——————test1</span><br><span class="line">        new AsyncTask&lt;Void, Void, Void&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            protected Void doInBackground(Void... params) &#123;</span><br><span class="line">                SystemClock.sleep(10000);</span><br><span class="line">                return null;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.execute();</span><br><span class="line">//——————test2</span><br><span class="line">        new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                SystemClock.sleep(10000);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br></pre></td></tr></table></figure>
+<p>上面的异步任务和 Runnable 都是一个匿名内部类，因此它们对当前 Activity 都有一个隐式引用。如果 Activity 在销毁之前，任务还未完成，<br>那么将导致 Activity 的内存资源无法回收，造成内存泄漏。</p>
+<p>正确的做法还是使用静态内部类的方式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">static class MyAsyncTask extends AsyncTask&lt;Void, Void, Void&gt; &#123;</span><br><span class="line">        private WeakReference&lt;Context&gt; weakReference;</span><br><span class="line"></span><br><span class="line">        public MyAsyncTask(Context context) &#123;</span><br><span class="line">            weakReference = new WeakReference&lt;&gt;(context);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        protected Void doInBackground(Void... params) &#123;</span><br><span class="line">            SystemClock.sleep(10000);</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        protected void onPostExecute(Void aVoid) &#123;</span><br><span class="line">            super.onPostExecute(aVoid);</span><br><span class="line">            MainActivity activity = (MainActivity) weakReference.get();</span><br><span class="line">            if (activity != null) &#123;</span><br><span class="line">                //...</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    static class MyRunnable implements Runnable&#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            SystemClock.sleep(10000);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">//——————</span><br><span class="line">    new Thread(new MyRunnable()).start();</span><br><span class="line">    new MyAsyncTask(this).execute();</span><br></pre></td></tr></table></figure>
+<p>这样就避免了 Activity 的内存资源泄漏，当然在 Activity 销毁时候也应该取消相应的任务 AsyncTask::cancel()，避免任务在后台执行浪费资源</p>
+<h5 id="集合中对象未清理造成的内存泄漏"><a href="#集合中对象未清理造成的内存泄漏" class="headerlink" title="集合中对象未清理造成的内存泄漏"></a>集合中对象未清理造成的内存泄漏</h5><p>这个比较好理解，如果一个对象放入到 ArrayList、HashMap 等集合中，这个集合就会持有该对象的引用。当我们不再需要这个对象时，也并没有将它从集合中移除，这样只要集合还在使用（而此对象已经无用了），这个对象就造成了内存泄露。并且如果集合被静态引用的话，集合里面那些没有用的对象更会造成内存泄露了。所以在使用集合时要及时将不用的对象从集合 remove，或者 clear 集合，以避免内存泄漏。</p>
+<h5 id="资源使用完未关闭导致内存泄漏"><a href="#资源使用完未关闭导致内存泄漏" class="headerlink" title="资源使用完未关闭导致内存泄漏"></a>资源使用完未关闭导致内存泄漏</h5><p>对于使用了 BraodcastReceiver，ContentObserver，File，Cursor，Stream，Bitmap 等资源的使用，这些资源在进行读写操作时通常都使用了缓冲，如果不及时关闭，这些缓冲对象就会一直被占用而得不到释放，以致发生内存泄露。因此在不使用时需要及时关闭或释放它们。</p>
+<h5 id="属性动画导致内存泄漏"><a href="#属性动画导致内存泄漏" class="headerlink" title="属性动画导致内存泄漏"></a>属性动画导致内存泄漏</h5><p>动画同样是一个耗时任务，比如在 Activity 中启动了属性动画（ObjectAnimator），但是在销毁的时候，没有调用 cancle 方法，虽然我们看不到动画了，但是这个动画依然会不断地播放下去，动画引用所在的控件，所在的控件引用 Activity，这就造成 Activity 无法正常释放。因此同样要在 Activity 销毁的时候 cancel 掉属性动画，避免发生内存泄漏。</p>
+<h5 id="WebView-导致内存泄漏"><a href="#WebView-导致内存泄漏" class="headerlink" title="WebView 导致内存泄漏"></a>WebView 导致内存泄漏</h5><p>关于 WebView 的内存泄露，因为 WebView 在加载网页后会长期占用内存而不能被释放，因此我们在 Activity 销毁后要调用它的 destory() 方法来销毁它以释放内存。</p>
+<p>Webview 下面的 Callback 持有 Activity 引用，造成 Webview 内存无法释放，即使是调用了 Webview.destory() 等方法都无法解决问题（Android5.1 之后）。</p>
+<p>因此，在销毁 webview 之前需要先将其从父容器中移除，然后再销毁 webview。详细分析过程参考 <a href="https://blog.csdn.net/xygy8860/article/details/53334476">WebView 内存泄漏解决方法</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line">protected void onDestroy() &#123;</span><br><span class="line">    super.onDestroy();</span><br><span class="line">    // 先从父控件中移除WebView</span><br><span class="line">    mWebViewContainer.removeView(mWebView);</span><br><span class="line">    mWebView.stopLoading();</span><br><span class="line">    mWebView.getSettings().setJavaScriptEnabled(false);</span><br><span class="line">    mWebView.clearHistory();</span><br><span class="line">    mWebView.removeAllViews();</span><br><span class="line">    mWebView.destroy();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="图片-Bitmap-相关"><a href="#图片-Bitmap-相关" class="headerlink" title="图片 Bitmap 相关"></a>图片 Bitmap 相关</h4><h5 id="分辨率适配问题"><a href="#分辨率适配问题" class="headerlink" title="分辨率适配问题"></a>分辨率适配问题</h5><p>通常我们可以通过将图片放在 hdpi/xhdpi/xxhdpi 等不同文件夹中进行适配，系统在解析时会对 Bitmap 根据当前设备屏幕像素密度 densityDpi 的值进行缩放适配操作，使得解析出来的 Bitmap 与当前设备的分辨率匹配，达到一个最佳的显示效果，并且 Bitmap 的大小将比原始的大。具体分析可参考：<a href="https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=403263974&idx=1&sn=b0315addbc47f3c38e65d9c633a12cd6&scene=21#wechat_redirect">你的 Bitmap 究竟占多大内存？</a></p>
+<p>因此在存放图片资源目录时需要注意选择合适的目录位置。</p>
+<h5 id="选择合适的颜色模式"><a href="#选择合适的颜色模式" class="headerlink" title="选择合适的颜色模式"></a>选择合适的颜色模式</h5><p><strong><code>ARGB_8888</code></strong> 和 <strong><code>RGB_565</code></strong> 颜色模式在大部分场景下没有明显区别，但是 由于 ARGB_8888 多了一个透明度通道，导致的内存占用会翻倍，因此在实际程序使用时需要好好考虑如何选择合适的颜色模式。</p>
+<h5 id="适当降低图片大小"><a href="#适当降低图片大小" class="headerlink" title="适当降低图片大小"></a>适当降低图片大小</h5><p>不要使用多大的图片，可以使用类似 <a href="https://tinypng.com/">tinypng</a> 的工具进行无损压缩</p>
+<h5 id="图片压缩"><a href="#图片压缩" class="headerlink" title="图片压缩"></a>图片压缩</h5><p>Bitmap 在解码图片时，可以使用一个 Option 来进行一些自定义的设置</p>
+<ul>
+<li><p>inTargetDensity 表示要被画出来时的目标像素密度</p>
+</li>
+<li><p>inSampleSize 这个值是一个 int，当它小于 1 的时候，将会被当做 1 处理，如果大于 1，那么就会按照比例（1 / inSampleSize）缩小 bitmap 的宽和高、降低分辨率，大于 1 时这个值将会被处置为 2 的倍数。例如，width=100，height=100，inSampleSize=2，那么就会将 bitmap 处理为，width=50，height=50，宽高降为 1 / 2，像素数降为 1 / 4</p>
+</li>
+<li><p>inJustDecodeBounds 字面意思就可以理解就是只解析图片的边界，有时如果只是为了获取图片的大小就可以用这个，而不必直接加载整张图片。</p>
+</li>
+<li><p>inPreferredConfig 默认会使用 ARGB_8888,在这个模式下一个像素点将会占用 4 个 byte,而对一些没有透明度要求或者图片质量要求不高的图片，可以使用 RGB_565，一个像素只会占用 2 个 byte，一下可以省下 50% 内存。</p>
+</li>
+<li><p>inPurgeable 和 inInputShareable 这两个需要一起使用，BitmapFactory.java 的源码里面有注释，大致意思是表示在系统内存不足时是否可以回收这个 bitmap，有点类似软引用，但是实际在 5.0 以后这两个属性已经被忽略，因为系统认为回收后再解码实际会反而可能导致性能问题</p>
+</li>
+<li><p>inBitmap 官方推荐使用的参数，表示重复利用图片内存，减少内存分配，在 4.4 以前只有相同大小的图片内存区域可以复用，4.4 以后只要原有的图片比将要解码的图片大既可以复用了。</p>
+</li>
+</ul>
+<h5 id="使用完毕后释放图片资源"><a href="#使用完毕后释放图片资源" class="headerlink" title="使用完毕后释放图片资源"></a>使用完毕后释放图片资源</h5><p>在 Android 2.3.3（API 10）前，使用 Bitmap.recycle() 方法，而使用该 API 的设备基本被淘汰了。</p>
+<p>现在尽量使用软引用 (SoftReference) 的方式来使用图片资源</p>
+<h5 id="设置图片缓存"><a href="#设置图片缓存" class="headerlink" title="设置图片缓存"></a>设置图片缓存</h5><p>对于一些重复图片可以使用全局 bitmap 缓存池，App 全局使用同一张 bitmap，复用同一份。</p>
+<h4 id="内存抖动"><a href="#内存抖动" class="headerlink" title="内存抖动"></a>内存抖动</h4><p>Android 里内存抖动是指内存频繁地分配和回收，而频繁的 gc 会导致卡顿，严重时还会导致 OOM。因为大量小对象的创建会造成内存碎片，虽然整体上内存大小还足够，但是不能分配出连续的可用内存，导致系统 OOM。</p>
+<p>一个典型案例就是 string 拼接创建大量小的对象（比如在一些频繁打印字符串拼接的日志里），见<br><a href="https://blog.csdn.net/vfush/article/details/53038437">Android 性能优化之 String 篇</a></p>
+<h4 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h4><ul>
+<li>构造 Adapter 时，没有使用缓存的 convertView</li>
+<li>对象的注册和反注册没有成对出现</li>
+<li>不在执行频率很高的地方，或者循环体内创建对象</li>
+<li>避免循环引用</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>本文简单介绍了 Java 内存基础知识背景，常见内存分析工具 Memory Profiler 和 MAT 的使用，内存优化的排查套路以及常见内存问题的修复。</p>
+<p>Android 内存优化是一个实践性非常强的工作，需要在实际工作中不断应用总结。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a href="https://developer.android.com/studio/profile/memory-profiler">使用 Memory Profiler 查看 Java 堆和内存分配</a></li>
+<li><a href="https://blog.csdn.net/Double2hao/article/details/78784758">（Android Studio 3.0）Android Profiler 内存泄漏检查</a></li>
+<li><a href="https://blog.csdn.net/yxz329130952/article/details/50288145">利用 MAT 进行内存泄漏分析</a></li>
+<li><a href="https://blog.csdn.net/itachi85/article/details/77075455">Android内存优化（五）详解内存分析工具MAT</a></li>
+<li><a href="https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html">Java Garbage Collection Basics</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=403263974&idx=1&sn=b0315addbc47f3c38e65d9c633a12cd6&scene=21#wechat_redirect">Android 开发绕不过的坑：你的 Bitmap 究竟占多大内存？</a></li>
+<li><a href="https://www.jianshu.com/p/ab4a7e353076">Android 内存优化——常见内存泄露及优化方案</a></li>
+<li><a href="https://blog.csdn.net/u010687392/article/details/49909477">Android 性能优化之常见的内存泄漏</a></li>
+<li><a href="https://mp.weixin.qq.com/s/2MsEAR9pQfMr1Sfs7cPdWQ">Android 内存优化总结 &amp; 实践</a></li>
+<li><a href="https://juejin.im/post/595371d0f265da6c375a7879">[贝聊科技]使用 Android Studio 和 MAT 进行内存泄漏分析</a></li>
+<li><a href="https://blog.csdn.net/carson_ho/article/details/79549382">Android 性能优化：那些关于 Bitmap 图片资源优化的小事</a></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>Android</tag>
+        <tag>内存优化</tag>
+        <tag>内存泄漏</tag>
+        <tag>Profiler</tag>
+        <tag>MAT</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android 多语言(国际化) 实现，兼容8.0+</title>
+    <url>/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/</url>
+    <content><![CDATA[<blockquote>
+<p>前言：公司 App 主要面向东南亚市场，因此必须针对东南亚市场做多语言国际化的实现。</p>
+</blockquote>
+<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><ul>
+<li>支持 App 内切换语言系统，不跟随系统语言变化</li>
+<li>重启后，使用用户上次选择记录的语言</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><h4 id="生成资源文件"><a href="#生成资源文件" class="headerlink" title="生成资源文件"></a>生成资源文件</h4><p>首先需要生成对应语言的资源文件，这一点 Studio 还是挺方便的。</p>
+<span id="more"></span>
+
+<img src="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_new_folder.png" class="">
+
+<p>在 res 目录下新建一个 Android 资源目录，选择 locale 然后在列表里选择对应的国家语言后，命名后保存，系统就会帮我们生成符合要求格式的文件。</p>
+<img src="/2019-01-07-Android-%E5%A4%9A%E8%AF%AD%E8%A8%80-%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%BC%E5%AE%B98-0/multi_language_choose_locale.png" class="">
+
+<p>这里如果有一些国家码不清楚或不知如何选择的话，也可以看看这个表查找下</p>
+<p><a href="http://www.cnblogs.com/jacksoft/p/5771130.html">每个国家对应的语言Locale和国家代码对照表</a></p>
+<h4 id="创建多语言工具类"><a href="#创建多语言工具类" class="headerlink" title="创建多语言工具类"></a>创建多语言工具类</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 1. AppApplication 中 attachBaseContext 会根据配置版本存储并设置语言</span><br><span class="line"> * 2. BaseActivity 中 attachBaseContext 里设置语言并更新 context ，便于使用过程中语言切换</span><br><span class="line"> */</span><br><span class="line">public class LanguageUtils &#123;</span><br><span class="line">    public static final String TAG = &quot;LanguageUtils&quot;;</span><br><span class="line">    public static final Locale ENGLISH = Locale.ENGLISH;</span><br><span class="line">    public static final String ENGLISH_LANGUAGE_TAG = ENGLISH.toLanguageTag();</span><br><span class="line">    public static final Locale INDONESIA = new Locale(&quot;in&quot;);</span><br><span class="line">    public static final String INDONESIA_LANGUAGE_TAG = INDONESIA.toLanguageTag();//&quot;id&quot;</span><br><span class="line">    public static final Locale MALAYSIA = new Locale(&quot;ms&quot;);</span><br><span class="line">    public static final String MALAYSIA_LANGUAGE_TAG = MALAYSIA.toLanguageTag();//&quot;ms&quot;</span><br><span class="line">    public static final String KEY = &quot;store_language&quot;;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * gradle 中配置值区分不同版本，发布时需要修改配置值</span><br><span class="line">     */</span><br><span class="line">    public static final int COUNTRY_VERSION_ID = 1;// 印尼版本</span><br><span class="line">    public static final int COUNTRY_VERSION_MY = 2;// 马来版本</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置 app 语言，兼容 8.0 及以上系统</span><br><span class="line">     *</span><br><span class="line">     * @param context</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static Context setAppLocalLanguage(Context context) &#123;</span><br><span class="line">        Locale locale = getUserSetLanguageLocal(context);</span><br><span class="line">        return updateConfiguration(context, locale);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * @param context</span><br><span class="line">     * @param locale</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private static Context updateConfiguration(Context context, Locale locale) &#123;</span><br><span class="line">        if (context == null) &#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        Locale.setDefault(locale);</span><br><span class="line">        Resources res = context.getResources();</span><br><span class="line">        Configuration config = res.getConfiguration();</span><br><span class="line">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N) &#123;</span><br><span class="line">            config.setLocale(locale);</span><br><span class="line">            context = context.createConfigurationContext(config);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            config.locale = locale;</span><br><span class="line">            res.updateConfiguration(config, res.getDisplayMetrics());</span><br><span class="line">        &#125;</span><br><span class="line">        return context;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 更新 application 的 updateConfiguration,否则 context.getResource.getString</span><br><span class="line">     * 中 当 context 为applicationContext 时不会生效</span><br><span class="line">     *</span><br><span class="line">     * @param context</span><br><span class="line">     */</span><br><span class="line">    public static void updateApplicationConfiguration(Context context, Locale locale) &#123;</span><br><span class="line">        if (context == null) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        Resources resources = context.getApplicationContext().getResources();</span><br><span class="line">        DisplayMetrics dm = resources.getDisplayMetrics();</span><br><span class="line">        Configuration config = resources.getConfiguration();</span><br><span class="line">        config.locale = locale;</span><br><span class="line">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N) &#123;</span><br><span class="line">            LocaleList localeList = new LocaleList(locale);</span><br><span class="line">            LocaleList.setDefault(localeList);</span><br><span class="line">            config.setLocales(localeList);</span><br><span class="line">            context.getApplicationContext().createConfigurationContext(config);</span><br><span class="line">            Locale.setDefault(locale);</span><br><span class="line">        &#125;</span><br><span class="line">        resources.updateConfiguration(config, dm);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取用户设置的语言 locale</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static Locale getUserSetLanguageLocal(Context context) &#123;</span><br><span class="line">        return Locale.forLanguageTag(getUserSetLanguageTag(context));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取用户设置的语言 tag</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static String getUserSetLanguageTag(Context context) &#123;</span><br><span class="line">        if (context == null) &#123;</span><br><span class="line">            LogUtils.e(KEY, &quot;context is empty!&quot;);</span><br><span class="line">            return &quot;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        return SharePreferenceUtils.getString(context, KEY, getLanguageLocaleFromGradle().toLanguageTag());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 从 gradle 中根据国家配置获取 locale 值</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static Locale getLanguageLocaleFromGradle() &#123;</span><br><span class="line">        Locale locale = Locale.ENGLISH;</span><br><span class="line">        switch (com.shopee.fms.BuildConfig.countryVersion) &#123;</span><br><span class="line">            case COUNTRY_VERSION_ID:</span><br><span class="line">                locale = INDONESIA;</span><br><span class="line">                break;</span><br><span class="line">            case COUNTRY_VERSION_MY:</span><br><span class="line">                locale = MALAYSIA;</span><br><span class="line">                break;</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        return locale;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 保存用户设置的语言 tag</span><br><span class="line">     *</span><br><span class="line">     * @param locale</span><br><span class="line">     */</span><br><span class="line">    public static void saveLanguage(Context context, Locale locale) &#123;</span><br><span class="line">        if (locale == null) &#123;</span><br><span class="line">            LogUtils.e(KEY, &quot;locale is empty!&quot;);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        SharePreferenceUtils.putString(context, KEY, locale.toLanguageTag());</span><br><span class="line">        updateApplicationConfiguration(context, locale);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void saveSystemCurrentLanguage(Context context) &#123;</span><br><span class="line">        Locale userSetLocale = getUserSetLanguageLocal(context);</span><br><span class="line">        if (userSetLocale == null) &#123;</span><br><span class="line">            Locale defaultLocale = getLanguageLocaleFromGradle();</span><br><span class="line">            SharePreferenceUtils.putString(context, KEY, defaultLocale.toLanguageTag());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 当用户手机切换语言时，不跟随</span><br><span class="line">     *</span><br><span class="line">     * @param context</span><br><span class="line">     */</span><br><span class="line">    public static void onConfigurationChanged(Context context) &#123;</span><br><span class="line">        Locale locale = getUserSetLanguageLocal(context);</span><br><span class="line">        updateConfiguration(context, locale);</span><br><span class="line">        updateApplicationConfiguration(context, locale);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="在相应地方调用"><a href="#在相应地方调用" class="headerlink" title="在相应地方调用"></a>在相应地方调用</h4><ol>
+<li>Application 里使用</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void onBaseContextAttached(Context base) &#123;</span><br><span class="line">    LanguageUtils.saveSystemCurrentLanguage(base);// 保存默认语言</span><br><span class="line">    super.onBaseContextAttached(LanguageUtils.setAppLocalLanguage(base));</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">@Override</span><br><span class="line">public void onConfigurationChanged(Configuration newConfig) &#123;</span><br><span class="line">	super.onConfigurationChanged(newConfig);</span><br><span class="line">	// 用户切换系统语言时，不影响 app 语言设置</span><br><span class="line">	LanguageUtils.onConfigurationChanged(getApplication());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>BaseActivity 里设置方便统一管理</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line">protected void attachBaseContext(Context newBase) &#123;</span><br><span class="line">    Context context = LanguageUtils.setAppLocalLanguage(newBase);</span><br><span class="line">    super.attachBaseContext(context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>多语言实现方案中，当切换语言后，需要记得更新 Application 的 updateConfiguration，否则使用代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">context.getResource.getString()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>来获取文本时，当 context 为 Application 时会失效。</p>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><ul>
+<li><a href="https://juejin.im/post/5ac8d62c518825557e78a514">Android国际化(多语言)实现，支持8.0</a></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>Android</tag>
+        <tag>多语言</tag>
+        <tag>国际化</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android 架构设计MV系列</title>
+    <url>/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/</url>
+    <content><![CDATA[<blockquote>
+<p>总结梳理下 Android 架构设计的几种模式</p>
+</blockquote>
+<p>为什么我们的项目需要使用架构模式？个人理解使用架构模式是为了使我们的代码模块化，达到模块内部高内聚和模块间低耦合的目的，同时开发人员只需要关注相应的业务逻辑点，提高开发效率。当然，使用架构模式不一定是减少了代码量，相反还可能增加代码量；但是它帮你简化了逻辑，提高了扩展性和兼容性。针对不同的项目规模，合理采用或不采用架构模式都是值得考虑的。</p>
+<h3 id="MVC"><a href="#MVC" class="headerlink" title="MVC"></a>MVC</h3><p>MVC(Model-View-Controller)</p>
+<img src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvc.png" class="">
+
+<ul>
+<li>Model: 模型层。主要是实体类，数据库，网络等存在的层面，Model 将新的数据发送到 View 层，用户得到数据响应。</li>
+<li>View: 视图层。一般以 xml 为代表的视图界面，它显示来自 Model 层的数据，同时将用户的点击操作等事件传送到 Controller 层。</li>
+<li>Controller 控制层。一般以 Activity/Fragment 为代表，它连接 Model 层和 View 层；它收到 View 层发送过来的事件请求，然后从 Model 层获取数据，并展示给 View 层。</li>
+</ul>
+<span id="more"></span>
+
+<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>多视图可共用同一模型，重用性高；模块彼此独立清晰，耦合低。</p>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><p>增加了实现复杂性；视图与控制层联系过于紧密，没有完全解耦；视图层无法组件化，复用比较困难。</p>
+<h3 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h3><p>Model(Model View Presenter),Model: 逻辑模型，View: 视图模型，Presenter: 接口。</p>
+<img src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvp.png" class="">
+
+<p>MVP 是 MVC 的升级版，让 Model 层和 View 层完全解耦，代码清晰。</p>
+<p>MVP 中的 P，是 Presenter 的含义，和 MVC 比较类似，都是将用户对 View 的操作交付给 Presenter，Presenter 会执行相应的逻辑，在这过程中会操作 Model，当 Model 执行完业务逻辑之后，同样是通过观察者模式把自己的结果传递出去，不过不是告诉 View，而是告诉 Presenter，Presenter 得到消息后，通过 View 的接口更新页面。</p>
+<p>这里详细代码可查看源码：<a href="https://github.com/bashellwang/AndroidArchitDemo">AndroidArchitDemo</a></p>
+<h4 id="MVP-代码演示"><a href="#MVP-代码演示" class="headerlink" title="MVP 代码演示"></a>MVP 代码演示</h4><img src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvp_demo.png" class="">
+
+<p>如图所示，代码结构分为三个模块，每个模块内封装了对应的基类。实际使用时，每个页面都会有一个对应的合约(Contract) 类，里面包含该页面的 View 接口和 Presenter 接口。</p>
+<p>比如 userdetail 功能页面，里面就有对应的 合约接口类，页面 UI 类以及 Presenter 实现类。这样做结构会比较清晰，当然每新建一个页面都有对应的合约及 Presenter 类，也是比较麻烦。</p>
+<h4 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h4><p>Model 层和 View 层完成接耦；View 层可以组件化，便于单元测试。</p>
+<h4 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h4><p>接口类增多，实现复杂；View 层和 Presenter 层通过接口交互，一旦 View 层某个 UI 元素修改，需要修改接口，则所有接口事件均需要修改</p>
+<h3 id="MVVM"><a href="#MVVM" class="headerlink" title="MVVM"></a>MVVM</h3><img src="/2019-02-15-Android-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1MV%E7%B3%BB%E5%88%97/mvvm.png" class="">
+
+<ul>
+<li>Model: 模型层，负责数据实现和逻辑处理，类似 MVP。</li>
+<li>View: 视图层，类似 MVP</li>
+<li>ViewModel：创建关联，将 Model 层和 View 层绑定起来，实现双向绑定。</li>
+</ul>
+<p>也就是说，MVVM 把 View 和 Model 的同步逻辑自动化了。以前 Presenter 负责的 View 和 Model 同步不再手动地进行操作，而是交由框架所提供的 Binder 进行负责。只需要告诉 Binder，View 显示的数据对应的是 Model 哪一部分即可。</p>
+<p>Android 官方推出的 MVVM 的 DataBinding，便是一个双向绑定的库。</p>
+<h4 id="MVVM-代码演示"><a href="#MVVM-代码演示" class="headerlink" title="MVVM 代码演示"></a>MVVM 代码演示</h4><p>启用：build.gradle 中 开启</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    dataBinding &#123;</span><br><span class="line">        enabled true</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Model 层定义相关的 bean 类以及数据获取逻辑，这块没什么特别之处，这里不特殊说明。</p>
+<p>View 层即界面布局 xml 和 Activity 中引用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;layout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;&gt;</span><br><span class="line">    &lt;data&gt;</span><br><span class="line">        &lt;variable</span><br><span class="line">            name=&quot;viewModel&quot; type=&quot;com.bashellwang.androidarchitdemo.mvvm.viewmodel.SchoolViewModel&quot; /&gt;</span><br><span class="line">    &lt;/data&gt;</span><br><span class="line"></span><br><span class="line">    &lt;android.support.constraint.ConstraintLayout</span><br><span class="line">        android:layout_width=&quot;match_parent&quot;</span><br><span class="line">        android:layout_height=&quot;match_parent&quot;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;TextView</span><br><span class="line">            android:layout_marginTop=&quot;50dp&quot;</span><br><span class="line">            android:id=&quot;@+id/tv_name&quot;</span><br><span class="line">            android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            android:text=&quot;@&#123;viewModel.mSchool.toString()&#125;&quot;</span><br><span class="line">            android:textColor=&quot;#000000&quot;</span><br><span class="line">            android:textSize=&quot;16sp&quot;</span><br><span class="line">            app:layout_constraintLeft_toLeftOf=&quot;parent&quot;</span><br><span class="line">            app:layout_constraintRight_toRightOf=&quot;parent&quot;</span><br><span class="line">            app:layout_constraintTop_toTopOf=&quot;parent&quot; /&gt;</span><br><span class="line"></span><br><span class="line">        &lt;TextView</span><br><span class="line">            android:id=&quot;@+id/tv_desc&quot;</span><br><span class="line">            android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            android:text=&quot;@&#123;viewModel.mSchool.description&#125;&quot;</span><br><span class="line">            android:textColor=&quot;#000000&quot;</span><br><span class="line">            android:layout_marginTop=&quot;20dp&quot;</span><br><span class="line">            android:textSize=&quot;16sp&quot;</span><br><span class="line">            app:layout_constraintLeft_toLeftOf=&quot;parent&quot;</span><br><span class="line">            app:layout_constraintRight_toRightOf=&quot;parent&quot;</span><br><span class="line">            app:layout_constraintTop_toBottomOf=&quot;@+id/tv_name&quot; /&gt;</span><br><span class="line"></span><br><span class="line">        &lt;Button</span><br><span class="line">            android:id=&quot;@+id/btn_get&quot;</span><br><span class="line">            android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            android:text=&quot;随机查询学校&quot;</span><br><span class="line">            android:onClick=&quot;@&#123;viewModel.onItemClick&#125;&quot;</span><br><span class="line">            app:layout_constraintLeft_toLeftOf=&quot;parent&quot;</span><br><span class="line">            app:layout_constraintRight_toRightOf=&quot;parent&quot;</span><br><span class="line">            app:layout_constraintTop_toBottomOf=&quot;@+id/tv_desc&quot; /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;/android.support.constraint.ConstraintLayout&gt;</span><br><span class="line"></span><br><span class="line">&lt;/layout&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class MvvmDemoActivity extends AppCompatActivity &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line"></span><br><span class="line">        ActivityMvvmDemoBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_mvvm_demo);</span><br><span class="line">        SchoolViewModel viewModel = new SchoolViewModel(binding);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 View 层只处理 UI 相关的逻辑。</p>
+<p>ViewModel 层处理业务相关逻辑，这里继承 BaseObservable，当获取到新数据后调用 notifyChange 即可。因为数据和 UI 已经绑定了，所以调用后相应的控件会自动更新 UI。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class SchoolViewModel extends BaseObservable &#123;</span><br><span class="line"></span><br><span class="line">    private static final String TAG = &quot;SchoolViewModel&quot;;</span><br><span class="line">    public School mSchool;</span><br><span class="line">    private ActivityMvvmDemoBinding mBinding;</span><br><span class="line">    private SchoolModelDao mSchoolDao;</span><br><span class="line"></span><br><span class="line">    public SchoolViewModel(ActivityMvvmDemoBinding demoBinding) &#123;</span><br><span class="line">        this.mBinding = demoBinding;</span><br><span class="line">        // 把自己和 binding 绑定，实现双向绑定</span><br><span class="line">        mBinding.setViewModel(this);</span><br><span class="line">        this.mSchoolDao = new SchoolModelDao();</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 初始化数据展示</span><br><span class="line">    public void init() &#123;</span><br><span class="line">        mSchool = new School(5, &quot;aa&quot;, &quot;aaa&quot;, 300);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void onItemClick(View view) &#123;</span><br><span class="line">        mSchoolDao.getSchoolById(new Random().nextInt(10), new Callback&lt;School, String&gt;() &#123;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void onSuccess(School school) &#123;</span><br><span class="line">                Log.e(TAG, &quot;获取新school 成功：&quot; + school.toString());</span><br><span class="line">                updateData(school);</span><br><span class="line">            &#125;</span><br><span class="line">            @Override</span><br><span class="line">            public void onFail(String s) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    private void updateData(School school) &#123;</span><br><span class="line">        mSchool = school;</span><br><span class="line">        notifyChange();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h4><p>提高可维护性。解决了 MVP 大量的手动 View 和 Model 同步的问题，提供双向绑定机制。提高了代码的可维护性。</p>
+<p>简化测试。因为同步逻辑是交由 Binder 做的，View 跟着 Model 同时变更，所以只需要保证 Model 的正确性，View 就正确。大大减少了对 View 同步更新的测试。</p>
+<h4 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h4><p>过于简单的图形界面不适用，或说牛刀杀鸡。</p>
+<p>对于大型的图形应用程序，视图状态较多，ViewModel 的构建和维护的成本都会比较高。</p>
+<p>数据绑定的声明是指令式地写在 View 的模版当中的，这些内容是没办法去打断点 debug 的。</p>
+<h3 id="代码下载"><a href="#代码下载" class="headerlink" title="代码下载"></a>代码下载</h3><p>本文相关 demo 源码可见：<a href="https://github.com/bashellwang/AndroidArchitDemo">AndroidArchitDemo</a></p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<li><p><a href="https://github.com/googlesamples/android-architecture">googlesamples/android-architecture</a></p>
+</li>
+<li><p><a href="https://github.com/googlesamples/android-architecture/blob/todo-mvp/">todo-mvp</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s/QFpHhC-5JkAb4IlMP0nKug">从0到1搭建MVP框架</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s/7EeSWNiLkk79CFbTEExQ2A">深入了解MV**模式</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s/DuNbl3V4gZY-ZCETbhZGug">一步步带你精通MVP</a></p>
+</li>
+<li><p><a href="https://juejin.im/post/58cf2d791b69e6006b851605">Android 架构设计 — 关于 MVVM 模式的探讨</a></p>
+</li>
+<li><p><a href="https://juejin.im/post/5bf787d5e51d450c487d06dd">Android MVP架构从入门到精通-真枪实弹</a></p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>MVC</tag>
+        <tag>MVP</tag>
+        <tag>MVVM</tag>
+        <tag>架构设计</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android Studio NDK 编译 Bsdiff 库</title>
+    <url>/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/</url>
+    <content><![CDATA[<blockquote>
+<p>最近在做 web 离线包，需要使用到增量更新，这里对基于 Android Studio 编译 Bsdiff so 库做一个总结记录</p>
+</blockquote>
+<p>web 离线包需要从服务端下载资源压缩包到本地并解压，当使用到对应资源时可以优先从本地读取，减少了网络耗时，优化了用户体验。当压缩包体积过大，或者变动量小时，如果还是整包下载，则会造成带宽流量的浪费。因此需要使用到增量更新的方式。</p>
+<h3 id="增量更新原理"><a href="#增量更新原理" class="headerlink" title="增量更新原理"></a>增量更新原理</h3><p>增量更新就是在服务端生成新包和旧包之间的差分包，然后客户端下载这个差分包，和本地的旧包进行合并成完整包再使用。</p>
+<p>增量更新的算法有很多，最常用的是 <a href="http://www.daemonology.net/bsdiff/">bsdiff</a> 算法</p>
+<span id="more"></span>
+
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><h4 id="bsdiff-源码下载"><a href="#bsdiff-源码下载" class="headerlink" title="bsdiff 源码下载"></a>bsdiff 源码下载</h4><p><a href="http://www.daemonology.net/bsdiff/bsdiff-4.3.tar.gz">bsdiff 4.3</a>，它依赖 bzip2，需要下载 bzip2 源码</p>
+<h4 id="bzip2-源码下载"><a href="#bzip2-源码下载" class="headerlink" title="bzip2 源码下载"></a>bzip2 源码下载</h4><p>目前版本是 1.0.6，下载地址如下：</p>
+<p><a href="https://sourceforge.net/projects/bzip2/files/latest/download">bzip2-1.0.6.tar.gz</a></p>
+<h4 id="添加-Native-代码支持"><a href="#添加-Native-代码支持" class="headerlink" title="添加 Native 代码支持"></a>添加 Native 代码支持</h4><p>Android Studio 上安装配置 Native 代码支持，可参考 <a href="https://developer.android.com/studio/projects/add-native-code">添加 C 和 C++ 代码</a></p>
+<h3 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h3><p>我将生成 so 的代码单独成一个子 module ，总体代码结构如图所示</p>
+<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_code_structure.png" class="">
+
+<h4 id="源码文件修改"><a href="#源码文件修改" class="headerlink" title="源码文件修改"></a>源码文件修改</h4><p>main 下新建 cpp 目录，下面存放 bsdiff 的源码，同时新建 bzip2 目录存放对应 bzip2 源码。</p>
+<blockquote>
+<p>注意：</p>
+<ul>
+<li>bsdiff.c、bspatch.c 的头文件引用路径需要修改调整为自己路径</li>
+<li>bsdiff.c、bspatch.c 以及 bzip2 下的部分源码都有 main 函数入口，我们需要将他们屏蔽掉</li>
+</ul>
+</blockquote>
+<h4 id="关联-CMake-文件"><a href="#关联-CMake-文件" class="headerlink" title="关联 CMake 文件"></a>关联 CMake 文件</h4><p>在 <code>build.gradle</code> 文件中关联 <code>cmake</code>，配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">externalNativeBuild &#123;</span><br><span class="line">        cmake &#123;</span><br><span class="line">            path file(&#x27;src/main/cpp/CMakeLists.txt&#x27;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>更多 <code>cmake</code> 用法参考 <a href="https://developer.android.com/studio/projects/gradle-external-native-builds">关联 Gradle</a></p>
+<p>Android Studio 同步一下，此时在 cmake 文件里则可看到对应提示帮助等。</p>
+<h4 id="配置-CMake-文件"><a href="#配置-CMake-文件" class="headerlink" title="配置 CMake 文件"></a>配置 CMake 文件</h4><p>添加 <code>CMakeLists.txt</code> 文件，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># For more information about using CMake with Android Studio, read the</span><br><span class="line"># documentation: https://d.android.com/studio/projects/add-native-code.html</span><br><span class="line"></span><br><span class="line"># Sets the minimum version of CMake required to build your native library.</span><br><span class="line"># This ensures that a certain set of CMake features is available to</span><br><span class="line"># your build.</span><br><span class="line"></span><br><span class="line">cmake_minimum_required(VERSION 3.4.1)</span><br><span class="line"></span><br><span class="line"># 查找文件系统中指定模式的路径，如/* 匹配根目录的文件（注意路径）</span><br><span class="line">file(GLOB bzip2 bzip2/*.c)</span><br><span class="line"></span><br><span class="line"># Specifies a library name, specifies whether the library is STATIC or</span><br><span class="line"># SHARED, and provides relative paths to the source code. You can</span><br><span class="line"># define multiple libraries by adding multiple add_library() commands,</span><br><span class="line"># and CMake builds them for you. When you build your app, Gradle</span><br><span class="line"># automatically packages shared libraries with your APK.</span><br><span class="line"></span><br><span class="line">add_library( # Specifies the name of the library.</span><br><span class="line">        bsdiff</span><br><span class="line"></span><br><span class="line">        # Sets the library as a shared library.</span><br><span class="line">        SHARED</span><br><span class="line"></span><br><span class="line">        # Provides a relative path to your source file(s).</span><br><span class="line">        bsdiff.c</span><br><span class="line">        bspatch.c</span><br><span class="line">        # 这里名字需要完全匹配，不能你是 cpp 类型文件，这里只写 .c 后缀；会有问题</span><br><span class="line">        diffpatch-lib.cpp</span><br><span class="line">        $&#123;bzip2&#125;</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">include_directories(src/main/cpp)</span><br><span class="line"></span><br><span class="line">find_library( # Defines the name of the path variable that stores the</span><br><span class="line">        # location of the NDK library.</span><br><span class="line">        log-lib</span><br><span class="line"></span><br><span class="line">        # Specifies the name of the NDK library that</span><br><span class="line">        # CMake needs to locate.</span><br><span class="line">        log)</span><br><span class="line"></span><br><span class="line"># Links your native library against one or more other native libraries.</span><br><span class="line">target_link_libraries( # Specifies the target library.</span><br><span class="line">        bsdiff</span><br><span class="line"></span><br><span class="line">        # Links the log library to the target library.</span><br><span class="line">        $&#123;log-lib&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="编写-Java-层工具类"><a href="#编写-Java-层工具类" class="headerlink" title="编写 Java 层工具类"></a>编写 Java 层工具类</h4><p>此时进入 JNI 相关内容，编写 Java 工具类方便调用 Native 代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class BsdiffUtils &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&quot;bsdiff&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //生成差分包</span><br><span class="line">    public static native int diff(String oldFile, String newFile, String patchFile);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static native int patch(String oldFile, String patchFile, String newFile);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 cpp 目录下 新建<code>diffpatch-lib.cpp</code>来实现底层 Native 方法。</p>
+<p>在新版 AS 中(我的版本是 3.6.3)，在刚新建的 cpp 文件里输入 jni，IDE 会有提示帮助你自动生成对应的 JNI 方法声明，如图所示：</p>
+<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_jni_code_tip.png" class="">
+
+<p>在这里我们实现差分和合并两个方法的具体实现，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;jni.h&gt;</span><br><span class="line">#include &lt;cstdlib&gt;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; &#123;</span><br><span class="line">int bsdiff_main(int argc, const char *argv[]);</span><br><span class="line"></span><br><span class="line">int bspatch_main(int argc, const char *argv[]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; JNIEXPORT jint JNICALL</span><br><span class="line">Java_com_bashellwang_libbsdiff_BsdiffUtils_diff(JNIEnv *env, jclass clazz, jstring old_file,</span><br><span class="line">                                                jstring new_file, jstring patch_file) &#123;</span><br><span class="line"></span><br><span class="line">    // for cpp</span><br><span class="line">    const char *oldFile = env-&gt;GetStringUTFChars(old_file, 0);</span><br><span class="line">    const char *patchFile = env-&gt;GetStringUTFChars(patch_file, 0);</span><br><span class="line">    const char *newFile = env-&gt;GetStringUTFChars(new_file, 0);</span><br><span class="line"></span><br><span class="line">    const char *argv[] = &#123;&quot;&quot;, oldFile, newFile, patchFile&#125;;</span><br><span class="line"></span><br><span class="line">    int result = bsdiff_main(4, argv);</span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(old_file, oldFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(patch_file, patchFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(new_file, newFile);</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extern &quot;C&quot; JNIEXPORT jint JNICALL</span><br><span class="line">Java_com_bashellwang_libbsdiff_BsdiffUtils_patch(JNIEnv *env, jclass clazz, jstring old_file,</span><br><span class="line">                                                 jstring patch_file, jstring new_file) &#123;</span><br><span class="line"></span><br><span class="line">    // for cpp</span><br><span class="line">    const char *oldFile = env-&gt;GetStringUTFChars(old_file, 0);</span><br><span class="line">    const char *patchFile = env-&gt;GetStringUTFChars(patch_file, 0);</span><br><span class="line">    const char *newFile = env-&gt;GetStringUTFChars(new_file, 0);</span><br><span class="line"></span><br><span class="line">    const char *argv[] = &#123;&quot;&quot;, oldFile, newFile, patchFile&#125;;</span><br><span class="line"></span><br><span class="line">    int result = bspatch_main(4, argv);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(old_file, oldFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(new_file, newFile);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(patch_file, patchFile);</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Rebuild Project</code>后可在<code>build-&gt;intermediates-&gt;cmake</code>找到对应 so 文件，其他工程可拷贝此 so 文件进行复用。也可上传到 maven 库供其他工程引用。</p>
+<img src="/2020-05-07-Android-Studio-NDK%E7%BC%96%E8%AF%91Bsdiff%E5%BA%93/as_build_so_path.png" class="">
+
+<p>此时相关功能就完成了，剩下就是写测试代码验证了。</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>这里主页面有两个按钮，一个是差分按钮，一个是合并按钮，分别调用差分和合并功能。</p>
+<h4 id="差分"><a href="#差分" class="headerlink" title="差分"></a>差分</h4><ul>
+<li>在电脑上安装 bsdiff 命令工具，进行差分获取 patch 包并计算 md5 值</li>
+<li>在手机中调用 so 库进行差分得到 patch 包，并计算 md5 值</li>
+<li>比较两个 md5 是否一致</li>
+</ul>
+<h4 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h4><ul>
+<li>合并后得到新包计算 md5 值</li>
+<li>与差分前的完整包做 md5 比对</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本文基于 Android Studio 和 Cmake ，搭建 NDK 环境并编译成功 bsdiff so 库，并进行测试验证。后续有需要可直接使用</p>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p><a href="https://github.com/bashellwang/MakeBsdiffSo">GitHub 地址</a></p>
+]]></content>
+      <tags>
+        <tag>cmake</tag>
+        <tag>ndk</tag>
+        <tag>bsdiff</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Gradle 依赖管理的几种方式</title>
+    <url>/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
+    <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>随着项目的发展扩张，项目区分多个 module 的做法越来越常见，同时项目中的依赖也越来越多，不同 module 引入的版本也不一致。有必要对项目中的依赖做梳理，达到统一管理、单独配置，版本号统一的目的。</p>
+<h3 id="gradle-依赖管理的一些方案"><a href="#gradle-依赖管理的一些方案" class="headerlink" title="gradle 依赖管理的一些方案"></a>gradle 依赖管理的一些方案</h3><p>gradle 随着版本的发展，也不断涌现出一些不同的方案。包括：<code>原始手动管理</code>、<code>extra 扩展管理</code>、<code>buildSrc 方案</code>、<code>composing build</code> 方案以及 gradle 7.0 新出的 <code>version catalog</code> 等。</p>
+<span id="more"></span>
+
+<h4 id="原始手动管理"><a href="#原始手动管理" class="headerlink" title="原始手动管理"></a>原始手动管理</h4><p>手动管理的方式如下所示，自己引入需要的库，该方法最直观简单，但是在每次升级依赖库时需要做大量手动修改调整；同时不同 module 中容易存在重复的配置，且不容易管理版本更新。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation &#x27;androidx.appcompat:appcompat:1.3.1&#x27;</span><br><span class="line">    implementation &#x27;com.google.android.material:material:1.4.0&#x27;</span><br><span class="line">    implementation &#x27;androidx.constraintlayout:constraintlayout:2.1.1&#x27;</span><br><span class="line">    implementation &#x27;com.squareup.okhttp3:okhttp:4.9.2&#x27;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="google-推荐，使用-extra-扩展"><a href="#google-推荐，使用-extra-扩展" class="headerlink" title="google 推荐，使用 extra 扩展"></a>google 推荐，使用 extra 扩展</h4><p>google 在<a href="https://developer.android.com/studio/build/gradle-tips#configure-project-wide-properties">配置项目全局属性</a> 中推荐这种管理方式。</p>
+<p>在根目录下<code>build.gradle</code>中，添加<code>ext</code>代码块</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ext &#123;</span><br><span class="line">    appcompatVer = &quot;1.3.1&quot;</span><br><span class="line">    materialVer = &quot;1.4.0&quot;</span><br><span class="line">    constraintlayoutVer = &quot;2.1.1&quot;</span><br><span class="line">    okhttpVer = &quot;4.9.2&quot;</span><br><span class="line"></span><br><span class="line">    dependencies = [</span><br><span class="line">            appcompat       : &quot;androidx.appcompat:appcompat:$appcompatVer&quot;,</span><br><span class="line">            material        : &quot;com.google.android.material:material:$materialVer&quot;,</span><br><span class="line">            constraintlayout: &quot;androidx.constraintlayout:constraintlayout:$constraintlayoutVer&quot;,</span><br><span class="line">            okhttp          : &quot;com.squareup.okhttp3:okhttp:$okhttpVer&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 module 目录下 <code>build.gradle</code> 中引入使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation rootProject.ext.dependencies.appcompat</span><br><span class="line">    implementation rootProject.ext.dependencies.material</span><br><span class="line">    implementation rootProject.ext.dependencies.constraintlayout</span><br><span class="line">    implementation rootProject.ext.dependencies.okhttp</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种方法比手动管理好了很多，可以做到统一版本号，统一管理；但是他也有缺点，就是在 IDE 中无法关联自动补全，同时 ext 里依赖项太多时，这个文件会变得很长。可以参考 <a href="https://juejin.cn/post/6947675376835362846#heading-2">使用循环优化Gradle依赖管理</a> 处理。</p>
+<h4 id="buildSrc-Kotlin"><a href="#buildSrc-Kotlin" class="headerlink" title="buildSrc + Kotlin"></a>buildSrc + Kotlin</h4><p>上面介绍的方法，不支持代码提示，不支持 IDE 跳转，在多模块开发时相同的依赖需要复制粘贴，使用 buildSrc +Kotlin 可以解决这个问题。</p>
+<blockquote>
+<p>gradle 在运行时会去检查是否存在 buildSrc 的目录，如果有的话，gradle 会自动编译并测试这段代码，并将其放入构建脚本的路径中。对于多项目构建，只能有一个 buildSrc 目录，它位于 gradle 根目录下的一个目录。</p>
+</blockquote>
+<h5 id="根目录下创建-buildSrc-目录"><a href="#根目录下创建-buildSrc-目录" class="headerlink" title="根目录下创建 buildSrc 目录"></a>根目录下创建 buildSrc 目录</h5><img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/build_src_dir.png" class="">
+
+<h5 id="新建文件-build-gradle-kts"><a href="#新建文件-build-gradle-kts" class="headerlink" title="新建文件 build.gradle.kts"></a>新建文件 build.gradle.kts</h5><p>文件内容如下，同步 gradle</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    `kotlin-dsl`</span><br><span class="line">&#125;</span><br><span class="line">repositories &#123;</span><br><span class="line">    // 必不可少</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="创建-src-main-kotlin-Dependencies-kt"><a href="#创建-src-main-kotlin-Dependencies-kt" class="headerlink" title="创建 /src/main/kotlin/Dependencies.kt"></a>创建 /src/main/kotlin/Dependencies.kt</h5><p>文件内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">object Versions &#123;</span><br><span class="line">    const val appcompatVer = &quot;1.3.1&quot;</span><br><span class="line">    const val materialVer = &quot;1.4.0&quot;</span><br><span class="line">    const val constraintlayoutVer = &quot;2.1.1&quot;</span><br><span class="line">    const val okhttpVer = &quot;4.9.2&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">object DependLibs &#123;</span><br><span class="line">    const val appcompat = &quot;androidx.appcompat:appcompat:$&#123;Versions.appcompatVer&#125;&quot;</span><br><span class="line">    const val material = &quot;com.google.android.material:material:$&#123;Versions.materialVer&#125;&quot;</span><br><span class="line">    const val constraintlayout = &quot;androidx.constraintlayout:constraintlayout:$&#123;Versions.constraintlayoutVer&#125;&quot;</span><br><span class="line">    const val okhttp = &quot;com.squareup.okhttp3:okhttp:$&#123;Versions.okhttpVer&#125;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 module 中的 <code>build.gradle</code> 中引用，如下所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation DependLibs.appcompat</span><br><span class="line">    implementation DependLibs.material</span><br><span class="line">    implementation DependLibs.constraintlayout</span><br><span class="line">    implementation DependLibs.okhttp</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码支持跳转，也可以支持自动补全，如下图所示</p>
+<img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/auto_complete_code.png" class="">
+
+
+<h4 id="Composing-build"><a href="#Composing-build" class="headerlink" title="Composing build"></a>Composing build</h4><p>buildSrc 在依赖更新时会重新构建整个项目，是对全局所有 module 的配置，因此构建速度较慢；有没有既满足自动补全、单击跳转又在依赖更新时不重新构建整个项目的方法呢。答案是使用 <a href="https://docs.gradle.org/current/userguide/composite_builds.html#composite_build_intro">Composing Build</a></p>
+<blockquote>
+<p><code>Composing build</code>又称 <code>复合构建</code>，指的是包含其它构建的构建。有点类似于 gradle 多项目构建，不同于独立项目，它是包含包括<code>settings.gradle</code>等配置文件在内的整个完整项目构建。</p>
+<p>包含在复合构建中的构建被称为<code>包含构建</code>，包含的构建不与复合构建或其他包含的构建共享任何配置。每个包含的构建都是独立配置和执行的。</p>
+</blockquote>
+<p>新建一个 module，只保留 src/main 下代码源文件和 build.gradle 文件，其余均删除，如图所示：</p>
+<img src="/2021-12-11-gradle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/composing_build_structure.png" class="">
+
+<p>其中 VersionPlugin 为继承 Plugin 的实现类，代码空实现即可</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class VersionPlugin : Plugin&lt;Project&gt; &#123;</span><br><span class="line">    override fun apply(target: Project) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ComposingBuildMethod.kt 为定义依赖版本信息类，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class ComposingBuildMethod &#123;</span><br><span class="line">    object Versions &#123;</span><br><span class="line">        const val appcompatVer = &quot;1.3.1&quot;</span><br><span class="line">        const val materialVer = &quot;1.4.0&quot;</span><br><span class="line">        const val constraintlayoutVer = &quot;2.1.1&quot;</span><br><span class="line">        const val okhttpVer = &quot;4.9.2&quot;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    object DependLibs &#123;</span><br><span class="line">        const val appcompat = &quot;androidx.appcompat:appcompat:$&#123;Versions.appcompatVer&#125;&quot;</span><br><span class="line">        const val material = &quot;com.google.android.material:material:$&#123;Versions.materialVer&#125;&quot;</span><br><span class="line">        const val constraintlayout =</span><br><span class="line">            &quot;androidx.constraintlayout:constraintlayout:$&#123;Versions.constraintlayoutVer&#125;&quot;</span><br><span class="line">        const val okhttp = &quot;com.squareup.okhttp3:okhttp:$&#123;Versions.okhttpVer&#125;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，build.gradle 中修改如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        // 因为使用的 Kotlin 需要需要添加 Kotlin 插件</span><br><span class="line">        classpath &quot;org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: &#x27;kotlin&#x27;</span><br><span class="line">apply plugin: &#x27;java-gradle-plugin&#x27;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">    // 需要添加 jcenter 否则会提示找不到 gradlePlugin</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation gradleApi()</span><br><span class="line">    implementation &quot;org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.72&quot;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">compileKotlin &#123;</span><br><span class="line">    kotlinOptions &#123;</span><br><span class="line">        jvmTarget = &quot;1.8&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">compileTestKotlin &#123;</span><br><span class="line">    kotlinOptions &#123;</span><br><span class="line">        jvmTarget = &quot;1.8&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">gradlePlugin &#123;</span><br><span class="line">    plugins &#123;</span><br><span class="line">        version &#123;</span><br><span class="line">            // 在 app 模块需要通过 id 引用这个插件</span><br><span class="line">            id = &#x27;com.bashellwang.versionplugin&#x27;</span><br><span class="line">            // 实现这个插件的类的路径</span><br><span class="line">            implementationClass = &#x27;com.bashellwang.versionplugin.VersionPlugin&#x27;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后，在 setting.gradle 中使用 <code>includeBuild</code> 引用该 module。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">includeBuild &#x27;versionplugin&#x27;</span><br></pre></td></tr></table></figure>
+<p>最终在需要使用的 module，即 app module 下的 build.gradle 中引用该插件并使用即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id &#x27;com.bashellwang.versionplugin&#x27;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">dependencies&#123;</span><br><span class="line">    // composing build 引用</span><br><span class="line">    implementation ComposingBuildMethod.DependLibs.appcompat</span><br><span class="line">    implementation ComposingBuildMethod.DependLibs.material</span><br><span class="line">    implementation ComposingBuildMethod.DependLibs.constraintlayout</span><br><span class="line">    implementation ComposingBuildMethod.DependLibs.okhttp</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h4 id="Version-Catalogs"><a href="#Version-Catalogs" class="headerlink" title="Version Catalogs"></a>Version Catalogs</h4><p>官方在 Gradle7.0 推出了一个新特性，可以使用 <a href="https://docs.gradle.org/current/userguide/platforms.html#sec:sharing-catalogs">Catalog</a> 统一依赖版本，它有以下特点：</p>
+<ul>
+<li>对于每一个 catalog，gradle 可以生成类型安全的访问器方便在 IDE 中自动补全(注：实测在 build.gradle 中暂未实现，不确定是用法问题还是功能开发中)</li>
+<li>catalog 对所有 module 可见，可以方便统一管理版本依赖</li>
+<li>catalog 可以声明 bundles 依赖，就是经常一起使用的依赖的组合</li>
+<li>catalog 支持依赖版本号与版本名分割，使用 version refrerences 可以在不同依赖之间共享版本号</li>
+</ul>
+<p>因为 catalog 还是一个在孵化中的功能，因此要使用时需要在 setting.gradle 中开启功能预览</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">enableFeaturePreview(&#x27;VERSION_CATALOGS&#x27;)</span><br></pre></td></tr></table></figure>
+<p>然后新建一个 toml 文件，里面是一些版本依赖相关信息，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[versions]</span><br><span class="line">groovy = &quot;3.0.5&quot;</span><br><span class="line">checkstyle = &quot;8.37&quot;</span><br><span class="line">compilesdk = &quot;30&quot;</span><br><span class="line">targetsdk = &quot;30&quot;</span><br><span class="line"></span><br><span class="line">[libraries]</span><br><span class="line">retrofit = &quot;com.squareup.retrofit2:retrofit:2.9.0&quot;</span><br><span class="line">groovy-core = &#123; module = &quot;org.codehaus.groovy:groovy&quot;, version.ref = &quot;groovy&quot; &#125;</span><br><span class="line">groovy-json = &#123; module = &quot;org.codehaus.groovy:groovy-json&quot;, version.ref = &quot;groovy&quot; &#125;</span><br><span class="line">groovy-nio = &#123; module = &quot;org.codehaus.groovy:groovy-nio&quot;, version.ref = &quot;groovy&quot; &#125;</span><br><span class="line">commons-lang3 = &#123; group = &quot;org.apache.commons&quot;, name = &quot;commons-lang3&quot;, version = &#123; strictly = &quot;[3.8, 4.0[&quot;, prefer=&quot;3.9&quot; &#125; &#125;</span><br><span class="line"></span><br><span class="line">[bundles]</span><br><span class="line">groovy = [&quot;groovy-core&quot;, &quot;groovy-json&quot;, &quot;groovy-nio&quot;]</span><br></pre></td></tr></table></figure>
+<p>之后在 setting.gradle 中进行声明后即可使用：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dependencyResolutionManagement &#123;</span><br><span class="line">    versionCatalogs &#123;</span><br><span class="line">        cataloglibs &#123;</span><br><span class="line">            from(files(&quot;libs.versions.toml&quot;))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 app 下的 build.gradle 文件中使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// gradle catalog 引用</span><br><span class="line">implementation cataloglibs.retrofit</span><br><span class="line">implementation cataloglibs.groovy.core</span><br><span class="line">implementation cataloglibs.groovy.json</span><br><span class="line">implementation cataloglibs.groovy.nio</span><br></pre></td></tr></table></figure>
+
+<h4 id="源码地址"><a href="#源码地址" class="headerlink" title="源码地址"></a>源码地址</h4><p><a href="https://github.com/bashellwang/gradlestudy">GitHub</a></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本文对常见依赖管理的几种方式进行了总结梳理，并初步体验了 gradle 7.0 新出的版本管理方式 catalog，项目可根据实际情况选择使用。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://developer.android.com/studio/build/gradle-tips#configure-project-wide-properties">Android 官方文档</a></li>
+<li><a href="https://docs.gradle.org/current/userguide/composite_builds.html">Composing builds</a></li>
+<li><a href="https://juejin.cn/post/6872721978898743310#heading-11">Android 重构 ｜ 持续优化统一管理 Gradle</a></li>
+<li><a href="https://juejin.cn/post/6947675376835362846#heading-2">7个你应该知道的Gradle实用技巧</a></li>
+<li><a href="https://juejin.cn/post/6844904169833234439">【奇技淫巧】除了 buildSrc 还能这样统一配置依赖版本？巧用 includeBuild</a></li>
+<li><a href="https://juejin.cn/post/6997396071055900680">【Gradle7.0】依赖统一管理的全新方式，了解一下~</a></li>
+<li><a href="https://docs.gradle.org/7.0/release-notes.html">Gradle Release Notes</a></li>
+<li><a href="https://docs.gradle.org/current/userguide/platforms.html">Sharing dependency versions between projects</a></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>gradle</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+</search>

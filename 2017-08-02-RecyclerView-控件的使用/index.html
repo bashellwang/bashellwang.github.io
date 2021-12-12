@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="RecyclerView 控件的使用 前言 最近在做一个滑动列表的需求，现将 RecyclerView 的使用知识记录总结下  概述RecyclerView 是 android.support.v7 包下的一个组件，根据官方文档说明，它是一个可以在有限屏幕区域提供大量数据集的灵活视图组件。 那么它和我们熟悉的 ListView 和 GridView 有什么区别呢，或者说对比已有的两个组件，Recy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RecyclerView 控件的使用">
+<meta property="og:url" content="https://bashellwang.github.io/2017-08-02-RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="bashellwang 的小书屋">
+<meta property="og:description" content="RecyclerView 控件的使用 前言 最近在做一个滑动列表的需求，现将 RecyclerView 的使用知识记录总结下  概述RecyclerView 是 android.support.v7 包下的一个组件，根据官方文档说明，它是一个可以在有限屏幕区域提供大量数据集的灵活视图组件。 那么它和我们熟悉的 ListView 和 GridView 有什么区别呢，或者说对比已有的两个组件，Recy">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-08-02T02:19:42.000Z">
+<meta property="article:modified_time" content="2021-12-12T09:29:24.326Z">
+<meta property="article:author" content="bashellwang">
+<meta property="article:tag" content="RecyclerView">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bashellwang.github.io/2017-08-02-RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>RecyclerView 控件的使用 | bashellwang 的小书屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">bashellwang 的小书屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/bashellwang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bashellwang.github.io/2017-08-02-RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="bashellwang">
+      <meta itemprop="description" content="路漫漫其修远兮">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bashellwang 的小书屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RecyclerView 控件的使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-08-02 10:19:42" itemprop="dateCreated datePublished" datetime="2017-08-02T10:19:42+08:00">2017-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-12 17:29:24" itemprop="dateModified" datetime="2021-12-12T17:29:24+08:00">2021-12-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="RecyclerView-控件的使用"><a href="#RecyclerView-控件的使用" class="headerlink" title="RecyclerView 控件的使用"></a>RecyclerView 控件的使用</h3><blockquote>
+<p>前言 最近在做一个滑动列表的需求，现将 RecyclerView 的使用知识记录总结下</p>
+</blockquote>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView">RecyclerView</a> 是 android.support.v7 包下的一个组件，根据官方文档说明，它是一个可以在有限屏幕区域提供大量数据集的灵活视图组件。</p>
+<p>那么它和我们熟悉的 ListView 和 GridView 有什么区别呢，或者说对比已有的两个组件，RecyclerView 有什么优势呢？整体来说，RecyclerView 提供了更为灵活的体验，高度解耦，开发者可以使用不同的 LayoutManager，ItemDecoration，ItemAnimator 来实现各种自定义效果。</p>
+<span id="more"></span>
+
+<ul>
+<li>LayoutManager 通过布局管理器，可以轻松实现类似 ListView，GridView 和 流式布局等效果</li>
+<li>ItemDecoration 通过它可以控制 Item 间的间隔，实现自定义间隔样式</li>
+<li>ItemAnimator 使用它来控制 Item 的增删等动画效果</li>
+<li>点击事件 RecyclerView 的点击事件需要自己来实现（提供了 OnItemTouchListener 接口）</li>
+</ul>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h4 id="导入库包"><a href="#导入库包" class="headerlink" title="导入库包"></a>导入库包</h4><p>在 gradle 文件中引入 v7 包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &#x27;com.android.support:recyclerview-v7:21.0.3&#x27;</span><br></pre></td></tr></table></figure>
+<h4 id="布局中使用"><a href="#布局中使用" class="headerlink" title="布局中使用"></a>布局中使用</h4><p>在 xml 布局文件中使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;android.support.v7.widget.RecyclerView</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;&gt;</span><br><span class="line">&lt;/android.support.v7.widget.RecyclerView&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Activity-中设置"><a href="#Activity-中设置" class="headerlink" title="Activity 中设置"></a>Activity 中设置</h4><p>在 Activity 中获取 RecyclerView 组件，进行以下设置：</p>
+<ul>
+<li>设置数据适配器（必须）</li>
+<li>设置布局管理器（必须）</li>
+<li>设置 Item 增加、移除动画（非必须）</li>
+<li>添加分割线（非必须）</li>
+</ul>
+<h4 id="Adapter"><a href="#Adapter" class="headerlink" title="Adapter"></a>Adapter</h4><p>继承实现 <code>RecyclerView.Adapter&lt;VH extends ViewHolder&gt;</code> 类，作为 <code>RecyclerView</code> 的数据适配器，主要实现以下几个方法</p>
+<ul>
+<li>onCreateViewHolder（创建 ViewHoldre，初始化填充 ItemView 布局）</li>
+<li>onBindViewHolder（绑定 ViewHolder，进行数据的展示处理）</li>
+<li>getItemViewType（获取 ItemView 类型，主要运用于多布局）</li>
+<li>getItemCount（获取 Item 个数）</li>
+</ul>
+<p><em><strong>注意:</strong></em> 在 onCreateViewHolder 中，填充 View 时建议使用如下格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_1, parent, false);</span><br></pre></td></tr></table></figure>
+<h4 id="LayoutManager"><a href="#LayoutManager" class="headerlink" title="LayoutManager"></a>LayoutManager</h4><p><code>RecyclerView.LayoutManager</code> 是一个抽象类，系统默认提供了三个实现类：</p>
+<ul>
+<li>LinearLayoutManager 线性布局管理器，支持横向及纵向布局</li>
+<li>GridLayoutManager 网格式布局管理器</li>
+<li>StaggeredGridLayoutManager 瀑布流式布局管理器</li>
+</ul>
+<p>将不同布局管理器设置到 RecyclerView 中，即可实现不同的布局；当然也可以继承 RecyclerView.LayoutManager 从而实现自定义布局</p>
+<h4 id="ItemDecoration"><a href="#ItemDecoration" class="headerlink" title="ItemDecoration"></a>ItemDecoration</h4><p>通过 <code>RecyclerView.addItemDecoration()</code> 方法可以添加分割线，该类为一个抽象类，开发者需要自己来进行实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public static abstract class ItemDecoration &#123;</span><br><span class="line"></span><br><span class="line">    public void onDraw(Canvas c, RecyclerView parent, State state) &#123;</span><br><span class="line">        onDraw(c, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void onDraw(Canvas c, RecyclerView parent) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void onDrawOver(Canvas c, RecyclerView parent, State state) &#123;</span><br><span class="line">        onDrawOver(c, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void onDrawOver(Canvas c, RecyclerView parent) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Deprecated</span><br><span class="line">    public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) &#123;</span><br><span class="line">        outRect.set(0, 0, 0, 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) &#123;</span><br><span class="line">        getItemOffsets(outRect, ((LayoutParams) view.getLayoutParams()).getViewPosition(),parent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们使用 <code>RecyclerView.addItemDecoration`` 方法时，RecyclerView 会进行绘制，主要是通过 onDraw()</code> 和 <code>onDrawOver()</code> 方法</p>
+<ul>
+<li>onDraw() : 绘制分割线</li>
+<li>onDrawOver() : 在 onDraw() 之后绘制，一般覆写其中一个即可</li>
+<li>getItemOffsets() : 通过 outRect.set() 为每个 item 设置偏移量，即用来设置分割线的宽、高</li>
+</ul>
+<h4 id="Item-Animator"><a href="#Item-Animator" class="headerlink" title="Item Animator"></a>Item Animator</h4><p>RecyclerView 能够通过 <code>mRecyclerView.setItemAnimator(ItemAnimator animator)</code> 设置添加、删除、移动、改变的动画效果。RecyclerView 提供了默认的 ItemAnimator 实现类：<code>DefaultItemAnimator</code></p>
+<h4 id="多布局实现"><a href="#多布局实现" class="headerlink" title="多布局实现"></a>多布局实现</h4><p>RecyclerView 可以通过 getItemViewType 获取不同的布局类型，进行对应布局的填充，有点类似 ListView ；利用这个接口可以轻松实现头布局和尾布局的添加</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>综合来看，RecyclerView 提供了一种低耦合，插拔式的滑动布局体验，通过 LayoutManager 可以只需一行代码实现布局格式的切换，轻松实现 ListView、GridView 等布局效果，更是可以支持自定义分割线处理。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/lmj623565791/article/details/45059587">Android RecyclerView 使用完全解析</a></li>
+<li><a target="_blank" rel="noopener" href="https://gist.github.com/alexfu/0f464fc3742f134ccd1e">DividerItemDecoration</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CymChad/CymChad.github.io">RecyclerView 优秀文集</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>bashellwang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://bashellwang.github.io/2017-08-02-RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8/" title="RecyclerView 控件的使用">https://bashellwang.github.io/2017-08-02-RecyclerView-控件的使用/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RecyclerView/" rel="tag"># RecyclerView</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" rel="prev" title="Mac 下 Hexo 和 Github 搭建博客">
+      <i class="fa fa-chevron-left"></i> Mac 下 Hexo 和 Github 搭建博客
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017-08-04-Python3-%E5%85%A5%E9%97%A8%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="next" title="Python3 入门之环境搭建">
+      Python3 入门之环境搭建 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">RecyclerView 控件的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E5%BA%93%E5%8C%85"><span class="nav-number">3.1.</span> <span class="nav-text">导入库包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%83%E5%B1%80%E4%B8%AD%E4%BD%BF%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">布局中使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Activity-%E4%B8%AD%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.3.</span> <span class="nav-text">Activity 中设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Adapter"><span class="nav-number">3.4.</span> <span class="nav-text">Adapter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LayoutManager"><span class="nav-number">3.5.</span> <span class="nav-text">LayoutManager</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ItemDecoration"><span class="nav-number">3.6.</span> <span class="nav-text">ItemDecoration</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Item-Animator"><span class="nav-number">3.7.</span> <span class="nav-text">Item Animator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%B8%83%E5%B1%80%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.8.</span> <span class="nav-text">多布局实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bashellwang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">bashellwang</p>
+  <div class="site-description" itemprop="description">路漫漫其修远兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/bashellwang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;bashellwang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://theme-next.iissnan.com/theme-settings.html" title="http:&#x2F;&#x2F;theme-next.iissnan.com&#x2F;theme-settings.html" rel="noopener" target="_blank">Next</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000" title="https:&#x2F;&#x2F;www.liaoxuefeng.com&#x2F;wiki&#x2F;0014316089557264a6b348958f449949df42a6d3a2e542c000" rel="noopener" target="_blank">Python</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bashellwang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

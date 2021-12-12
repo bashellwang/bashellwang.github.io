@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="写在前面之前在 Windows 下操作过一次博客搭建过程，不过后面没有写什么内容，也就慢慢废弃了。转岗到新部门后申请到了 Mac 电脑，在使用了一段时间之后，不得不感慨 Mac 电脑对于开发人员的便捷舒适。这里尽量将自己平时的工作总结进行记录备忘，那么就从搭建博客开始吧。 注册 GitHub 账号在 Github 上进行注册，这个比较简单，按照正常操作即可。 创建仓库 (repo)，这个仓库是和我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mac 下 Hexo 和 Github 搭建博客">
+<meta property="og:url" content="https://bashellwang.github.io/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/index.html">
+<meta property="og:site_name" content="bashellwang 的小书屋">
+<meta property="og:description" content="写在前面之前在 Windows 下操作过一次博客搭建过程，不过后面没有写什么内容，也就慢慢废弃了。转岗到新部门后申请到了 Mac 电脑，在使用了一段时间之后，不得不感慨 Mac 电脑对于开发人员的便捷舒适。这里尽量将自己平时的工作总结进行记录备忘，那么就从搭建博客开始吧。 注册 GitHub 账号在 Github 上进行注册，这个比较简单，按照正常操作即可。 创建仓库 (repo)，这个仓库是和我">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bashellwang.github.io/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/blog_home_page.png">
+<meta property="article:published_time" content="2017-06-30T07:06:16.000Z">
+<meta property="article:modified_time" content="2021-12-12T09:29:24.323Z">
+<meta property="article:author" content="bashellwang">
+<meta property="article:tag" content="Mac">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Next">
+<meta property="article:tag" content="github">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bashellwang.github.io/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/blog_home_page.png">
+
+<link rel="canonical" href="https://bashellwang.github.io/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Mac 下 Hexo 和 Github 搭建博客 | bashellwang 的小书屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">bashellwang 的小书屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/bashellwang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bashellwang.github.io/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="bashellwang">
+      <meta itemprop="description" content="路漫漫其修远兮">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bashellwang 的小书屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Mac 下 Hexo 和 Github 搭建博客
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-30 15:06:16" itemprop="dateCreated datePublished" datetime="2017-06-30T15:06:16+08:00">2017-06-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-12 17:29:24" itemprop="dateModified" datetime="2021-12-12T17:29:24+08:00">2021-12-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>之前在 Windows 下操作过一次博客搭建过程，不过后面没有写什么内容，也就慢慢废弃了。转岗到新部门后申请到了 Mac 电脑，在使用了一段时间之后，不得不感慨 Mac 电脑对于开发人员的便捷舒适。这里尽量将自己平时的工作总结进行记录备忘，那么就从搭建博客开始吧。</p>
+<h3 id="注册-GitHub-账号"><a href="#注册-GitHub-账号" class="headerlink" title="注册 GitHub 账号"></a>注册 GitHub 账号</h3><p>在 <a target="_blank" rel="noopener" href="https://github.com/">Github</a> 上进行注册，这个比较简单，按照正常操作即可。</p>
+<p>创建仓库 (repo)，这个仓库是和我们的博客关联起来的，后续博客文章资源都是存放在这个仓库当中。使用 Hexo 时，repo 的名字应该按照 <code>your_github_username.github.io</code> 来命名。一个账号一般只能对应一个博客。</p>
+<span id="more"></span>
+
+<h3 id="安装-Git、Node-js-和-Hexo"><a href="#安装-Git、Node-js-和-Hexo" class="headerlink" title="安装 Git、Node.js 和 Hexo"></a>安装 Git、Node.js 和 Hexo</h3><ul>
+<li>Mac 电脑本身自带 Git ，无需安装</li>
+<li>在 <a target="_blank" rel="noopener" href="https://nodejs.org/en/">Nodejs</a> 官网下载安装；用来下载 Hexo 等工具及插件</li>
+<li>在命令行使用 <code>npm install -g hexo-cli</code> 来下载安装 Hexo</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>公司开发网需要设置代理 <code>npm config set proxy=http://dev-proxy.oa.com:8080</code></li>
+<li>如果发现没有权限，则使用如下命令 <code>sudo npm install -g hexo-cli</code></li>
+</ul>
+<h3 id="搭建博客"><a href="#搭建博客" class="headerlink" title="搭建博客"></a>搭建博客</h3><h4 id="博客初始化"><a href="#博客初始化" class="headerlink" title="博客初始化"></a>博客初始化</h4><p>建立一个博客文件夹，比如 “GitRoom”，进入到文件夹后进行初始化操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd GitRoom</span><br><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
+<p>安装依赖包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
+<p>这样设置后，我们就可以在博客文件夹中看到多了很多文件和目录</p>
+<h3 id="博客配置"><a href="#博客配置" class="headerlink" title="博客配置"></a>博客配置</h3><p>博客站点的配置信息在 <code>_config.yml</code> 文件中，我们主要修改如下几点即可（注意每一项的「 : 」后需要保留一个空格）</p>
+<p>网站基本信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">title: bashellwang 的小书屋</span><br><span class="line">subtitle:</span><br><span class="line">description: 路漫漫其修远兮</span><br><span class="line">author: bashellwang</span><br><span class="line">language: zh-Hans</span><br><span class="line">timezone: Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<p>绑定 Github</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/bashellwang/bashellwang.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<h3 id="博客本地部署测试"><a href="#博客本地部署测试" class="headerlink" title="博客本地部署测试"></a>博客本地部署测试</h3><p>一般我们在发布到正式环境前会先本地部署看看效果，使用如下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>此时，正常情况下应该会显示如下；在浏览器中输入 <code>http://localhost:4000/</code> 即可看到搭建好的博客和文章了。</p>
+<h3 id="博客发布到正式环境"><a href="#博客发布到正式环境" class="headerlink" title="博客发布到正式环境"></a>博客发布到正式环境</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>这时我们就可以在 GitHub 的仓库中看见我们提交的网站相关资源了；此时在浏览器中输入 <code>your_github_name.github.io</code> 就可以打开我们博客的主页了。</p>
+<h3 id="新建文章"><a href="#新建文章" class="headerlink" title="新建文章"></a>新建文章</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new &quot;article_title&quot;</span><br></pre></td></tr></table></figure>
+<p>即可在本地文件夹 <code>/source/_post</code> 下看到我们新建的 markdown 文件；<br>使用 markdown 编辑器编写文章内容后保存（ mac 推荐使用 MacDown 软件）；<br>生成静态网页文件并发布到网上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>更多 Hexo 操作请参考 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo 操作指南</a></p>
+<h3 id="删除文章"><a href="#删除文章" class="headerlink" title="删除文章"></a>删除文章</h3><p>在本地文件夹 <code>/source/_post</code> 目录下删除对应的 .md 文件，然后重新生成静态网页文件并发布</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>每次当博客发生问题或错误时，建议先进行 clean 操作并重新生成静态网页</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">$ hexo g</span><br></pre></td></tr></table></figure>
+
+<h3 id="草稿相关命令操作"><a href="#草稿相关命令操作" class="headerlink" title="草稿相关命令操作"></a>草稿相关命令操作</h3><h4 id="编写草稿"><a href="#编写草稿" class="headerlink" title="编写草稿"></a>编写草稿</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new draft &quot;article_title&quot;</span><br></pre></td></tr></table></figure>
+<p>生成的文件作为草稿被放到 <code>/source/_draft</code> 目录下。</p>
+<p>放在该目录下的草稿，在使用 <code>hexo generate</code> 命令生成静态文件时不会被处理。</p>
+<h4 id="预览草稿"><a href="#预览草稿" class="headerlink" title="预览草稿"></a>预览草稿</h4><p>如果想要查看草稿效果，可以在启动本地服务时增加一个参数 <code>hexo server --draft</code>，或者在 <code>_config.yml</code> 文件中进行配置，这样每次在启动本地服务时都会渲染草稿。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">render_drafts: true</span><br></pre></td></tr></table></figure>
+
+<h4 id="发布草稿"><a href="#发布草稿" class="headerlink" title="发布草稿"></a>发布草稿</h4><p>编写好草稿之后，如果想将草稿发布到 <code>source_posts</code> 目录下，可以使用如下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo publish post &quot;article_title&quot;</span><br></pre></td></tr></table></figure>
+<p>在发布成功后，<code>_drafts</code> 目录下的草稿会被移除</p>
+<h3 id="Hexo-常用命令"><a href="#Hexo-常用命令" class="headerlink" title="Hexo 常用命令"></a>Hexo 常用命令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">hexo help #查看帮助</span><br><span class="line">hexo init #初始化一个目录</span><br><span class="line">hexo new &quot;postName&quot; #新建文章</span><br><span class="line">hexo new page &quot;pageName&quot; #新建页面</span><br><span class="line">hexo generate #生成网页，可以在 public 目录查看整个网站的文件</span><br><span class="line">hexo server #本地预览，&#x27;Ctrl+C&#x27;关闭</span><br><span class="line">hexo deploy #部署.deploy目录</span><br><span class="line">hexo clean #清除缓存，**强烈建议每次执行命令前先清理缓存，每次部署前先删除 .deploy 文件夹**</span><br><span class="line">简写：</span><br><span class="line">hexo n == hexo new</span><br><span class="line">hexo g == hexo generate</span><br><span class="line">hexo s == hexo server</span><br><span class="line">hexo d == hexo deploy</span><br></pre></td></tr></table></figure>
+
+<h3 id="博客主题修改"><a href="#博客主题修改" class="headerlink" title="博客主题修改"></a>博客主题修改</h3><p>Hexo 支持多种主题，并且可以轻易修改主题风格。下面以我的站点 <a href="https://bashellwang.github.io/">https://bashellwang.github.io/</a> 来进行简单说明<br>Hexo 主要有两份配置文件（文件名均为 <code>_config.yml</code>）：一份在站点根目录下，一份在主题 <code>theme</code> 目录下，我们可以分别称为站点配置文件和主题配置文件。</p>
+<p>在 <code>theme</code> 目录下下载主题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https://github.com/iissnan/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>站点配置文件中启用主题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">theme: next</span><br></pre></td></tr></table></figure>
+
+<p>主题配置文件中选用主题特性，使用 <code>Pisces</code> 特性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#scheme: Muse</span><br><span class="line">#scheme: Mist</span><br><span class="line">scheme: Pisces</span><br></pre></td></tr></table></figure>
+<p>这样即完成了基本的网站主题设置，更多详情请参考 <a target="_blank" rel="noopener" href="http://theme-next.iissnan.com/getting-started.html">NexT 使用文档</a></p>
+<h3 id="博客中插入图片"><a href="#博客中插入图片" class="headerlink" title="博客中插入图片"></a>博客中插入图片</h3><p>可参考文章 <a target="_blank" rel="noopener" href="https://univer2012.github.io/2017/04/23/6how-to-insert-picture-in-hexo-blog/">hexo 博客插入图片</a></p>
+<h3 id="最终成品"><a href="#最终成品" class="headerlink" title="最终成品"></a>最终成品</h3><p><a href="https://bashellwang.github.io/">https://bashellwang.github.io/</a></p>
+<img src="/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/blog_home_page.png" class="" title="blog_home_page.png">
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>bashellwang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://bashellwang.github.io/2017-06-30-Mac-%E4%B8%8B-Hexo-%E5%92%8C-Github-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" title="Mac 下 Hexo 和 Github 搭建博客">https://bashellwang.github.io/2017-06-30-Mac-下-Hexo-和-Github-搭建博客/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Mac/" rel="tag"># Mac</a>
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/Next/" rel="tag"># Next</a>
+              <a href="/tags/github/" rel="tag"># github</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/hello-world/" rel="prev" title="Hello World">
+      <i class="fa fa-chevron-left"></i> Hello World
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017-08-02-RecyclerView-%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="next" title="RecyclerView 控件的使用">
+      RecyclerView 控件的使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="nav-number">1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C-GitHub-%E8%B4%A6%E5%8F%B7"><span class="nav-number">2.</span> <span class="nav-text">注册 GitHub 账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Git%E3%80%81Node-js-%E5%92%8C-Hexo"><span class="nav-number">3.</span> <span class="nav-text">安装 Git、Node.js 和 Hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2"><span class="nav-number">4.</span> <span class="nav-text">搭建博客</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">博客初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE"><span class="nav-number">5.</span> <span class="nav-text">博客配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2%E6%B5%8B%E8%AF%95"><span class="nav-number">6.</span> <span class="nav-text">博客本地部署测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E5%8F%91%E5%B8%83%E5%88%B0%E6%AD%A3%E5%BC%8F%E7%8E%AF%E5%A2%83"><span class="nav-number">7.</span> <span class="nav-text">博客发布到正式环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E5%BB%BA%E6%96%87%E7%AB%A0"><span class="nav-number">8.</span> <span class="nav-text">新建文章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%96%87%E7%AB%A0"><span class="nav-number">9.</span> <span class="nav-text">删除文章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8D%89%E7%A8%BF%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C"><span class="nav-number">10.</span> <span class="nav-text">草稿相关命令操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E8%8D%89%E7%A8%BF"><span class="nav-number">10.1.</span> <span class="nav-text">编写草稿</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E8%A7%88%E8%8D%89%E7%A8%BF"><span class="nav-number">10.2.</span> <span class="nav-text">预览草稿</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E8%8D%89%E7%A8%BF"><span class="nav-number">10.3.</span> <span class="nav-text">发布草稿</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">11.</span> <span class="nav-text">Hexo 常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E4%B8%BB%E9%A2%98%E4%BF%AE%E6%94%B9"><span class="nav-number">12.</span> <span class="nav-text">博客主题修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E4%B8%AD%E6%8F%92%E5%85%A5%E5%9B%BE%E7%89%87"><span class="nav-number">13.</span> <span class="nav-text">博客中插入图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E6%88%90%E5%93%81"><span class="nav-number">14.</span> <span class="nav-text">最终成品</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bashellwang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">bashellwang</p>
+  <div class="site-description" itemprop="description">路漫漫其修远兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/bashellwang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;bashellwang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://theme-next.iissnan.com/theme-settings.html" title="http:&#x2F;&#x2F;theme-next.iissnan.com&#x2F;theme-settings.html" rel="noopener" target="_blank">Next</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000" title="https:&#x2F;&#x2F;www.liaoxuefeng.com&#x2F;wiki&#x2F;0014316089557264a6b348958f449949df42a6d3a2e542c000" rel="noopener" target="_blank">Python</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bashellwang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
