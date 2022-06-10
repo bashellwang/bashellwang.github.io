@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bashellwang.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前端代码在部署发布过程中，需要涉及到服务器的配置处理，一般都是运维或发布同事帮忙处理，目前公司主要使用的是 Nginx 服务器。了解一些 Nginx 的知识，有利于我们快速定位处理一些发布中遇到的问题。  基础概念说明NginxNginx 是一个免费的、开源的、高性能的 HTTP 服务器，同时也是反向代理服务器，以及 IMAP&#x2F;POP3 代理服务器。Nginx 以其高性能、稳定性、丰富功能集、简">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx 配置入门">
+<meta property="og:url" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="bashellwang 的小书屋">
+<meta property="og:description" content="前端代码在部署发布过程中，需要涉及到服务器的配置处理，一般都是运维或发布同事帮忙处理，目前公司主要使用的是 Nginx 服务器。了解一些 Nginx 的知识，有利于我们快速定位处理一些发布中遇到的问题。  基础概念说明NginxNginx 是一个免费的、开源的、高性能的 HTTP 服务器，同时也是反向代理服务器，以及 IMAP&#x2F;POP3 代理服务器。Nginx 以其高性能、稳定性、丰富功能集、简">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/forward_reverse_proxy.png">
+<meta property="og:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/load_balance_polling.png">
+<meta property="og:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/load_balance_ip_hash.png">
+<meta property="og:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/nginx_help.png">
+<meta property="og:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/nginx_modules.png">
+<meta property="og:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/openresty_phases.png">
+<meta property="og:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/pc_request.png">
+<meta property="og:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/mobile_request.png">
+<meta property="article:published_time" content="2022-06-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-06-10T07:49:12.652Z">
+<meta property="article:author" content="bashellwang">
+<meta property="article:tag" content="Nginx">
+<meta property="article:tag" content="Lua">
+<meta property="article:tag" content="Openresty">
+<meta property="article:tag" content="反向代理">
+<meta property="article:tag" content="负载均衡">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/forward_reverse_proxy.png">
+
+<link rel="canonical" href="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Nginx 配置入门 | bashellwang 的小书屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">bashellwang 的小书屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/bashellwang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="bashellwang">
+      <meta itemprop="description" content="路漫漫其修远兮">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bashellwang 的小书屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nginx 配置入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-10 00:00:00 / 修改时间：15:49:12" itemprop="dateCreated datePublished" datetime="2022-06-10T00:00:00+08:00">2022-06-10</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>前端代码在部署发布过程中，需要涉及到服务器的配置处理，一般都是运维或发布同事帮忙处理，目前公司主要使用的是 Nginx 服务器。了解一些 Nginx 的知识，有利于我们快速定位处理一些发布中遇到的问题。</p>
+</blockquote>
+<h3 id="基础概念说明"><a href="#基础概念说明" class="headerlink" title="基础概念说明"></a>基础概念说明</h3><h4 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h4><p><a target="_blank" rel="noopener" href="https://www.nginx.com/resources/wiki/">Nginx</a> 是一个免费的、开源的、高性能的 HTTP 服务器，同时也是反向代理服务器，以及 IMAP/POP3 代理服务器。Nginx 以其高性能、稳定性、丰富功能集、简单的配置和低资源消耗而著称。可以通过简单配置来实现反向代理、负载均衡、Nginx 缓存以及动静分离等功能。</p>
+<span id="more"></span>
+<h4 id="正向代理和反向代理"><a href="#正向代理和反向代理" class="headerlink" title="正向代理和反向代理"></a>正向代理和反向代理</h4><ul>
+<li><code>正向代理</code>：是一个位于客户端和原始服务器(origin server)之间的服务器，为了从原始服务器取得内容，客户端向代理发送一个请求并指定目标(原始服务器)，然后代理向原始服务器转交请求并将获得的内容返回给客户端。</li>
+<li><code>反向代理</code>：反向代理服务器位于用户与目标服务器之间，但是对于用户而言，反向代理服务器就相当于目标服务器，即用户直接访问反向代理服务器就可以获得目标服务器的资源。同时，用户不需要知道目标服务器的地址，也无须在用户端作任何设定。</li>
+</ul>
+<p>正向代理服务器和反向代理服务器都是位于客户端和真实服务器之间，所做的事情也都是把客户端请求转发到服务器，再把服务器响应转发回客户端。两者还是有一定的差异。</p>
+<ol>
+<li>正向代理是客户端的代理，可以帮助客户端访问其无法访问的服务器资源。反向代理则是服务器的代理，帮助服务器做负载均衡，安全防护等。</li>
+<li>正向代理一般是客户端架设的，比如在自己机器安装一个代理软件。而反向代理一般是服务器架设的，比如在机器集群中部署一个反向代理服务器。</li>
+<li>正向代理中，服务器不知道真正的客户端是谁，以为访问自己的就是真实的客户端。而在反向代理中，客户端不知道真正的服务器是谁，以为自己访问的是真实的服务器。</li>
+<li>正向代理和反向代理的作用和目的不一样。正向代理主要是用来解决访问限制问题。而反向代理则是提供负载均衡、安全防护等作用。二者均能提高访问速度。</li>
+</ol>
+<p>总的来说，正向代理是模拟客户端，对客户端负责；反向代理是模拟服务器，对所代理的服务器负责。</p>
+<p>示意图可参考如下图所示：</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/forward_reverse_proxy.png" class="">
+
+<h4 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h4><p><code>负载均衡</code>，英文名称为 Load Balance，其含义就是指将负载（工作任务）进行平衡、分摊到多个操作单元上进行运行，例如 FTP服务器、Web 服务器、企业核心应用服务器和其它主要任务服务器等，从而协同完成工作任务。</p>
+<p>负载均衡构建在原有网络结构之上，它提供了一种透明且廉价有效的方法扩展服务器和网络设备的带宽、加强网络数据处理能力、增加吞吐量、提高网络的可用性和灵活性。</p>
+<p>负载均衡常用算法</p>
+<ul>
+<li><code>轮询/加权轮询</code>：每个请求按时间顺序逐一分配到不同的后端服务器，如果后端某台服务器宕机，故障系统被自动剔除，使用户访问不受影响。Weight 指定轮询权值，Weight 值越大，分配到的访问机率越高，主要用于后端每个服务器性能不均的情况下。</li>
+<li><code>IP 哈希</code>：每个请求按访问 IP 的 hash 结果分配，这样来自同一个 IP 的访客固定访问一个后端服务器，有效解决了动态网页存在的 session 不共享问题。</li>
+<li><code>最小连接法</code>：将任务分配给此时具有最小连接数的节点，因此它是动态负载均衡算法。一个节点收到一个任务后连接数就会加1，当节点故障时就将节点权值设置为0，不再给节点分配任务。适用于各节点性能相似时。</li>
+<li><code>URL 哈希</code>：根据请求的 URL 的哈希值来分配服务器。它的特点是相同 URL的请求会分配给固定的服务器，当存在缓存时，效率较高。</li>
+</ul>
+<p>Nginx 内置策略为轮询、加权轮询和 IP 哈希。示意图如下所示：</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/load_balance_polling.png" class="">
+
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/load_balance_ip_hash.png" class="">
+
+<h3 id="Nginx-基础"><a href="#Nginx-基础" class="headerlink" title="Nginx 基础"></a>Nginx 基础</h3><h4 id="Nginx-安装"><a href="#Nginx-安装" class="headerlink" title="Nginx 安装"></a>Nginx 安装</h4><ol>
+<li>下载 <a target="_blank" rel="noopener" href="http://nginx.org/en/download.html">Nginx</a> 版本</li>
+<li>解压 nginx-xx.tar.gz 包</li>
+<li>进入解压缩目录，执行 <code>./configure</code></li>
+<li>执行命令 <code>make &amp; make install</code></li>
+</ol>
+<p>如若安装结束，使用 <code>nginx</code> 启动 nginx 后，浏览器中输入 <code>http:localhost</code> 看到欢迎页面即可验证安装启动成功。</p>
+<h4 id="Nginx-常用命令"><a href="#Nginx-常用命令" class="headerlink" title="Nginx 常用命令"></a>Nginx 常用命令</h4><img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/nginx_help.png" class="">
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">nginx -h：查看帮助</span><br><span class="line">nginx -v：查看版本信息</span><br><span class="line">nginx -V：查看版本和配置信息</span><br><span class="line">nginx -t：测试配置文件正确性</span><br><span class="line">nginx -T：测试配置文件，并显示配置文件信息</span><br><span class="line">nginx -q：测试配置文件，但是只显示错误信息</span><br><span class="line">nginx -s：发送信号，包括：stop、quit、reopen、reload</span><br><span class="line">nginx -p：设置前缀</span><br><span class="line">nginx -e：设置错误日志文件路径</span><br><span class="line">nginx -c：设置配置文件</span><br><span class="line">nginx -g：设置配置文件路径</span><br></pre></td></tr></table></figure>
+
+<h4 id="Nginx-模块化机制"><a href="#Nginx-模块化机制" class="headerlink" title="Nginx 模块化机制"></a>Nginx 模块化机制</h4><p>Nginx 的内部结构是由核心部分和一系列的功能模块所组成。这样划分是为了使得每个模块的功能相对简单，便于开发，同时也便于对系统进行功能扩展。</p>
+<ul>
+<li>第一类模块叫 <code>ngx_core_module</code> 叫核心模块。核心模块里面会有一类核心模块，比如 events，http，mail 或者 stream。它们本身会定义出新的类型模块，如果新出了一类应用可以新增一个 <code>ngx_core_module</code> 来定义新的模块。</li>
+<li>还有个独立的模块叫 <code>ngx_conf_module</code>，这个类型只有一个模块叫 <code>ngx_conf_module</code>；它只负责去解析我们的 nginx.conf 文件。</li>
+<li>所有事件处理的方法内聚为 <code>ngx_event_module</code> 事件模块。通常会在这类模块中其中第一个模块通常加上 <code>_core</code> 关键字来把通用的共性部分放到里面，比如 <code>event_core</code>，<code>ngx_http_core_module</code>，<code>ngx_mail_core_module</code>，<code>ngx_stream_core_module</code>。</li>
+<li>其次最复杂的 http 模块。<code>ngx_http_core_module</code> 它已经定义了许多特色的规则。比如说当一个 http 请求进入 nginx 的时候，为请求生成相应的模块我们叫它请求处理模块；当我们生成响应把响应发送给浏览器的时候，响应过滤模块会对响应做二次处理；还有一类模块叫 upsteam 相关模块，它专注于在一个请求内部去访问上游服务。</li>
+</ul>
+<p>示意图如图所示：</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/nginx_modules.png" class="">
+
+
+<h3 id="Nginx-配置文件"><a href="#Nginx-配置文件" class="headerlink" title="Nginx 配置文件"></a>Nginx 配置文件</h3><h4 id="配置文件说明"><a href="#配置文件说明" class="headerlink" title="配置文件说明"></a>配置文件说明</h4><p>Nginx 的主配置文件是 <code>nginx.conf</code>，这个配置文件一共由三部分组成，分别为 <code>全局块、events 块和 http 块</code>。</p>
+<ul>
+<li>全局块：配置影响 nginx 全局的指令。一般有运行 nginx 服务器的用户组，nginx 进程 pid 存放路径，日志存放路径，配置文件引入，允许生成 worker process 数等。</li>
+<li>events 块：配置影响 nginx 服务器或与用户的网络连接。有每个进程的最大连接数，选取哪种事件驱动模型处理连接请求，是否允许同时接受多个网路连接，开启多个网络连接序列化等。</li>
+<li>http 块：可以嵌套多个 server，配置代理，缓存，日志定义等绝大多数功能和第三方模块的配置。如文件引入，mime-type 定义，日志自定义，是否使用 sendfile 传输文件，连接超时时间，单连接请求数等。</li>
+<li>server 块：配置虚拟主机的相关参数，一个http中可以有多个server。</li>
+<li>location 块：配置请求的路由，以及各种页面的处理情况。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">#全局块</span><br><span class="line">#user  nobody;</span><br><span class="line">worker_processes  1;</span><br><span class="line"></span><br><span class="line">#event块</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#http块</span><br><span class="line">http &#123;</span><br><span class="line">    #http 全局块</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line">    #server块</span><br><span class="line">    server &#123;</span><br><span class="line">        #server 全局块</span><br><span class="line">        listen       8000;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">        #location 块</span><br><span class="line">        location / &#123;</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    #这边可以有多个 server 块</span><br><span class="line">    server &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更多详情可参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/54chensongxia/p/12938929.html">Nginx配置文件详解</a></p>
+<h4 id="location-详解"><a href="#location-详解" class="headerlink" title="location 详解"></a>location 详解</h4><p>location 指令是 nginx 中最重要的指令之一，它用来匹配不同的 url 请求，进而对请求做不同的处理和响应，其中重点需要注意的是 location 的匹配顺序及优先级。</p>
+<h5 id="location-语法"><a href="#location-语法" class="headerlink" title="location 语法"></a>location 语法</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 关键字 修饰符 匹配的前缀字符(url)&#123; 要执行的操作 &#125;</span><br><span class="line"></span><br><span class="line">location [=|~|~*|^~] /uri/ &#123; … &#125;</span><br><span class="line">location @name &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="location-模式及匹配优先级"><a href="#location-模式及匹配优先级" class="headerlink" title="location 模式及匹配优先级"></a>location 模式及匹配优先级</h5><table>
+<thead>
+<tr>
+<th>名字</th>
+<th>模式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>精确匹配</td>
+<td>locatio = /uri</td>
+<td>= 表示精确匹配，只有完全匹配上才能生效</td>
+</tr>
+<tr>
+<td>前缀匹配</td>
+<td>location ^~ /uri</td>
+<td>^~ 开头对URL路径进行前缀匹配，并且在正则之前。</td>
+</tr>
+<tr>
+<td>正则匹配</td>
+<td>location ~ pattern</td>
+<td>开头表示区分大小写的正则匹配</td>
+</tr>
+<tr>
+<td>正则匹配</td>
+<td>location ~* pattern</td>
+<td>开头表示不区分大小写的正则匹配</td>
+</tr>
+<tr>
+<td>最长前缀匹配</td>
+<td>location /uri</td>
+<td>不带任何修饰符，也表示前缀匹配，但是在正则匹配之后</td>
+</tr>
+<tr>
+<td>默认匹配</td>
+<td>location /</td>
+<td>通用匹配，任何未匹配到其它location的请求都会匹配到，相当于switch中的default</td>
+</tr>
+</tbody></table>
+<p>多个 location 配置的情况下匹配顺序为:</p>
+<ul>
+<li>location = /a {…} #精准匹配</li>
+<li>location ^~ /a {…} #前缀匹配</li>
+<li>location ~ /a.* {…} #正则匹配（区分大小写）</li>
+<li>location ~* /a.* {…} #正则匹配（不区分大小写）</li>
+<li>location /a {…} #最长前缀匹配，但是优先级低于正则匹配。 /a 和 ^~ /a 会冲突，报错</li>
+<li>location / {} #任何没有匹配成功的，都会匹配这里处理</li>
+</ul>
+<h5 id="命名-location-name-用法"><a href="#命名-location-name-用法" class="headerlink" title="命名 location @name 用法"></a>命名 location @name 用法</h5><p>@用来定一个一个命名 location。主要用于内部重定向，不能用来处理正常的请求。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">	try_files $uri $uri/ @custom</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location @custom &#123;</span><br><span class="line">	# do ... something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="uri-末尾带不带-的说明"><a href="#uri-末尾带不带-的说明" class="headerlink" title="uri 末尾带不带 / 的说明"></a>uri 末尾带不带 / 的说明</h5><p>uri 末尾带斜杠<code>/user/</code>表示目录，不带斜杠<code>/user</code>表示文件。</p>
+<p>默认情况下，访问 <code>/user/</code>时，服务器会自动去该目录下查找加载默认文件。<br>而访问 <code>/user</code> 时，服务器会先尝试加载该文件，如果文件不存在，则重定向至 <code>/user/</code> 去该目录下找默认文件。</p>
+<h3 id="OpenResty"><a href="#OpenResty" class="headerlink" title="OpenResty"></a>OpenResty</h3><p><a target="_blank" rel="noopener" href="https://openresty.org/cn/">OpenResty</a> 是一个基于 Nginx 与 Lua 的高性能 Web 平台，其内部集成了大量精良的 Lua 库、第三方模块以及大多数的依赖项。用于方便地搭建能够处理超高并发、扩展性极高的动态 Web 应用、Web 服务和动态网关。</p>
+<p>通过 OpenResty，Web 开发人员和系统工程师可以使用 Lua 脚本语言调动 Nginx 支持的各种 C 以及 Lua 模块。</p>
+<h4 id="Lua-入门"><a href="#Lua-入门" class="headerlink" title="Lua 入门"></a>Lua 入门</h4><p>我们学习 OpenResty，只需要了解基础 lua 语法即可，下面列举出一些和其他常见语言不太一样的地方，方便快速对比上手。更多详情可自行参考网络资料 <a target="_blank" rel="noopener" href="https://www.runoob.com/lua/lua-tutorial.html">Lua 教程</a>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">-- 单行注释</span><br><span class="line"></span><br><span class="line">--[[</span><br><span class="line">	这是一个</span><br><span class="line">	多行注释</span><br><span class="line">--]]</span><br><span class="line"></span><br><span class="line">-- Lua 中的表（table）其实是一个&quot;关联数组&quot;（associative arrays），数组的索引可以是数字或者是字符串。</span><br><span class="line">-- Lua 中表的默认初始索引一般从 1 开始。</span><br><span class="line">-- 创建一个空的 table</span><br><span class="line">local tbl1 = &#123;&#125;</span><br><span class="line"> </span><br><span class="line">-- 直接初始表</span><br><span class="line">local tbl2 = &#123;&quot;apple&quot;, &quot;pear&quot;, &quot;orange&quot;, &quot;grape&quot;&#125;</span><br><span class="line"></span><br><span class="line">--[[</span><br><span class="line">	Lua 中变量有三种：全局变量、局部变量、表中的域</span><br><span class="line">	Lua 中的变量全是全局变量，哪怕是语句块或是函数里，除非用 local 显式声明为局部变量。</span><br><span class="line">	局部变量的作用域为从声明位置开始到所在语句块结束。</span><br><span class="line">--]]</span><br><span class="line"></span><br><span class="line">-- Lua 函数可以接受可变数目的参数，和 C 语言类似，在函数参数列表中使用三点 ... 表示函数有可变的参数。</span><br><span class="line">function add(...)  </span><br><span class="line">local s = 0  </span><br><span class="line">  for i, v in ipairs&#123;...&#125; do   --&gt; &#123;...&#125; 表示一个由所有变长参数构成的数组  </span><br><span class="line">    s = s + v  </span><br><span class="line">  end  </span><br><span class="line">  return s  </span><br><span class="line">end  </span><br><span class="line">print(add(3,4,5,6,7))  ---&gt;25</span><br><span class="line"></span><br><span class="line">-- 运算符: .. 和 #</span><br><span class="line">a = &quot;hello &quot;</span><br><span class="line">b = &quot;world&quot;</span><br><span class="line"></span><br><span class="line">print(&quot;连接字符串 a 和 b &quot;, a..b )</span><br><span class="line">print(&quot;b 字符串长度 &quot;,#b )</span><br></pre></td></tr></table></figure>
+
+<h4 id="OpenResty-安装"><a href="#OpenResty-安装" class="headerlink" title="OpenResty 安装"></a>OpenResty 安装</h4><p>以 Mac 为例，使用 <code>brew</code> 安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install openresty/brew/openresty</span><br></pre></td></tr></table></figure>
+<p>安装后，将 <code>/usr/local/Cellar/openresty/&lt;version&gt;/bin</code> 和 <code>/usr/local/Cellar/openresty/&lt;version&gt;/nginx/sbin</code> 配置到系统 path 环境变量中。使用 <code>openresty -v</code> 来查看版本信息。</p>
+<h4 id="HelloWorld"><a href="#HelloWorld" class="headerlink" title="HelloWorld"></a>HelloWorld</h4><p>新建一个工作目录 <code>hello_resty</code>，里面新建两个目录 <code>conf</code> 和 <code>logs</code>。在 conf 目录下新建配置文件 <code>nginx.conf</code>，文件内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">worker_processes  1;        #nginx worker 数量</span><br><span class="line">error_log logs/error.log debug;   #指定错误日志文件路径</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections 1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen 8080;</span><br><span class="line">        location / &#123;</span><br><span class="line">            default_type text/html;</span><br><span class="line">            content_by_lua_block &#123;</span><br><span class="line">                ngx.say(&quot;&lt;h2&gt;hello&lt;/h2&gt;&quot;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动 nginx</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -p ./ -c conf/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>启动后可以使用 <code>curl http://localhost:6699</code> 访问，使用浏览器访问 <code>http://localhost:8080/</code> 有同样效果。</p>
+<h4 id="nginx-lua-模块"><a href="#nginx-lua-模块" class="headerlink" title="nginx lua 模块"></a>nginx lua 模块</h4><p>OpenResty 处理请求流程如下：</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/openresty_phases.png" class="">
+
+<p>由于 Nginx 把一个请求分成了很多阶段，这样第三方模块就可以根据自己行为，挂载到不同阶段进行处理达到目的。OpenResty 也应用了同样的特性。所不同的是，OpenResty 挂载的是我们编写的 Lua 代码。</p>
+<ul>
+<li><code>set_by_lua*</code>: 流程分支处理判断变量初始化</li>
+<li><code>rewrite_by_lua*</code>: 转发、重定向、缓存等功能(例如特定请求代理到外网)</li>
+<li><code>access_by_lua*</code>: IP 准入、接口权限等情况集中处理(例如配合 iptable 完成简单防火墙)</li>
+<li><code>content_by_lua*</code>: 内容生成</li>
+<li><code>header_filter_by_lua*</code>: 响应头部过滤处理(例如添加头部信息)</li>
+<li><code>body_filter_by_lua*</code>: 响应体过滤处理(例如完成应答内容统一成大写)</li>
+<li><code>log_by_lua*</code>: 会话完成后本地异步完成日志记录(日志可以记录在本地，还可以同步到其他机器)</li>
+</ul>
+<p>把逻辑放在不同阶段，分工明确，代码独立，方便维护以及扩展。</p>
+<h3 id="Demo-案例"><a href="#Demo-案例" class="headerlink" title="Demo 案例"></a>Demo 案例</h3><h4 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h4><p>实现一个静态代码网站，同一 url 请求，PC 和 移动端均可访问。根据请求方携带的 useragent 判断来源，从而导向不同页面。同时可以在链接里带上指定参数来访问指定页面。</p>
+<h4 id="nginx-配置文件实现"><a href="#nginx-配置文件实现" class="headerlink" title="nginx 配置文件实现"></a>nginx 配置文件实现</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">location ~ ^/(hello$|hello/) &#123;</span><br><span class="line"></span><br><span class="line">            access_by_lua_block     &#123;</span><br><span class="line">                local uri_args = ngx.req.get_uri_args()   </span><br><span class="line">                ngx.log(ngx.DEBUG,string.format(&quot;匹配正则表达式, uri_args: %s&quot;,table.concat(uri_args,&#x27;,&#x27;)))</span><br><span class="line"></span><br><span class="line">                if uri_args[&quot;__mobile__&quot;] ~= nil then</span><br><span class="line">                    -- Forward requests containing __mobile__ parameter to mobile.</span><br><span class="line">                    uri_args[&quot;__mobile__&quot;] = nil</span><br><span class="line">                    ngx.req.set_uri_args(uri_args)</span><br><span class="line">                    ngx.log(ngx.DEBUG,string.format(&quot;有参数:__mobile__, 走移动端&quot;))</span><br><span class="line">                    return ngx.exec(&quot;/hello-mobile/index.html&quot;)</span><br><span class="line">                elseif uri_args[&quot;__pc__&quot;] ~= nil then</span><br><span class="line">                    -- Forward requests containing __pc__ parameter to pc.</span><br><span class="line">                    uri_args[&quot;__pc__&quot;] = nil</span><br><span class="line">                    ngx.req.set_uri_args(uri_args)</span><br><span class="line">                    ngx.log(ngx.DEBUG,string.format(&quot;有参数:__pc__, 走PC端&quot;))</span><br><span class="line">                    return ngx.exec(&quot;/hello-pc/index.html&quot;)</span><br><span class="line">                end</span><br><span class="line"></span><br><span class="line">                if ngx.var.http_user_agent then</span><br><span class="line">                     ngx.log(ngx.DEBUG,string.format(&quot;请求方带有 useragent，检查useragent&quot;))</span><br><span class="line">                    -- Forward PC (non-app) requests to hello-pc.</span><br><span class="line"></span><br><span class="line">                    if(string.find(ngx.var.http_user_agent, &quot;Windows NT&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;Macintosh&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;iPad&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;SM%-T&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;SM%-P&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;X11&quot;) ) then</span><br><span class="line"></span><br><span class="line">                        ngx.log(ngx.DEBUG,string.format(&quot;不是移动端，走PC页面&quot;))</span><br><span class="line">                        return ngx.exec(&quot;/hello-pc/index.html&quot;)</span><br><span class="line"></span><br><span class="line">                    else</span><br><span class="line">                    -- Forward mobile (non-app) requests to mobile.</span><br><span class="line">                        ngx.log(ngx.DEBUG,string.format(&quot;默认走移动端页面&quot;))</span><br><span class="line">                        return ngx.exec(&quot;/hello-mobile/index.html&quot;)</span><br><span class="line">                    end</span><br><span class="line"></span><br><span class="line">                end</span><br><span class="line">                ngx.log(ngx.DEBUG,string.format(&quot;兜底处理，去首页&quot;))</span><br><span class="line">                return ngx.exec(&quot;/home.html&quot;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="效果演示"><a href="#效果演示" class="headerlink" title="效果演示"></a>效果演示</h4><p>模拟 PC 端访问效果</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/pc_request.png" class="">
+
+<p>模拟移动端访问效果</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/mobile_request.png" class="">
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本文以学习入门 nginx 配置为目的，介绍了相关涉及到的概念和基础知识，包括 nginx、反向代理、负载均衡相关知识、lua基础、 openresty 基础等，最后给出一个 demo 样例用于展示。</p>
+<p>所涉及到的东西都是基础部分，没有深入说明，目的是给出 nginx 配置涉及的相关知识面，使我们对其有一个相对基础而全面的了解，后续有需要深入的部分可以知道从哪个方向去着手解决。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/nginx-setup-intro.html">Nginx 配置详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86">反向代理</a></li>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/932451">负载均衡</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.nginx.com/resources/glossary/load-balancing/">What Is Load Balancing?</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pizixu/articles/12455407.html">Nginx 模块分类</a></li>
+<li><a target="_blank" rel="noopener" href="https://moonbingbing.gitbooks.io/openresty-best-practices/content/">OpenResty 最佳实践</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/54chensongxia/p/12938929.html">Nginx配置文件详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.fandenggui.com/post/nginx-location.html">nginx location 详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/lua/lua-tutorial.html">Lua 教程</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>bashellwang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://bashellwang.github.io/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/" title="Nginx 配置入门">https://bashellwang.github.io/2022-06-10-Nginx-配置入门/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Nginx/" rel="tag"><i class="fa fa-tag"></i> Nginx</a>
+              <a href="/tags/Lua/" rel="tag"><i class="fa fa-tag"></i> Lua</a>
+              <a href="/tags/Openresty/" rel="tag"><i class="fa fa-tag"></i> Openresty</a>
+              <a href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> 反向代理</a>
+              <a href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="tag"><i class="fa fa-tag"></i> 负载均衡</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022-04-22-JavaScript-%E4%B8%AD%E9%82%A3%E4%BA%9B%E4%B8%8D%E5%BE%97%E4%B8%8D%E6%B3%A8%E6%84%8F%E7%9A%84%E7%82%B9/" rel="prev" title="JavaScript 中那些不得不注意的点">
+      <i class="fa fa-chevron-left"></i> JavaScript 中那些不得不注意的点
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">基础概念说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Nginx"><span class="nav-number">1.1.</span> <span class="nav-text">Nginx</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">正向代理和反向代理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.3.</span> <span class="nav-text">负载均衡</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx-%E5%9F%BA%E7%A1%80"><span class="nav-number">2.</span> <span class="nav-text">Nginx 基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Nginx-%E5%AE%89%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">Nginx 安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Nginx-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">2.2.</span> <span class="nav-text">Nginx 常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Nginx-%E6%A8%A1%E5%9D%97%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="nav-number">2.3.</span> <span class="nav-text">Nginx 模块化机制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">Nginx 配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E"><span class="nav-number">3.1.</span> <span class="nav-text">配置文件说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#location-%E8%AF%A6%E8%A7%A3"><span class="nav-number">3.2.</span> <span class="nav-text">location 详解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#location-%E8%AF%AD%E6%B3%95"><span class="nav-number">3.2.1.</span> <span class="nav-text">location 语法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#location-%E6%A8%A1%E5%BC%8F%E5%8F%8A%E5%8C%B9%E9%85%8D%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">3.2.2.</span> <span class="nav-text">location 模式及匹配优先级</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%91%BD%E5%90%8D-location-name-%E7%94%A8%E6%B3%95"><span class="nav-number">3.2.3.</span> <span class="nav-text">命名 location @name 用法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#uri-%E6%9C%AB%E5%B0%BE%E5%B8%A6%E4%B8%8D%E5%B8%A6-%E7%9A%84%E8%AF%B4%E6%98%8E"><span class="nav-number">3.2.4.</span> <span class="nav-text">uri 末尾带不带 &#x2F; 的说明</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenResty"><span class="nav-number">4.</span> <span class="nav-text">OpenResty</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Lua-%E5%85%A5%E9%97%A8"><span class="nav-number">4.1.</span> <span class="nav-text">Lua 入门</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OpenResty-%E5%AE%89%E8%A3%85"><span class="nav-number">4.2.</span> <span class="nav-text">OpenResty 安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HelloWorld"><span class="nav-number">4.3.</span> <span class="nav-text">HelloWorld</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-lua-%E6%A8%A1%E5%9D%97"><span class="nav-number">4.4.</span> <span class="nav-text">nginx lua 模块</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Demo-%E6%A1%88%E4%BE%8B"><span class="nav-number">5.</span> <span class="nav-text">Demo 案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">5.1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.2.</span> <span class="nav-text">nginx 配置文件实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E6%BC%94%E7%A4%BA"><span class="nav-number">5.3.</span> <span class="nav-text">效果演示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bashellwang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">bashellwang</p>
+  <div class="site-description" itemprop="description">路漫漫其修远兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/bashellwang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;bashellwang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://theme-next.iissnan.com/theme-settings.html" title="http:&#x2F;&#x2F;theme-next.iissnan.com&#x2F;theme-settings.html" rel="noopener" target="_blank">Next</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000" title="https:&#x2F;&#x2F;www.liaoxuefeng.com&#x2F;wiki&#x2F;0014316089557264a6b348958f449949df42a6d3a2e542c000" rel="noopener" target="_blank">Python</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bashellwang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

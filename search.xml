@@ -1540,4 +1540,187 @@ ABC
 <p>More info: <a href="https://hexo.io/docs/deployment.html">Deployment</a></p>
 ]]></content>
   </entry>
+  <entry>
+    <title>Nginx 配置入门</title>
+    <url>/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<blockquote>
+<p>前端代码在部署发布过程中，需要涉及到服务器的配置处理，一般都是运维或发布同事帮忙处理，目前公司主要使用的是 Nginx 服务器。了解一些 Nginx 的知识，有利于我们快速定位处理一些发布中遇到的问题。</p>
+</blockquote>
+<h3 id="基础概念说明"><a href="#基础概念说明" class="headerlink" title="基础概念说明"></a>基础概念说明</h3><h4 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h4><p><a href="https://www.nginx.com/resources/wiki/">Nginx</a> 是一个免费的、开源的、高性能的 HTTP 服务器，同时也是反向代理服务器，以及 IMAP/POP3 代理服务器。Nginx 以其高性能、稳定性、丰富功能集、简单的配置和低资源消耗而著称。可以通过简单配置来实现反向代理、负载均衡、Nginx 缓存以及动静分离等功能。</p>
+<span id="more"></span>
+<h4 id="正向代理和反向代理"><a href="#正向代理和反向代理" class="headerlink" title="正向代理和反向代理"></a>正向代理和反向代理</h4><ul>
+<li><code>正向代理</code>：是一个位于客户端和原始服务器(origin server)之间的服务器，为了从原始服务器取得内容，客户端向代理发送一个请求并指定目标(原始服务器)，然后代理向原始服务器转交请求并将获得的内容返回给客户端。</li>
+<li><code>反向代理</code>：反向代理服务器位于用户与目标服务器之间，但是对于用户而言，反向代理服务器就相当于目标服务器，即用户直接访问反向代理服务器就可以获得目标服务器的资源。同时，用户不需要知道目标服务器的地址，也无须在用户端作任何设定。</li>
+</ul>
+<p>正向代理服务器和反向代理服务器都是位于客户端和真实服务器之间，所做的事情也都是把客户端请求转发到服务器，再把服务器响应转发回客户端。两者还是有一定的差异。</p>
+<ol>
+<li>正向代理是客户端的代理，可以帮助客户端访问其无法访问的服务器资源。反向代理则是服务器的代理，帮助服务器做负载均衡，安全防护等。</li>
+<li>正向代理一般是客户端架设的，比如在自己机器安装一个代理软件。而反向代理一般是服务器架设的，比如在机器集群中部署一个反向代理服务器。</li>
+<li>正向代理中，服务器不知道真正的客户端是谁，以为访问自己的就是真实的客户端。而在反向代理中，客户端不知道真正的服务器是谁，以为自己访问的是真实的服务器。</li>
+<li>正向代理和反向代理的作用和目的不一样。正向代理主要是用来解决访问限制问题。而反向代理则是提供负载均衡、安全防护等作用。二者均能提高访问速度。</li>
+</ol>
+<p>总的来说，正向代理是模拟客户端，对客户端负责；反向代理是模拟服务器，对所代理的服务器负责。</p>
+<p>示意图可参考如下图所示：</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/forward_reverse_proxy.png" class="">
+
+<h4 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h4><p><code>负载均衡</code>，英文名称为 Load Balance，其含义就是指将负载（工作任务）进行平衡、分摊到多个操作单元上进行运行，例如 FTP服务器、Web 服务器、企业核心应用服务器和其它主要任务服务器等，从而协同完成工作任务。</p>
+<p>负载均衡构建在原有网络结构之上，它提供了一种透明且廉价有效的方法扩展服务器和网络设备的带宽、加强网络数据处理能力、增加吞吐量、提高网络的可用性和灵活性。</p>
+<p>负载均衡常用算法</p>
+<ul>
+<li><code>轮询/加权轮询</code>：每个请求按时间顺序逐一分配到不同的后端服务器，如果后端某台服务器宕机，故障系统被自动剔除，使用户访问不受影响。Weight 指定轮询权值，Weight 值越大，分配到的访问机率越高，主要用于后端每个服务器性能不均的情况下。</li>
+<li><code>IP 哈希</code>：每个请求按访问 IP 的 hash 结果分配，这样来自同一个 IP 的访客固定访问一个后端服务器，有效解决了动态网页存在的 session 不共享问题。</li>
+<li><code>最小连接法</code>：将任务分配给此时具有最小连接数的节点，因此它是动态负载均衡算法。一个节点收到一个任务后连接数就会加1，当节点故障时就将节点权值设置为0，不再给节点分配任务。适用于各节点性能相似时。</li>
+<li><code>URL 哈希</code>：根据请求的 URL 的哈希值来分配服务器。它的特点是相同 URL的请求会分配给固定的服务器，当存在缓存时，效率较高。</li>
+</ul>
+<p>Nginx 内置策略为轮询、加权轮询和 IP 哈希。示意图如下所示：</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/load_balance_polling.png" class="">
+
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/load_balance_ip_hash.png" class="">
+
+<h3 id="Nginx-基础"><a href="#Nginx-基础" class="headerlink" title="Nginx 基础"></a>Nginx 基础</h3><h4 id="Nginx-安装"><a href="#Nginx-安装" class="headerlink" title="Nginx 安装"></a>Nginx 安装</h4><ol>
+<li>下载 <a href="http://nginx.org/en/download.html">Nginx</a> 版本</li>
+<li>解压 nginx-xx.tar.gz 包</li>
+<li>进入解压缩目录，执行 <code>./configure</code></li>
+<li>执行命令 <code>make &amp; make install</code></li>
+</ol>
+<p>如若安装结束，使用 <code>nginx</code> 启动 nginx 后，浏览器中输入 <code>http:localhost</code> 看到欢迎页面即可验证安装启动成功。</p>
+<h4 id="Nginx-常用命令"><a href="#Nginx-常用命令" class="headerlink" title="Nginx 常用命令"></a>Nginx 常用命令</h4><img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/nginx_help.png" class="">
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nginx -h：查看帮助</span><br><span class="line">nginx -v：查看版本信息</span><br><span class="line">nginx -V：查看版本和配置信息</span><br><span class="line">nginx -t：测试配置文件正确性</span><br><span class="line">nginx -T：测试配置文件，并显示配置文件信息</span><br><span class="line">nginx -q：测试配置文件，但是只显示错误信息</span><br><span class="line">nginx -s：发送信号，包括：stop、quit、reopen、reload</span><br><span class="line">nginx -p：设置前缀</span><br><span class="line">nginx -e：设置错误日志文件路径</span><br><span class="line">nginx -c：设置配置文件</span><br><span class="line">nginx -g：设置配置文件路径</span><br></pre></td></tr></table></figure>
+
+<h4 id="Nginx-模块化机制"><a href="#Nginx-模块化机制" class="headerlink" title="Nginx 模块化机制"></a>Nginx 模块化机制</h4><p>Nginx 的内部结构是由核心部分和一系列的功能模块所组成。这样划分是为了使得每个模块的功能相对简单，便于开发，同时也便于对系统进行功能扩展。</p>
+<ul>
+<li>第一类模块叫 <code>ngx_core_module</code> 叫核心模块。核心模块里面会有一类核心模块，比如 events，http，mail 或者 stream。它们本身会定义出新的类型模块，如果新出了一类应用可以新增一个 <code>ngx_core_module</code> 来定义新的模块。</li>
+<li>还有个独立的模块叫 <code>ngx_conf_module</code>，这个类型只有一个模块叫 <code>ngx_conf_module</code>；它只负责去解析我们的 nginx.conf 文件。</li>
+<li>所有事件处理的方法内聚为 <code>ngx_event_module</code> 事件模块。通常会在这类模块中其中第一个模块通常加上 <code>_core</code> 关键字来把通用的共性部分放到里面，比如 <code>event_core</code>，<code>ngx_http_core_module</code>，<code>ngx_mail_core_module</code>，<code>ngx_stream_core_module</code>。</li>
+<li>其次最复杂的 http 模块。<code>ngx_http_core_module</code> 它已经定义了许多特色的规则。比如说当一个 http 请求进入 nginx 的时候，为请求生成相应的模块我们叫它请求处理模块；当我们生成响应把响应发送给浏览器的时候，响应过滤模块会对响应做二次处理；还有一类模块叫 upsteam 相关模块，它专注于在一个请求内部去访问上游服务。</li>
+</ul>
+<p>示意图如图所示：</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/nginx_modules.png" class="">
+
+
+<h3 id="Nginx-配置文件"><a href="#Nginx-配置文件" class="headerlink" title="Nginx 配置文件"></a>Nginx 配置文件</h3><h4 id="配置文件说明"><a href="#配置文件说明" class="headerlink" title="配置文件说明"></a>配置文件说明</h4><p>Nginx 的主配置文件是 <code>nginx.conf</code>，这个配置文件一共由三部分组成，分别为 <code>全局块、events 块和 http 块</code>。</p>
+<ul>
+<li>全局块：配置影响 nginx 全局的指令。一般有运行 nginx 服务器的用户组，nginx 进程 pid 存放路径，日志存放路径，配置文件引入，允许生成 worker process 数等。</li>
+<li>events 块：配置影响 nginx 服务器或与用户的网络连接。有每个进程的最大连接数，选取哪种事件驱动模型处理连接请求，是否允许同时接受多个网路连接，开启多个网络连接序列化等。</li>
+<li>http 块：可以嵌套多个 server，配置代理，缓存，日志定义等绝大多数功能和第三方模块的配置。如文件引入，mime-type 定义，日志自定义，是否使用 sendfile 传输文件，连接超时时间，单连接请求数等。</li>
+<li>server 块：配置虚拟主机的相关参数，一个http中可以有多个server。</li>
+<li>location 块：配置请求的路由，以及各种页面的处理情况。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#全局块</span><br><span class="line">#user  nobody;</span><br><span class="line">worker_processes  1;</span><br><span class="line"></span><br><span class="line">#event块</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#http块</span><br><span class="line">http &#123;</span><br><span class="line">    #http 全局块</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line">    #server块</span><br><span class="line">    server &#123;</span><br><span class="line">        #server 全局块</span><br><span class="line">        listen       8000;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">        #location 块</span><br><span class="line">        location / &#123;</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    #这边可以有多个 server 块</span><br><span class="line">    server &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更多详情可参考：<a href="https://www.cnblogs.com/54chensongxia/p/12938929.html">Nginx配置文件详解</a></p>
+<h4 id="location-详解"><a href="#location-详解" class="headerlink" title="location 详解"></a>location 详解</h4><p>location 指令是 nginx 中最重要的指令之一，它用来匹配不同的 url 请求，进而对请求做不同的处理和响应，其中重点需要注意的是 location 的匹配顺序及优先级。</p>
+<h5 id="location-语法"><a href="#location-语法" class="headerlink" title="location 语法"></a>location 语法</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 关键字 修饰符 匹配的前缀字符(url)&#123; 要执行的操作 &#125;</span><br><span class="line"></span><br><span class="line">location [=|~|~*|^~] /uri/ &#123; … &#125;</span><br><span class="line">location @name &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="location-模式及匹配优先级"><a href="#location-模式及匹配优先级" class="headerlink" title="location 模式及匹配优先级"></a>location 模式及匹配优先级</h5><table>
+<thead>
+<tr>
+<th>名字</th>
+<th>模式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>精确匹配</td>
+<td>locatio = /uri</td>
+<td>= 表示精确匹配，只有完全匹配上才能生效</td>
+</tr>
+<tr>
+<td>前缀匹配</td>
+<td>location ^~ /uri</td>
+<td>^~ 开头对URL路径进行前缀匹配，并且在正则之前。</td>
+</tr>
+<tr>
+<td>正则匹配</td>
+<td>location ~ pattern</td>
+<td>开头表示区分大小写的正则匹配</td>
+</tr>
+<tr>
+<td>正则匹配</td>
+<td>location ~* pattern</td>
+<td>开头表示不区分大小写的正则匹配</td>
+</tr>
+<tr>
+<td>最长前缀匹配</td>
+<td>location /uri</td>
+<td>不带任何修饰符，也表示前缀匹配，但是在正则匹配之后</td>
+</tr>
+<tr>
+<td>默认匹配</td>
+<td>location /</td>
+<td>通用匹配，任何未匹配到其它location的请求都会匹配到，相当于switch中的default</td>
+</tr>
+</tbody></table>
+<p>多个 location 配置的情况下匹配顺序为:</p>
+<ul>
+<li>location = /a {…} #精准匹配</li>
+<li>location ^~ /a {…} #前缀匹配</li>
+<li>location ~ /a.* {…} #正则匹配（区分大小写）</li>
+<li>location ~* /a.* {…} #正则匹配（不区分大小写）</li>
+<li>location /a {…} #最长前缀匹配，但是优先级低于正则匹配。 /a 和 ^~ /a 会冲突，报错</li>
+<li>location / {} #任何没有匹配成功的，都会匹配这里处理</li>
+</ul>
+<h5 id="命名-location-name-用法"><a href="#命名-location-name-用法" class="headerlink" title="命名 location @name 用法"></a>命名 location @name 用法</h5><p>@用来定一个一个命名 location。主要用于内部重定向，不能用来处理正常的请求。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">	try_files $uri $uri/ @custom</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location @custom &#123;</span><br><span class="line">	# do ... something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="uri-末尾带不带-的说明"><a href="#uri-末尾带不带-的说明" class="headerlink" title="uri 末尾带不带 / 的说明"></a>uri 末尾带不带 / 的说明</h5><p>uri 末尾带斜杠<code>/user/</code>表示目录，不带斜杠<code>/user</code>表示文件。</p>
+<p>默认情况下，访问 <code>/user/</code>时，服务器会自动去该目录下查找加载默认文件。<br>而访问 <code>/user</code> 时，服务器会先尝试加载该文件，如果文件不存在，则重定向至 <code>/user/</code> 去该目录下找默认文件。</p>
+<h3 id="OpenResty"><a href="#OpenResty" class="headerlink" title="OpenResty"></a>OpenResty</h3><p><a href="https://openresty.org/cn/">OpenResty</a> 是一个基于 Nginx 与 Lua 的高性能 Web 平台，其内部集成了大量精良的 Lua 库、第三方模块以及大多数的依赖项。用于方便地搭建能够处理超高并发、扩展性极高的动态 Web 应用、Web 服务和动态网关。</p>
+<p>通过 OpenResty，Web 开发人员和系统工程师可以使用 Lua 脚本语言调动 Nginx 支持的各种 C 以及 Lua 模块。</p>
+<h4 id="Lua-入门"><a href="#Lua-入门" class="headerlink" title="Lua 入门"></a>Lua 入门</h4><p>我们学习 OpenResty，只需要了解基础 lua 语法即可，下面列举出一些和其他常见语言不太一样的地方，方便快速对比上手。更多详情可自行参考网络资料 <a href="https://www.runoob.com/lua/lua-tutorial.html">Lua 教程</a>。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 单行注释</span><br><span class="line"></span><br><span class="line">--[[</span><br><span class="line">	这是一个</span><br><span class="line">	多行注释</span><br><span class="line">--]]</span><br><span class="line"></span><br><span class="line">-- Lua 中的表（table）其实是一个&quot;关联数组&quot;（associative arrays），数组的索引可以是数字或者是字符串。</span><br><span class="line">-- Lua 中表的默认初始索引一般从 1 开始。</span><br><span class="line">-- 创建一个空的 table</span><br><span class="line">local tbl1 = &#123;&#125;</span><br><span class="line"> </span><br><span class="line">-- 直接初始表</span><br><span class="line">local tbl2 = &#123;&quot;apple&quot;, &quot;pear&quot;, &quot;orange&quot;, &quot;grape&quot;&#125;</span><br><span class="line"></span><br><span class="line">--[[</span><br><span class="line">	Lua 中变量有三种：全局变量、局部变量、表中的域</span><br><span class="line">	Lua 中的变量全是全局变量，哪怕是语句块或是函数里，除非用 local 显式声明为局部变量。</span><br><span class="line">	局部变量的作用域为从声明位置开始到所在语句块结束。</span><br><span class="line">--]]</span><br><span class="line"></span><br><span class="line">-- Lua 函数可以接受可变数目的参数，和 C 语言类似，在函数参数列表中使用三点 ... 表示函数有可变的参数。</span><br><span class="line">function add(...)  </span><br><span class="line">local s = 0  </span><br><span class="line">  for i, v in ipairs&#123;...&#125; do   --&gt; &#123;...&#125; 表示一个由所有变长参数构成的数组  </span><br><span class="line">    s = s + v  </span><br><span class="line">  end  </span><br><span class="line">  return s  </span><br><span class="line">end  </span><br><span class="line">print(add(3,4,5,6,7))  ---&gt;25</span><br><span class="line"></span><br><span class="line">-- 运算符: .. 和 #</span><br><span class="line">a = &quot;hello &quot;</span><br><span class="line">b = &quot;world&quot;</span><br><span class="line"></span><br><span class="line">print(&quot;连接字符串 a 和 b &quot;, a..b )</span><br><span class="line">print(&quot;b 字符串长度 &quot;,#b )</span><br></pre></td></tr></table></figure>
+
+<h4 id="OpenResty-安装"><a href="#OpenResty-安装" class="headerlink" title="OpenResty 安装"></a>OpenResty 安装</h4><p>以 Mac 为例，使用 <code>brew</code> 安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">brew install openresty/brew/openresty</span><br></pre></td></tr></table></figure>
+<p>安装后，将 <code>/usr/local/Cellar/openresty/&lt;version&gt;/bin</code> 和 <code>/usr/local/Cellar/openresty/&lt;version&gt;/nginx/sbin</code> 配置到系统 path 环境变量中。使用 <code>openresty -v</code> 来查看版本信息。</p>
+<h4 id="HelloWorld"><a href="#HelloWorld" class="headerlink" title="HelloWorld"></a>HelloWorld</h4><p>新建一个工作目录 <code>hello_resty</code>，里面新建两个目录 <code>conf</code> 和 <code>logs</code>。在 conf 目录下新建配置文件 <code>nginx.conf</code>，文件内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">worker_processes  1;        #nginx worker 数量</span><br><span class="line">error_log logs/error.log debug;   #指定错误日志文件路径</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections 1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen 8080;</span><br><span class="line">        location / &#123;</span><br><span class="line">            default_type text/html;</span><br><span class="line">            content_by_lua_block &#123;</span><br><span class="line">                ngx.say(&quot;&lt;h2&gt;hello&lt;/h2&gt;&quot;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动 nginx</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nginx -p ./ -c conf/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>启动后可以使用 <code>curl http://localhost:6699</code> 访问，使用浏览器访问 <code>http://localhost:8080/</code> 有同样效果。</p>
+<h4 id="nginx-lua-模块"><a href="#nginx-lua-模块" class="headerlink" title="nginx lua 模块"></a>nginx lua 模块</h4><p>OpenResty 处理请求流程如下：</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/openresty_phases.png" class="">
+
+<p>由于 Nginx 把一个请求分成了很多阶段，这样第三方模块就可以根据自己行为，挂载到不同阶段进行处理达到目的。OpenResty 也应用了同样的特性。所不同的是，OpenResty 挂载的是我们编写的 Lua 代码。</p>
+<ul>
+<li><code>set_by_lua*</code>: 流程分支处理判断变量初始化</li>
+<li><code>rewrite_by_lua*</code>: 转发、重定向、缓存等功能(例如特定请求代理到外网)</li>
+<li><code>access_by_lua*</code>: IP 准入、接口权限等情况集中处理(例如配合 iptable 完成简单防火墙)</li>
+<li><code>content_by_lua*</code>: 内容生成</li>
+<li><code>header_filter_by_lua*</code>: 响应头部过滤处理(例如添加头部信息)</li>
+<li><code>body_filter_by_lua*</code>: 响应体过滤处理(例如完成应答内容统一成大写)</li>
+<li><code>log_by_lua*</code>: 会话完成后本地异步完成日志记录(日志可以记录在本地，还可以同步到其他机器)</li>
+</ul>
+<p>把逻辑放在不同阶段，分工明确，代码独立，方便维护以及扩展。</p>
+<h3 id="Demo-案例"><a href="#Demo-案例" class="headerlink" title="Demo 案例"></a>Demo 案例</h3><h4 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h4><p>实现一个静态代码网站，同一 url 请求，PC 和 移动端均可访问。根据请求方携带的 useragent 判断来源，从而导向不同页面。同时可以在链接里带上指定参数来访问指定页面。</p>
+<h4 id="nginx-配置文件实现"><a href="#nginx-配置文件实现" class="headerlink" title="nginx 配置文件实现"></a>nginx 配置文件实现</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location ~ ^/(hello$|hello/) &#123;</span><br><span class="line"></span><br><span class="line">            access_by_lua_block     &#123;</span><br><span class="line">                local uri_args = ngx.req.get_uri_args()   </span><br><span class="line">                ngx.log(ngx.DEBUG,string.format(&quot;匹配正则表达式, uri_args: %s&quot;,table.concat(uri_args,&#x27;,&#x27;)))</span><br><span class="line"></span><br><span class="line">                if uri_args[&quot;__mobile__&quot;] ~= nil then</span><br><span class="line">                    -- Forward requests containing __mobile__ parameter to mobile.</span><br><span class="line">                    uri_args[&quot;__mobile__&quot;] = nil</span><br><span class="line">                    ngx.req.set_uri_args(uri_args)</span><br><span class="line">                    ngx.log(ngx.DEBUG,string.format(&quot;有参数:__mobile__, 走移动端&quot;))</span><br><span class="line">                    return ngx.exec(&quot;/hello-mobile/index.html&quot;)</span><br><span class="line">                elseif uri_args[&quot;__pc__&quot;] ~= nil then</span><br><span class="line">                    -- Forward requests containing __pc__ parameter to pc.</span><br><span class="line">                    uri_args[&quot;__pc__&quot;] = nil</span><br><span class="line">                    ngx.req.set_uri_args(uri_args)</span><br><span class="line">                    ngx.log(ngx.DEBUG,string.format(&quot;有参数:__pc__, 走PC端&quot;))</span><br><span class="line">                    return ngx.exec(&quot;/hello-pc/index.html&quot;)</span><br><span class="line">                end</span><br><span class="line"></span><br><span class="line">                if ngx.var.http_user_agent then</span><br><span class="line">                     ngx.log(ngx.DEBUG,string.format(&quot;请求方带有 useragent，检查useragent&quot;))</span><br><span class="line">                    -- Forward PC (non-app) requests to hello-pc.</span><br><span class="line"></span><br><span class="line">                    if(string.find(ngx.var.http_user_agent, &quot;Windows NT&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;Macintosh&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;iPad&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;SM%-T&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;SM%-P&quot;) or</span><br><span class="line">                        string.find(ngx.var.http_user_agent, &quot;X11&quot;) ) then</span><br><span class="line"></span><br><span class="line">                        ngx.log(ngx.DEBUG,string.format(&quot;不是移动端，走PC页面&quot;))</span><br><span class="line">                        return ngx.exec(&quot;/hello-pc/index.html&quot;)</span><br><span class="line"></span><br><span class="line">                    else</span><br><span class="line">                    -- Forward mobile (non-app) requests to mobile.</span><br><span class="line">                        ngx.log(ngx.DEBUG,string.format(&quot;默认走移动端页面&quot;))</span><br><span class="line">                        return ngx.exec(&quot;/hello-mobile/index.html&quot;)</span><br><span class="line">                    end</span><br><span class="line"></span><br><span class="line">                end</span><br><span class="line">                ngx.log(ngx.DEBUG,string.format(&quot;兜底处理，去首页&quot;))</span><br><span class="line">                return ngx.exec(&quot;/home.html&quot;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="效果演示"><a href="#效果演示" class="headerlink" title="效果演示"></a>效果演示</h4><p>模拟 PC 端访问效果</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/pc_request.png" class="">
+
+<p>模拟移动端访问效果</p>
+<img data-src="/2022-06-10-Nginx-%E9%85%8D%E7%BD%AE%E5%85%A5%E9%97%A8/mobile_request.png" class="">
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本文以学习入门 nginx 配置为目的，介绍了相关涉及到的概念和基础知识，包括 nginx、反向代理、负载均衡相关知识、lua基础、 openresty 基础等，最后给出一个 demo 样例用于展示。</p>
+<p>所涉及到的东西都是基础部分，没有深入说明，目的是给出 nginx 配置涉及的相关知识面，使我们对其有一个相对基础而全面的了解，后续有需要深入的部分可以知道从哪个方向去着手解决。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<li><a href="https://www.runoob.com/w3cnote/nginx-setup-intro.html">Nginx 配置详解</a></li>
+<li><a href="https://baike.baidu.com/item/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86">反向代理</a></li>
+<li><a href="https://baike.baidu.com/item/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/932451">负载均衡</a></li>
+<li><a href="https://www.nginx.com/resources/glossary/load-balancing/">What Is Load Balancing?</a></li>
+<li><a href="https://www.cnblogs.com/pizixu/articles/12455407.html">Nginx 模块分类</a></li>
+<li><a href="https://moonbingbing.gitbooks.io/openresty-best-practices/content/">OpenResty 最佳实践</a></li>
+<li><a href="https://www.cnblogs.com/54chensongxia/p/12938929.html">Nginx配置文件详解</a></li>
+<li><a href="https://www.fandenggui.com/post/nginx-location.html">nginx location 详解</a></li>
+<li><a href="https://www.runoob.com/lua/lua-tutorial.html">Lua 教程</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Nginx</tag>
+        <tag>Lua</tag>
+        <tag>Openresty</tag>
+        <tag>反向代理</tag>
+        <tag>负载均衡</tag>
+      </tags>
+  </entry>
 </search>
